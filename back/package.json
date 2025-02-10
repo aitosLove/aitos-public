@@ -1,0 +1,37 @@
+{
+  "name": "learn-agent-v1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx tsx src/main.ts",
+    "db:push": "npx drizzle-kit push"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@ai-sdk/openai": "^1.1.5",
+    "@mysten/sui.js": "^0.54.1",
+    "@neondatabase/serverless": "^0.10.4",
+    "@types/node-cron": "^3.0.11",
+    "ai": "^4.1.10",
+    "axios": "^1.7.9",
+    "axios-cache-interceptor": "^1.6.2",
+    "bull": "^4.16.5",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.39.1",
+    "navi-aggregator-sdk": "^1.0.8",
+    "node-cron": "^3.0.3",
+    "p-limit": "^6.2.0",
+    "pg": "^8.13.1",
+    "typescript": "^5.7.3",
+    "uuid": "^11.0.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bull": "^3.15.9",
+    "drizzle-kit": "^0.30.4",
+    "tsx": "^4.19.2"
+  }
+}
