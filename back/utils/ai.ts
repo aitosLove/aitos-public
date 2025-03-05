@@ -29,12 +29,19 @@ const MODEL_MAPPING: ModelMapping = {
     xlarge: "gpt-4-vision-preview",
     reason: "gpt-o3-mini",
   },
+  // deepseek: {
+  //   small: "deepseek-chat",
+  //   medium: "deepseek-chat",
+  //   large: "deepseek-chat",
+  //   xlarge: "deepseek-chat",
+  //   reason: "deepseek-reasoner",
+  // },
   deepseek: {
-    small: "deepseek-chat",
-    medium: "deepseek-chat",
-    large: "deepseek-chat",
-    xlarge: "deepseek-chat",
-    reason: "deepseek-reasoner",
+    small: "deepseek-r1-250120",
+    medium: "deepseek-r1-250120",
+    large: "deepseek-r1-250120",
+    xlarge: "deepseek-r1-250120",
+    reason: "deepseek-r1-250120",
   },
   atoma: {
     small: "meta-llama/Llama-3.3-70B-Instruct",
@@ -45,7 +52,7 @@ const MODEL_MAPPING: ModelMapping = {
   },
 };
 
-const defaultSelect: Platform = "deepseek";
+const defaultSelect: Platform = "qwen";
 const defaultVersion: Model = "large";
 
 const openai = createOpenAI({
@@ -59,15 +66,15 @@ const qwen = createOpenAI({
   compatibility: "compatible", // strict mode, enable when using the OpenAI API
 });
 
-const deepseek = createOpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-  compatibility: "compatible", // strict mode, enable when using the OpenAI API
-});
+// const deepseek = createOpenAI({
+//   baseURL: "https://api.deepseek.com",
+//   apiKey: process.env.DEEPSEEK_API_KEY,
+//   compatibility: "compatible", // strict mode, enable when using the OpenAI API
+// });
 
-const atoma = createOpenAI({
-  baseURL: "https://api.atoma.network/v1",
-  apiKey: process.env.ATOMA_API_KEY,
+const deepseek = createOpenAI({
+  baseURL: "https://ark.cn-beijing.volces.com/api/v3",
+  apiKey: process.env.HUOSHAN_API_KEY,
   compatibility: "compatible", // strict mode, enable when using the OpenAI API
 });
 
@@ -83,8 +90,6 @@ export function getProvider({
       return openai;
     case "deepseek":
       return deepseek;
-    case "atoma":
-      return atoma;
     default:
       return qwen;
   }

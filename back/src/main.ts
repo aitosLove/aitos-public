@@ -9,22 +9,20 @@
  */
 
 import { Agent } from "./agent";
-import { enableInvestmentModule } from "./modules/suikai";
-import { enableThrowEventModule } from "./modules/test/throw_event";
+import { enableInvestmentModule } from "./modules/suikai_v2";
+// import { enableThrowEventModule } from "./modules/test/throw_event";
 
 export const agent = new Agent();
 
 async function main() {
-  // 1. 创建Agent
-  // 2. 启用 schedule/hook 等模块 (可注释其中任意行)
   // enableScheduleModule(agent);
   // enableHookModule(agent);
 
   enableInvestmentModule(agent);
+  console.log("[main] Agent started with Suikai module enabled.");
 
   // enableThrowEventModule(agent);
-
-  console.log("[main] Agent started with rate module enabled.");
+  // console.log("[main] Agent started with ThrowEvent module enabled.");
 }
 
 // 启动

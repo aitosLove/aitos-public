@@ -1,4 +1,4 @@
-import { getProvider, getModel } from "./ai";
+import { getProvider, getModel } from "@/utils/ai";
 import { z } from "zod";
 import { generateText, tool } from "ai";
 import { adjustToTargetSUIProportion, getHolding, CoinBalance } from "./tool";
@@ -7,7 +7,7 @@ import { actionStateTable } from "@/db/schema";
 
 const select = "deepseek";
 const provider = getProvider({ provider: select });
-const model = getModel({ inputModel: "large", provider: select });
+const model = getModel({ inputModel: "reason", provider: select });
 
 export async function adjustPortfolio_by_AI({
   current_holding,
@@ -16,65 +16,75 @@ export async function adjustPortfolio_by_AI({
   current_holding: string;
   insight: string;
 }) {
-  const { text, toolResults } = await generateText({
-    model: provider(model),
-    toolChoice: "required",
-    tools: {
-      adjust_portfolio: tool({
-        description:
-          "This tool is used to adjust the portfolio. You can adjust weight of SUI holding to adjust the portfolio.",
-        parameters: z.object({
-          thinking: z
-            .string()
-            .describe(
-              "What's your thinking about the portfolio and the adjustment?"
-            ),
-          sui_weight: z
-            .number()
-            .max(100)
-            .min(0)
-            .describe(
-              "Which SUI weight you think is the best? It's percentage."
-            ),
-        }),
-        execute: async ({ thinking, sui_weight }) => {
-          try {
-            console.log(
-              `Adjust Portfolio. ${thinking} \n So weight should be set to : ${sui_weight}%`
-            );
-            adjustToTargetSUIProportion(sui_weight);
+  try {
+    const { text, toolResults } = await generateText({
+      model: provider(model),
+      toolChoice: "required",
+      tools: {
+        adjust_portfolio: tool({
+          description:
+            "This tool is used to adjust the portfolio. You can adjust weight of SUI holding to adjust the portfolio.",
+          parameters: z.object({
+            thinking: z
+              .string()
+              .describe(
+                "What's your thinking about the portfolio and the adjustment?"
+              ),
+            sui_weight: z
+              .number()
+              .max(100)
+              .min(0)
+              .describe(
+                "Which SUI weight you think is the best? It's percentage."
+              ),
+          }),
+          execute: async ({ thinking, sui_weight }) => {
+            try {
+              console.log(
+                `Adjust Portfolio. ${thinking} \n So weight should be set to : ${sui_weight}%`
+              );
+              adjustToTargetSUIProportion(sui_weight)
+                .then(() => {
+                  db.insert(actionStateTable)
+                    .values({
+                      action: `Set SUI weight to : ${sui_weight}%`,
+                      reason: thinking,
+                    })
+                    .then(() => {
+                      console.log(`Save portfolio action in DB successfully`);
+                    });
+                })
+                .catch((e) => {
+                  console.log(`Error in adjustToTargetSUIProportion`);
+                  console.log(e);
+                });
 
-            db.insert(actionStateTable)
-              .values({
-                action: `Set SUI weight to : ${sui_weight}%`,
-                reason: thinking,
-              })
-              .then(() => {
-                console.log(`Save portfolio action in DB successfully`);
-              });
-            return {
-              status: "success",
-              target: sui_weight,
-            };
-          } catch (e) {
-            console.log("Error in adjust_portfolio tool");
-            console.log(e);
-          }
+              return {
+                status: "success",
+                target: sui_weight,
+              };
+            } catch (e) {
+              console.log("Error in adjust_portfolio tool");
+              console.log(e);
+            }
+          },
+        }),
+      },
+      maxSteps: 1,
+      messages: [
+        {
+          role: "system",
+          content: `You are a professional trader and you have a portfolio on SUI blockchain, which includes SUI, USDC and others. You want to adjust the portfolio to get best profit according to market situation. You main method is to adjust the weight of SUI holding. \n Your current portfolio is ${current_holding}`,
         },
-      }),
-    },
-    // maxSteps: 1,
-    messages: [
-      {
-        role: "system",
-        content: `You are a professional trader and you have a portfolio on SUI blockchain, which includes SUI, USDC and others. You want to adjust the portfolio to get best profit according to market situation. You main method is to adjust the weight of SUI holding. \n Your current portfolio is ${current_holding}`,
-      },
-      {
-        role: "user",
-        content: `The market insight is \n${insight}`,
-      },
-    ],
-  });
+        {
+          role: "user",
+          content: `The market insight is \n${insight}`,
+        },
+      ],
+    });
+  } catch (e) {
+    console.log(e);
+  }
 
   //   console.log(text);
 }

@@ -2,15 +2,6 @@
 
 import { db } from "@/db";
 
-// interface PairInfo {
-//   pair: string;
-//   "1h": { value: number; change: number };
-//   "1d": { value: number; change: number };
-//   "3d": { value: number; change: number };
-//   "7d": { value: number; change: number };
-//   "30d": { value: number; change: number };
-// }
-
 interface PriceData {
   value: number;
   change: number;
@@ -25,6 +16,7 @@ interface RatioData {
   "7d": PriceData;
   "30d": PriceData;
 }
+
 export async function getNewestMarketState() {
   try {
     const marketState = await db.query.marketStateTable.findFirst({
@@ -86,14 +78,15 @@ export async function getTasks() {
 }
 
 // 代币余额信息
-interface CoinBalance {
-  balance: number;
-  coinName: string;
+export interface TokenOnPortfolio {
   coinType: string;
+  coinName: string;
+  coinSymbol: string;
+  balance: number;
+  balanceUsd: number;
   decimals: number;
   coinPrice: number;
-  balanceUsd: number;
-  coinSymbol: string;
+  percentage: number;
 }
 
 // 代币百分比信息
@@ -105,9 +98,9 @@ interface TokenPercentage {
 // 返回的数据类型
 interface HoldingData {
   timestamp?: number;
-  validBalances: CoinBalance[];
+  validPortfolio: TokenOnPortfolio[];
   totalBalanceUsd: number;
-  tokenPercentages: TokenPercentage[];
+  totalBalanceUsd_notFiltered: number;
 }
 
 export async function getNewestHolding() {
@@ -121,6 +114,8 @@ export async function getNewestHolding() {
     if (!holdingState) {
       throw new Error("No holding state found");
     }
+
+    // console.log(holdingState.holding);
 
     return holdingState.holding as HoldingData;
   } catch (e) {

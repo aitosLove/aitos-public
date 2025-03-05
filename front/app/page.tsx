@@ -40,6 +40,8 @@ import {
   ArrowDownIcon,
 } from "lucide-react";
 
+const REFRESH_INTERVAL = 60 * 1000;
+
 // 类型定义
 type TimeFrame = "1h" | "1d" | "3d" | "7d" | "30d";
 
@@ -88,7 +90,7 @@ const MarketPerception = () => {
     refresh();
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
@@ -215,7 +217,7 @@ const ThoughtStream: React.FC = () => {
     refresh();
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
@@ -441,7 +443,7 @@ const EventsCard = () => {
     refresh();
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
@@ -507,7 +509,7 @@ const TasksCard: React.FC = () => {
 
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
@@ -585,32 +587,36 @@ const COLORS = [
 // 仓位展示组件
 const PositionCard = () => {
   const [positions, setPositions] = useState<Position[]>([]);
+  const [valueNotFiltered, setValueNotFiltered] = useState<number>(0);
 
   useEffect(() => {
     const refresh = () =>
       getNewestHolding().then((data) => {
         if (data) {
           setPositions(
-            data.validBalances.map((item) => {
+            data.validPortfolio.map((item) => {
               return {
                 token: item.coinSymbol,
                 value: item.balanceUsd,
               };
             })
           );
+          setValueNotFiltered(data.totalBalanceUsd_notFiltered);
         }
       });
 
     refresh();
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
 
   // 计算总价值和百分比
   const totalValue = positions.reduce((sum, pos) => sum + pos.value, 0);
+  const otherValue = valueNotFiltered - totalValue;
+
   const positionsWithPercentage = positions.map((pos, index) => ({
     ...pos,
     percentage: ((pos.value / totalValue) * 100).toFixed(2),
@@ -623,7 +629,7 @@ const PositionCard = () => {
         <CardTitle className="text-xl font-bold">
           <div className="flex items-center gap-2">
             <Wallet className="h-6 w-6" />
-            Portfolio Distribution on SUI
+            Portfolio on SUI
           </div>
         </CardTitle>
       </CardHeader>
@@ -656,7 +662,8 @@ const PositionCard = () => {
             <div className="text-center mb-4">
               <p className="text-sm text-gray-500">Total Value</p>
               <p className="text-2xl font-bold">
-                ${totalValue.toLocaleString()}
+                ${totalValue.toLocaleString()} + ${otherValue.toLocaleString()}
+                (others)
               </p>
             </div>
             <div className="space-y-2">
@@ -711,7 +718,7 @@ const PositionHistoryCard = () => {
     refresh();
     const interval = setInterval(() => {
       refresh();
-    }, 5000);
+    }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
