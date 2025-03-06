@@ -6,7 +6,7 @@ import { IconLogo } from "@/components//ui/icons";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export const Header: React.FC = async () => {
+export async function Header() {
   return (
     <header className="w-full fixed w-2xl p-2 flex justify-right items-center z-10 backdrop-blur lg:backdrop-blur-none bg-background/80 lg:bg-transparent">
       {/* <ModeToggle /> */}
@@ -17,6 +17,4 @@ export const Header: React.FC = async () => {
       <HistoryContainer />
     </header>
   );
-};
-
-export default Header;
+}
