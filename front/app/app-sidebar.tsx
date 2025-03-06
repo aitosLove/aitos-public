@@ -109,7 +109,7 @@ export function AppSidebar() {
                     <SidebarMenuSubButton asChild>
                       <a href={`/portfolio`}>
                         <Wallet />
-                        <span>{`Portfolio Management`}</span>
+                        <span>{`AI Portfolio`}</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
