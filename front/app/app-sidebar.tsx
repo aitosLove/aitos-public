@@ -6,6 +6,8 @@ import {
   Settings,
   Bot,
   MessageCircle,
+  Wallet,
+  Blocks,
 } from "lucide-react";
 
 import {
@@ -92,12 +94,22 @@ export function AppSidebar() {
                   </div>
                 </SidebarMenuButton>
                 <SidebarMenuSub>
+                  {/* Sui Market */}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <a href={`/sui-market`}>
+                        <Blocks />
+                        <span>{`Sui Analysis`}</span>
+                      </a>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
                   {/* Portfolio */}
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href={`/portfolio`}>
-                        <Settings />
-                        <span>{`AI Trading`}</span>
+                        <Wallet />
+                        <span>{`Portfolio Management`}</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -108,6 +120,16 @@ export function AppSidebar() {
                       <div>
                         <Settings />
                         <span>{`Defi (Coming Soon)`}</span>
+                      </div>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  {/* NFT */}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild aria-disabled>
+                      <div>
+                        <Settings />
+                        <span>{`NFT (Coming Soon)`}</span>
                       </div>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
