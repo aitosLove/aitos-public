@@ -2,7 +2,7 @@ import React from "react";
 import { History } from "./history";
 import { HistoryList } from "./history-list";
 
-const HistoryContainer: React.FC = async () => {
+export default async function HistoryContainer() {
   const enableSaveChatHistory = process.env.ENABLE_SAVE_CHAT_HISTORY === "true";
   if (!enableSaveChatHistory) {
     return null;
@@ -13,6 +13,4 @@ const HistoryContainer: React.FC = async () => {
       <HistoryList userId="anonymous" />
     </History>
   );
-};
-
-export default HistoryContainer;
+}
