@@ -129,7 +129,7 @@ const MarketPerception = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
+                  <tr className="border-b bg-background">
                     <th className="p-2 text-left font-medium">Pair</th>
                     {timeframes.map((tf: TimeFrame) => (
                       <th key={tf} className="p-2 text-left font-medium">
@@ -230,7 +230,7 @@ const ThoughtStream: React.FC = () => {
   const totalPages = thoughts.length;
 
   return (
-    <Card className="w-full bg-gray-900">
+    <Card className="w-full bg-background">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold text-gray-100">
           <div className="flex items-center gap-2">
@@ -424,6 +424,7 @@ const PositionCard = () => {
                   innerRadius={60}
                   outerRadius={80}
                   paddingAngle={2}
+                  stroke="#000000"
                 >
                   {positionsWithPercentage.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
@@ -519,7 +520,7 @@ const PositionHistoryCard = () => {
           {history.map((item, index) => (
             <div
               key={index}
-              className="rounded-lg border bg-gray-50 p-4 hover:bg-gray-100 transition-colors"
+              className="rounded-lg border bg-backgroundp-4 hover:bg-background transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-medium text-blue-600">{item.action}</h3>
@@ -541,7 +542,7 @@ const PositionHistoryCard = () => {
 // 更新主页面布局
 const AgentDashboard: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Top Row - Profile, Events, Tasks */}
         {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

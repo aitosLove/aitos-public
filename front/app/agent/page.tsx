@@ -73,7 +73,7 @@ const AgentProfile: React.FC = () => {
   };
 
   return (
-    <Card className="w-full bg-white">
+    <Card className="w-full bg-background">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold">
           <div className="flex items-center gap-2">
@@ -92,14 +92,14 @@ const AgentProfile: React.FC = () => {
             />
           </div>
           <div className="text-center">
-            <h2 className="text-xl font-bold text-gray-800">Suikai</h2>
-            <p className="text-gray-500">All in Suikai, All in Sui&AI</p>
+            <h2 className="text-xl font-bold text-foreground">Suikai</h2>
+            <p className="text-muted-foreground">All in Suikai, All in Sui&AI</p>
           </div>
           <TooltipProvider>
             <ShadcnTooltip>
               <TooltipTrigger>
                 <div
-                  className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-background rounded-lg hover:bg-muted transition-colors cursor-pointer"
                   onClick={handleCopy}
                 >
                   <span className="text-sm font-medium text-gray-600">
@@ -188,7 +188,7 @@ const EventsCard = () => {
           {events.map((event) => (
             <div
               key={event.id}
-              className="rounded-lg border bg-gray-50 p-3 hover:bg-gray-100 transition-colors"
+              className="rounded-lg border bg-background p-3 hover:bg-background transition-colors"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-medium text-blue-600">{event.name}</h3>
@@ -254,7 +254,7 @@ const TasksCard: React.FC = () => {
           {tasks.map((task) => (
             <div
               key={task.id}
-              className="rounded-lg border bg-gray-50 p-3 hover:bg-gray-100 transition-colors"
+              className="rounded-lg border bg-background p-3 hover:bg-background transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -263,13 +263,13 @@ const TasksCard: React.FC = () => {
                   ) : (
                     <XCircle className="h-4 w-4 text-red-500" />
                   )}
-                  <h3 className="font-medium text-gray-900">{task.name}</h3>
+                  <h3 className="font-medium text-primary">{task.name}</h3>
                 </div>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {formatTimestamp(task.timestamp)}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-600">{task.description}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{task.description}</p>
             </div>
           ))}
         </div>
@@ -281,7 +281,7 @@ const TasksCard: React.FC = () => {
 // 更新主页面布局
 const AgentDashboard: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-6">
         {/* Top Row - Profile, Events, Tasks */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

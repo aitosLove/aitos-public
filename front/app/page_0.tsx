@@ -129,7 +129,7 @@ const MarketPerception = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
+                  <tr className="border-b bg-background">
                     <th className="p-2 text-left font-medium">Pair</th>
                     {timeframes.map((tf: TimeFrame) => (
                       <th key={tf} className="p-2 text-left font-medium">
