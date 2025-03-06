@@ -40,6 +40,7 @@ export default function RootLayout({
             <AppSidebar />
             <div className="w-full h-full min-h-screen flex relative">
               <SidebarTrigger className="absolute top-0 left-0" />
+
               {children}
             </div>
           </SidebarProvider>

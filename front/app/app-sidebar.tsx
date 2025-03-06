@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
+import { ModeToggle as ThemeButton } from "./theme-button";
 
 // Menu items.
 const items = [
@@ -43,6 +44,9 @@ export function AppSidebar() {
                 <div className="flex items-center space-x-2">
                   <Image src="/suikai.png" alt="S" width={32} height={32} />
                 </div>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <ThemeButton />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarHeader>
