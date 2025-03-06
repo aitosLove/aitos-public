@@ -1,12 +1,7 @@
 import { cn } from "@/app/chat/(chat)/lib/utils";
 import { AnchorHTMLAttributes, DetailedHTMLProps, ReactNode } from "react";
 
-type CustomLinkProps = Omit<
-  DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>,
-  "ref"
-> & {
-  children: ReactNode;
-};
+type CustomLinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export function Citing({
   href,

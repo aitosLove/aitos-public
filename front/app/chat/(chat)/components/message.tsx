@@ -9,6 +9,7 @@ import remarkMath from "remark-math";
 import { Citing } from "./custom-link";
 import { CodeBlock } from "@/components/ui/codeblock";
 import { MemoizedReactMarkdown } from "@/components//ui/markdown";
+import React from "react";
 
 export function BotMessage({
   message,
@@ -52,20 +53,37 @@ export function BotMessage({
         className
       )}
       components={{
-        code({ node, inline, className, children, ...props }) {
-          if (children.length) {
-            if (children[0] == "▍") {
+        code({ node, className, children, ...props }) {
+          if (!node) {
+            return null;
+          }
+
+          // 判断是否为行内代码
+          const isInline =
+            node.tagName === "code" &&
+            node.position?.start.line === node.position?.end.line;
+
+          // 将 children 转换为字符串
+          const codeString = React.Children.toArray(children).join("");
+
+          // 处理特殊字符 '▍'
+          if (codeString.includes("▍")) {
+            if (codeString.trim() === "▍") {
               return (
                 <span className="mt-1 cursor-default animate-pulse">▍</span>
               );
             }
-
-            children[0] = (children[0] as string).replace("`▍`", "▍");
+            const replacedString = codeString.replace(/`▍`/g, "▍");
+            return (
+              <code className={className} {...props}>
+                {replacedString}
+              </code>
+            );
           }
 
           const match = /language-(\w+)/.exec(className || "");
 
-          if (inline) {
+          if (isInline) {
             return (
               <code className={className} {...props}>
                 {children}

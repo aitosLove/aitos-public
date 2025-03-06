@@ -1,4 +1,4 @@
-import { Chat } from "@/app/(chat)/components/chat";
+import { Chat } from "@/app/chat/(chat)/components/chat";
 import { getSharedChat } from "@/app/chat/(chat)/lib/actions/chat";
 import { getModels } from "@/app/chat/(chat)/lib/config/models";
 import { convertToUIMessages } from "@/app/chat/(chat)/lib/utils";
