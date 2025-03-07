@@ -54,9 +54,9 @@ export function ThoughtStream() {
   const totalPages = thoughts.length;
 
   return (
-    <Card className="w-full bg-background">
+    <Card className="w-full ">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xl font-bold text-gray-100">
+        <CardTitle className="text-xl font-bold ">
           <div className="flex items-center gap-2">
             <ArrowUpDown className="h-6 w-6" />
             Thought Stream (Driven by Atoma & DeepSeek)
