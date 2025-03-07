@@ -17,9 +17,23 @@ export function validateModel(model: any): model is Model {
 export async function getModels(): Promise<Model[]> {
   try {
     const headersList = await headers();
-    const baseUrl = new URL(
-      headersList.get("x-url") || "http://localhost:3000"
-    );
+
+    console.log(headersList.get("x-host"));
+    let baseUrl: URL;
+    if (headersList.get("x-host") == "localhost:3000") {
+      // 测试情况
+      baseUrl = new URL("http://localhost:3000");
+    } else if (headersList.get("x-host") != null) {
+      // 大多数情况，手动添加https头
+      baseUrl = new URL(`https://` + headersList.get("x-host"));
+    } else {
+      // 例外情况，手动赋值
+      baseUrl = new URL("http://localhost:3000");
+    }
+
+    // const baseUrl = new URL(
+    //   `https://` + headersList.get("x-host") || "http://localhost:3000"
+    // );
     const modelUrl = new URL("/config/models.json", baseUrl.origin);
 
     const response = await fetch(modelUrl, {

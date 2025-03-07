@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { ChatMessages } from "./chat-messages";
 import { ChatPanel } from "./chat-panel";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export function Chat({
   id,

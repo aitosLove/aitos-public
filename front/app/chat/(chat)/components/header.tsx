@@ -10,10 +10,10 @@ export default function Header() {
   return (
     <header className="w-full fixed w-2xl p-2 flex justify-right items-center z-10 backdrop-blur lg:backdrop-blur-none bg-background/80 lg:bg-transparent">
       {/* <ModeToggle /> */}
-
       <Link href="/chat">
         <ArrowLeft className="size-6" />
       </Link>
+
       <HistoryContainer />
     </header>
   );
