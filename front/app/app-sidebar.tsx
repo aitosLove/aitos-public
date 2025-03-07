@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Wallet,
   Blocks,
+  ChevronsLeftRightEllipsis,
 } from "lucide-react";
 
 import {
@@ -66,6 +67,16 @@ export function AppSidebar() {
           {/* <SidebarGroupLabel>Route</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
+              {/* About */}
+              <SidebarMenuItem key={"about"}>
+                <SidebarMenuButton asChild>
+                  <a href={`/`}>
+                    <ChevronsLeftRightEllipsis />
+                    <span>{`About`}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {/* Agent */}
               <SidebarMenuItem key={"agent"}>
                 <SidebarMenuButton asChild>

@@ -1,4 +1,12 @@
 import Image from "next/image";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { BlocksIcon, Bot, MessageCircle, Wallet } from "lucide-react";
+import Link from "next/link";
 
 export default function SuikaiDocumentation() {
   return (
@@ -16,7 +24,7 @@ export default function SuikaiDocumentation() {
       </p>
 
       <h2 className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-        Principle Introduction
+        What is Suikai?
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Smart contracts built on the blockchain serve single functions such as
@@ -27,6 +35,53 @@ export default function SuikaiDocumentation() {
         high-frequency blockchain operations, such as dynamically adjusting
         positions. This makes users feel tired and confused.
       </p>
+      <div className="flex items-center gap-2">
+        <Link href="/sui-market">
+          <Card className="w-[240px] h-[120px] hover:bg-accent hover:cursor-pointer ">
+            <CardHeader>
+              <CardTitle className="flex gap-2">
+                {">"}
+                <BlocksIcon />
+                Sui Analysis
+              </CardTitle>
+              <CardDescription>
+                Analysis of Sui market and ecosystem
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link href="/sui-market">
+          <Card className="w-[240px] h-[120px] hover:bg-accent hover:cursor-pointer ">
+            <CardHeader>
+              <CardTitle className="flex gap-2">
+                {">"}
+                <Wallet />
+                AI Portfolio
+              </CardTitle>
+              <CardDescription>
+                Manage your SUI portfolio by AI, based on Sui Analysis
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link href="/chat">
+          <Card className="w-[240px] h-[120px] hover:bg-accent hover:cursor-pointer ">
+            <CardHeader>
+              <CardTitle className="flex gap-2">
+                {">"}
+                <MessageCircle />
+                Chat
+              </CardTitle>
+              <CardDescription>
+                As before, you can chat with your agent
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Suikai does not aim to help users become blockchain experts. Instead,
         Suikai itself is a blockchain expert that helps users handle all complex
@@ -39,7 +94,7 @@ export default function SuikaiDocumentation() {
       </p>
 
       <h2 className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors">
-        How is Suikai Implemented?
+        How it works?
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Suikai is powered by the asynchronous Agent framework Sekai, which gives
@@ -66,7 +121,7 @@ export default function SuikaiDocumentation() {
       </p>
 
       <h2 className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors">
-        Scalability
+        Modules
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Suikai’s scalability is endowed by its modular design. In addition to
@@ -74,6 +129,7 @@ export default function SuikaiDocumentation() {
         SUI blockchain, Suikai also prepares advanced encapsulated modules for
         interacting with specific protocols.
       </p>
+
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         With abstractions for raw chain interactions and contract interactions,
         blueprint creators can easily develop towards specific needs.
@@ -99,6 +155,23 @@ export default function SuikaiDocumentation() {
         and tasks, which is also what distinguishes Sekai from most other Agent
         frameworks.
       </p>
+      <div className="flex items-center gap-2">
+        <Link href="/agent">
+          <Card className="w-[240px] h-[120px] hover:bg-accent hover:cursor-pointer ">
+            <CardHeader>
+              <CardTitle className="flex gap-2">
+                {">"}
+                <Bot />
+                Sekai Agent
+              </CardTitle>
+              <CardDescription>
+                Explore how your Sekai Agent works in the background
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         For example, Sekai can:
       </p>
@@ -112,7 +185,7 @@ export default function SuikaiDocumentation() {
       </p>
 
       <h2 className="mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors">
-        Trustworthiness
+        Try it out!
       </h2>
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Nothing is more trustworthy than running locally.
