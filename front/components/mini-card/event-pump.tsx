@@ -109,7 +109,7 @@ export const EventPumpsCard: React.FC = () => {
           {eventPumps.map((pump) => (
             <div
               key={pump.id}
-              className="rounded-lg border bg-gray-50 p-4 hover:bg-gray-100 transition-colors"
+              className="rounded-lg border p-4 hover:bg-accent transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -120,7 +120,7 @@ export const EventPumpsCard: React.FC = () => {
                   {pump.status}
                 </span>
               </div>
-              <div className="mt-2 text-sm text-gray-600">
+              <div className="mt-2 text-sm ">
                 <p>Last Triggered: {pump.lastTriggered}</p>
                 <p className="mt-1">- {pump.description}</p>
               </div>
