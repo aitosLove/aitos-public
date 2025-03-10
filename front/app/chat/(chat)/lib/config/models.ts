@@ -18,7 +18,7 @@ export async function getModels(): Promise<Model[]> {
   try {
     const headersList = await headers();
 
-    console.log(headersList.get("x-host"));
+    // console.log(headersList.get("x-host"));
     let baseUrl: URL;
     if (headersList.get("x-host") == "localhost:3000") {
       // 测试情况

@@ -96,12 +96,13 @@ export function AppSidebar() {
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              {/* Modules */}
-              <SidebarMenuItem key={"Modules"}>
+
+              {/* Blueprint */}
+              <SidebarMenuItem key={"blueprint"}>
                 <SidebarMenuButton asChild>
                   <div>
                     <Inbox />
-                    <span>{`Modules`}</span>
+                    <span>{`Blueprints`}</span>
                   </div>
                 </SidebarMenuButton>
                 <SidebarMenuSub>
@@ -141,6 +142,47 @@ export function AppSidebar() {
                       <div>
                         <Settings />
                         <span>{`NFT (Coming Soon)`}</span>
+                      </div>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </SidebarMenuItem>
+
+              {/* Modules */}
+              <SidebarMenuItem key={"modules"}>
+                <SidebarMenuButton asChild aria-disabled>
+                  <div>
+                    <Search />
+                    <span>{`Modules`}</span>
+                  </div>
+                </SidebarMenuButton>
+                <SidebarMenuSub>
+                  {/* CoinInfo */}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild aria-disabled>
+                      <div>
+                        <Blocks />
+                        <span>{`Coin Info`}</span>
+                      </div>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  {/* Swap */}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild aria-disabled>
+                      <div>
+                        <Blocks />
+                        <span>{`Swap Coin on Sui`}</span>
+                      </div>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  {/* NFT */}
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild aria-disabled>
+                      <div>
+                        <Blocks />
+                        <span>{`NFT Trading`}</span>
                       </div>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>

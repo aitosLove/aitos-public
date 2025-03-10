@@ -39,9 +39,6 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <AppSidebar />
-            {/* 关于Trigger的位置 */}
-            {/* 手机端时，Trigger应始终位于页面左上角，不然点不到 */}
-            {/* PC端时，Trigger在Sidebar开启时应位于Sidebar右上角，关闭时应位于页面左上角，可以通过调整绝对距离来完成 */}
             <main className="w-full ">
               <SidebarTrigger />
 

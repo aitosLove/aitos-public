@@ -64,7 +64,7 @@ export const AIPortfolioSummary: React.FC = () => {
 
   const pieData = [
     ...topHoldings.map((h) => ({ name: h.token, value: h.value })),
-    ...(othersValue > 0 ? [{ name: "其他", value: othersValue }] : []),
+    ...(othersValue > 0 ? [{ name: "Others", value: othersValue }] : []),
   ];
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
@@ -128,7 +128,7 @@ export const AIPortfolioSummary: React.FC = () => {
           ))}
           {othersValue > 0 && (
             <div className="flex justify-between">
-              <span>其他</span>
+              <span>Others</span>
               <span>{((othersValue / totalValue) * 100).toFixed(1)}%</span>
             </div>
           )}
