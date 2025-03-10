@@ -3,6 +3,7 @@ import { Agent } from "@/src/agent";
 import { AgentEvent } from "@/src/agent/core/EventTypes";
 
 import cron from "node-cron";
+import { TelegramBotManager } from "../tg/bot_manager";
 
 export interface ETHPayload {
   source: string;
@@ -40,6 +41,8 @@ class InvestmentManager {
   private agent: Agent;
   private localState: InvestmentState;
   private offListeners: Array<() => void> = []; // 存“关闭监听器”的函数
+  private botManager: TelegramBotManager;
+
 
   constructor(agent: Agent) {
     this.agent = agent;
@@ -96,10 +99,10 @@ class InvestmentManager {
       payload,
       callback: (payload) => {
         console.log("BTC Price Task Callback:", payload);
-        this.agent.thinking.response({
-          input: "what s your opinion on btc",
-          systemPrompt: "reply in short no more than 20 words",
-        });
+        // this.agent.thinking.response({
+        //   input: "what s your opinion on btc",
+        //   systemPrompt: "reply in short no more than 20 words",
+        // });
       },
     }) as BTCTask;
 
@@ -114,10 +117,10 @@ class InvestmentManager {
       payload,
       callback: (payload) => {
         console.log("ETH Price Task Callback:", payload);
-        this.agent.thinking.response({
-          input: "what s your opinion on eth",
-          systemPrompt: "reply in short no more than 20 words",
-        });
+        // this.agent.thinking.response({
+        //   input: "what s your opinion on eth",
+        //   systemPrompt: "reply in short no more than 20 words",
+        // });
       },
     }) as BTCTask;
   }
@@ -135,3 +138,7 @@ export function enableThrowEventModule(agent: Agent) {
   // 若后续想关闭
   // scheduleMgr.teardown();
 }
+
+
+
+

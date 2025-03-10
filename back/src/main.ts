@@ -10,7 +10,10 @@
 
 import { Agent } from "./agent";
 import { enableInvestmentModule } from "./modules/suikai_v2";
-// import { enableThrowEventModule } from "./modules/test/throw_event";
+import { enableThrowEventModule } from "./modules/test/throw_event";
+import TelegramBot from "node-telegram-bot-api";
+import { HttpsProxyAgent } from "https-proxy-agent";
+import { enableTgMessageModule } from "./modules/tg/throw_tg";
 
 export const agent = new Agent();
 
@@ -18,12 +21,15 @@ async function main() {
   // enableScheduleModule(agent);
   // enableHookModule(agent);
 
-  enableInvestmentModule(agent);
-  console.log("[main] Agent started with Suikai module enabled.");
+  // enableInvestmentModule(agent);
+  // console.log("[main] Agent started with Suikai module enabled.");
 
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
-}
 
+  enableTgMessageModule(agent)
+    console.log("[main] Agent started with TG message module enabled.");
+
+}
 // 启动
 main().catch((err) => console.error(err));
