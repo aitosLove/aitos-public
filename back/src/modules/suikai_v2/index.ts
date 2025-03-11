@@ -138,6 +138,14 @@ ${formattedString}
                 .then((res) => {
                   console.log(`${Date.now()}insert insight success`);
 
+                   // 泵出insight报告生成完成事件
+                  //  this.agent.sensing.emitEvent({
+                  //   type: "UPDATE_INSIGHT_COMPLETE",
+                  //   description: "Agent has finished insight",
+                  //   payload: {},
+                  //   timestamp: Date.now(),
+                  // });
+
                   // 完成后立刻更新持仓
                   this.agent.sensing.emitEvent({
                     type: "UPDATE_PORTFOLIO_EVENT",

@@ -9,6 +9,7 @@ import {
   Wallet,
   Blocks,
   ChevronsLeftRightEllipsis,
+  MessageCircleMore,
 } from "lucide-react";
 
 import {
@@ -125,6 +126,17 @@ export function AppSidebar() {
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
+
+                     {/* Telegram */}
+                     <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <a href={`/telegram`}>
+                        <MessageCircleMore />
+                        <span>{`Telegram`}</span>
+                      </a>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                  
 
                   {/* Defi */}
                   <SidebarMenuSubItem>
