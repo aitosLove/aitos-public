@@ -3,9 +3,11 @@ import { Agent } from "@/src/agent";
 import { AgentEvent } from "@/src/agent/core/EventTypes";
 import TelegramBot from "node-telegram-bot-api";
 import { HttpsProxyAgent } from "https-proxy-agent";
-
+import { db } from "@/db";
+import { insightStateTable, tgMessageTable } from "@/db/schema";
 import cron from "node-cron";
 import { TelegramBotManager } from "./bot_manager";
+import { eq } from "drizzle-orm";
 
 export interface TGPayload {
   //   chatId: number;
@@ -32,21 +34,38 @@ export type TGTask = AgentTask<TGPayload>;
 
 class InvestmentState {
   private state: Map<string, any> = new Map();
-  private insights: InsightRecord[] = []; // 模拟数据库表
 
-  async getInsightContent(insightId: string): Promise<string> {
-    // 模拟数据库查询
-    const record = this.insights.find((i) => i.id === insightId);
-    return record?.content || "No insight available";
+  async getInsightContent({
+    insightId,
+  }: {
+    insightId: string;
+  }): Promise<string> {
+    try {
+      const record = await db.query.insightStateTable.findFirst({
+        where: eq(insightStateTable, insightId),
+      });
+
+      if (!record) {
+        throw new Error(`Insight ${insightId} not found`);
+      }
+      return record.insight;
+    } catch (error) {
+      console.error("Failed to fetch insight:", error);
+      throw new Error("Failed to retrieve insight content");
+    }
   }
 
-  async storeInsightRecord(content: string): Promise<void> {
-    // 模拟数据库插入
-    this.insights.push({
-      id: `insight_${Date.now()}`,
-      content,
-      sentAt: new Date(),
-    });
+  async storeInsightRecord({ content }: { content: string }): Promise<void> {
+    try {
+      // 同时存储 insightId 用于后续追踪
+      await db.insert(tgMessageTable).values({
+        content,
+        status: "sent",
+      });
+    } catch (error) {
+      console.error("Failed to store record:", error);
+      throw new Error("Failed to store insight record");
+    }
   }
 
   set(key: string, value: any) {
@@ -89,11 +108,12 @@ class InvestmentManager {
       (evt: AgentEvent) => {
         if (evt.type === "UPDATE_INSIGHT_COMPLETE") {
           this.handleNewInsight(evt.payload as InsightPayload);
+          // console.log("new insight event listened");
         }
       }
     );
     this.offListeners.push(insightHandler);
-    
+
     // 设置定时任务
     this.setupPriceScheduler();
 
@@ -104,19 +124,26 @@ class InvestmentManager {
     });
   }
 
-  // 事件泵
+  // 模拟事件泵
   private setupPriceScheduler() {
     cron.schedule("*/10 * * * * *", () => {
-      this.createAutomatedTask({
-        source: "BTC/USD in Binance: $61,234.56",
+      this.agent.sensing.emitEvent({
+        type: "UPDATE_INSIGHT_COMPLETE",
+        description: "Price updated. Now you should update insight.",
+        payload: {},
+        timestamp: Date.now(),
       });
+      // console.log("new insight event pumped");
 
-      this.createAutomatedTask({
-        source: "ETH/USD in Binance: $3,456.78",
-      });
+      // this.createAutomatedTask({
+      //   source: "BTC/USD in Binance: $61,234.56",
+      // });
+
+      // this.createAutomatedTask({
+      //   source: "ETH/USD in Binance: $3,456.78",
+      // });
     });
   }
-
 
   // 任务
   private handleNewInsight(payload: InsightPayload) {
@@ -124,27 +151,33 @@ class InvestmentManager {
       type: "SEND_INSIGHT_TG",
       descrpition: "Send latest insight to Telegram",
       payload,
-      callback: async (result) => {
+      callback: async (payload) => {
         try {
           // 1. 获取insight内容
-          const content = await this.localState.getInsightContent(result.insightId);
+          // console.log("getting new insight content");
           
+          // 换数据库了记得改这个地方拿insight
+          const content = "another useless mock market insight!";
+          // const content = await this.localState.getInsightContent({
+          //   insightId: payload.insightId,
+          // });
+
           // 2. 发送Telegram消息
+          // console.log("sending to tg insight content");
+
           const success = await this.botManager.sendMessage(content);
-          
+
           if (success) {
             // 3. 存储发送记录
-            await this.localState.storeInsightRecord(content);
+            await this.localState.storeInsightRecord({ content });
             // this.agent.logger.info(`Insight ${result.insightId} sent successfully`);
           }
         } catch (error) {
           // this.agent.logger.error(`Insight sending failed: ${error.message}`);
         }
-      }
+      },
     });
   }
-
-
 
   private createAutomatedTask(payload: TGPayload) {
     this.agent.taskManager.createTask<TGPayload>({
@@ -169,10 +202,10 @@ class InvestmentManager {
   }
 }
 
-export function enableTgMessageModule(agent: Agent) {
+export function enableTgInsightModule(agent: Agent) {
   const investmentMgr = new InvestmentManager(agent);
   investmentMgr.init();
-  console.log("[ScheduleModule] Enabled.");
+  console.log("[enableTgInsightModule] Enabled.");
 
   // 若后续想关闭
   // scheduleMgr.teardown();

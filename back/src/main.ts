@@ -13,7 +13,7 @@ import { enableInvestmentModule } from "./modules/suikai_v2";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { enableTgMessageModule } from "./modules/tg/throw_tg";
+import { enableTgInsightModule } from "./modules/tg/throw_insight";
 
 export const agent = new Agent();
 
@@ -27,7 +27,7 @@ async function main() {
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
 
-  enableTgMessageModule(agent)
+  enableTgInsightModule(agent)
     console.log("[main] Agent started with TG message module enabled.");
 
 }

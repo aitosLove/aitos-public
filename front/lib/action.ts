@@ -1,6 +1,8 @@
 "use server";
 
 import { db } from "@/db";
+import { insightStateTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 interface PriceData {
   value: number;
@@ -51,6 +53,21 @@ export async function getInsights() {
     return insightState;
   } catch (e) {
     console.log(e);
+  }
+}
+
+export async function getInsightContent(insightId: number): Promise<string> {
+  try {
+    const record = await db.query.insightStateTable.findFirst({
+      where: eq(insightStateTable, insightId),
+    })
+    if (!record) {
+      throw new Error(`Insight ${insightId} not found`);
+    }
+    return record.insight;
+  } catch (error) {
+    console.error("Failed to fetch insight:", error);
+    throw new Error("Failed to retrieve insight content");
   }
 }
 
@@ -135,3 +152,15 @@ export async function getActions() {
     console.log(e);
   }
 }
+
+
+export async function getTgMessageRecord(){
+    try {
+      return db.query.tgMessageTable.findMany({
+        orderBy: (tgMessageTable, { desc }) => [desc(tgMessageTable.sentAt)],
+        limit: 20,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
