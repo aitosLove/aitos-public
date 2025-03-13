@@ -27,9 +27,8 @@ async function main() {
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
 
-  enableTgInsightModule(agent)
-    console.log("[main] Agent started with TG message module enabled.");
-
+  enableTgInsightModule(agent);
+  console.log("[main] Agent started with TG message module enabled.");
 }
 // 启动
 main().catch((err) => console.error(err));

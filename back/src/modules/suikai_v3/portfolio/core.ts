@@ -16,6 +16,7 @@ import {
 } from "../config/coin";
 import { swap } from "./swap";
 import { account_v3 } from "../config/account";
+import { getNAVIPortfolio } from "../defi/navi";
 dotenv.config();
 
 const instance = Axios.create();
@@ -68,7 +69,7 @@ export async function getHolding() {
       headers,
     });
 
-    const coinHolding = processHoldings(response.data);
+    const coinHolding = await processHoldings(response.data);
 
     return coinHolding;
   } catch (error: any) {
@@ -85,12 +86,10 @@ export async function getHolding() {
 }
 
 // 过滤原始持仓数据，只要 portfolio 中的 token
-function processHoldings(responseData: BalanceOnScan[]) {
-  // 计算总balanceUSD，给前端展示用
-  const totalBalanceUsd_notFiltered = responseData.reduce(
-    (total, balance) => total + (balance.balanceUsd || 0),
-    0
-  );
+async function processHoldings(responseData: BalanceOnScan[]) {
+  // 合并Navi Portfollio
+  // 按照TokenSymbol等于key的合并，把supply amount
+  // const naviPortfolio = await getNAVIPortfolio();
 
   // 提取 portfolio 中的 coinType 用于过滤
   const portfolioCoinTypes = new Set(
@@ -108,6 +107,12 @@ function processHoldings(responseData: BalanceOnScan[]) {
   filteredBalances
     .filter((balance) => balance.balanceUsd !== null)
     .forEach((balance) => holdingMap.set(balance.coinType, balance));
+
+  // 计算总balanceUSD，给前端展示用
+  const totalBalanceUsd_notFiltered = responseData.reduce(
+    (total, balance) => total + (balance.balanceUsd || 0),
+    0
+  );
 
   // 计算总的 balanceUsd
   const totalBalanceUsd = filteredBalances.reduce(
