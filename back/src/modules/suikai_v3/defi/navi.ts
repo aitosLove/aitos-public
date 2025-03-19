@@ -3,15 +3,18 @@ dotenv.config();
 import { Sui, USDT, nUSDC, NAVX } from "navi-sdk/dist/address";
 import { CoinInfo } from "navi-sdk";
 import { account_v3, client } from "../config/account";
+import { SUI_COIN, NAVX as o_NAVX, USDC as o_USDC } from "../config/coin";
 
 const account = account_v3;
 
-const AutoDefi_Token: CoinInfo[] = [
+export const AutoDefi_Token: CoinInfo[] = [
   Sui,
   NAVX,
   nUSDC,
   // nUSDC就是通常意义上的USDC
 ];
+
+const o_defi_Token = [SUI_COIN, o_NAVX, o_USDC];
 
 export async function getNAVIPortfolio() {
   // 特别的，过滤未持有Portfolio的情况，这个情况下使用suiscan拿不到价格
@@ -33,6 +36,32 @@ export async function getNAVIPortfolio() {
 async function stakeAllCoins() {}
 
 async function unstakeAllCoins() {}
+
+export async function getPoolInfo() {
+  const pool = await client.getPoolInfo();
+
+  let poolDescription = ``;
+  for (const token of AutoDefi_Token) {
+    const tokenPoolInfo = await client.getPoolInfo(token);
+
+    const tokenDetails = o_defi_Token.find((t) => t.coinType === token.address);
+
+    const introduction =
+      tokenDetails?.description || "No description available.";
+
+    poolDescription += `Pool Info for ${token.symbol}:
+    Introduction of the Token: ${introduction}
+    Rate of Supply: ${tokenPoolInfo.base_supply_rate}%
+    Rate of Borrow: ${tokenPoolInfo.base_borrow_rate}%
+    Size of Pool: ${tokenPoolInfo.total_supply}(Supply) + ${tokenPoolInfo.total_borrow}(Borrow)
+    `;
+  }
+
+  // console.log(poolDescription);
+  return { poolDescription };
+}
+
+// getPoolInfo();
 
 async function test() {
   console.log("Account address:", account.address);
