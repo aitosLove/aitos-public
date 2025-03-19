@@ -168,7 +168,34 @@ export function ThoughtStream() {
                     <blockquote className="border-l-4 border-border pl-4 italic text-muted-foreground mb-4">
                       {children}
                     </blockquote>
+                  ),
+                  table: ({ children }) => (
+                    <div className="my-6 border rounded-lg overflow-hidden">
+                      <table className="w-full">{children}</table>
+                    </div>
+                  ),
+                  thead: ({ children }) => (
+                    <thead className="bg-muted/50 border-b border-border">
+                      {children}
+                    </thead>
+                  ),
+                  tbody: ({ children }) => (
+                    <tbody className="divide-y divide-border/50">{children}</tbody>
+                  ),
+                  tr: ({ children }) => (
+                    <tr className="py-4 hover:bg-muted/20 transition-colors">
+                      {children}
+                    </tr>
+                  ),
+                  th: ({ children }) => (
+                    <th className="px-4 py-3 text-left font-medium text-foreground">
+                      {children}
+                    </th>
+                  ),
+                  td: ({ children }) => (
+                    <td className="px-4 py-3 text-foreground">{children}</td>
                   )
+                  
                 }}
               >
                 {currentThought.content}

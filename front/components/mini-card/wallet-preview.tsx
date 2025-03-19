@@ -68,7 +68,7 @@ export function PositionCard() {
   }));
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-0 shadow-sm hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold">
           <div className="flex items-center gap-2">

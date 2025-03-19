@@ -67,7 +67,7 @@ export function TelegramMessageCard() {
   };
 
   return (
-    <Card className="w-full shadow-sm">
+    <Card className="w-full border-0 shadow-sm hover:shadow-md">
       <CardHeader className="border-b">
         <CardTitle className="text-lg font-medium text-primary">
           {/* <History className="h-5 w-5 text-blue-600" /> */}
