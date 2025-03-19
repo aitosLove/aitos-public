@@ -111,7 +111,9 @@ export default function TaskPool() {
                 {React.cloneElement(statusConfig[task.status].icon, {
                   className: `${statusConfig[task.status].icon.props.className} w-4 h-4`
                 })}
-                <h3 className="font-medium text-sm">{task.name}</h3>
+
+                <h3 className="font-medium text-xs md:text-sm">{task.name}</h3>
+
               </div>
               <span className="text-xs text-gray-500 font-mono">
                 {formatTime(task.executionTime)}

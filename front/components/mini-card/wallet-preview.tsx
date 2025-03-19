@@ -72,14 +72,14 @@ export function PositionCard() {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold">
           <div className="flex items-center gap-2">
-            <Wallet className="h-6 w-6" />
+            {/* <Wallet className="h-6 w-6" /> */}
             Portfolio on SUI
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row items-center justify-between">
-          <div className="w-full md:w-1/2 h-64">
+          <div className="w-full md:w-1/2 h-64 my-8">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -88,10 +88,10 @@ export function PositionCard() {
                   nameKey="token"
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
+                  innerRadius={90}
+                  outerRadius={120}
                   paddingAngle={2}
-                  stroke="#000000"
+                  strokeWidth={0}
                 >
                   {positionsWithPercentage.map((entry, index) => (
                     <Cell key={index} fill={entry.color} />
@@ -105,7 +105,7 @@ export function PositionCard() {
           </div>
           <div className="w-full md:w-1/2">
             <div className="text-center mb-4">
-              <p className="text-sm text-gray-500">Total Value</p>
+              <p className="text-sm mb-1 text-muted-foreground">Total Value</p>
               <p className="text-2xl font-bold">
                 ${totalValue.toLocaleString()} + ${otherValue.toLocaleString()}
                 (others)

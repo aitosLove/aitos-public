@@ -55,13 +55,13 @@ export function PositionHistoryCard() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 max-h-full overflow-y-auto pr-2">
+        <div className="space-y-4 max-h-full overflow-y-auto p-2">
           {history.map((item, index) => (
             <div
               key={index}
-              className="rounded-lg border bg-backgroundp-4 hover:bg-background transition-colors"
+              className="rounded-lg border bg-background p-4 hover:border-sky-300 hover:shadow-sm hover:shadow-sky-300/50 transition-colors"
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-start justify-between mb-2">
                 <h3 className="font-medium text-blue-600">{item.action}</h3>
                 <span className="text-sm text-gray-500">
                   {formatTimestamp(item.timestamp)}

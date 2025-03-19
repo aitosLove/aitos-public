@@ -61,7 +61,8 @@ export function AppSidebar() {
               </div>
             </SidebarMenuItem>
             <SidebarMenuItem className="mt-4">
-              <ThemeButton />
+              <ThemeButton/>
+
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>

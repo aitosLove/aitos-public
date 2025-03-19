@@ -106,7 +106,9 @@ export default function EventPool() {
               <TimelineContent>
                 <TimelineTitle>
                   <div className="flex justify-between items-start">
-                    <h3 className="font-medium text-sm text-primary">
+
+                    <h3 className="font-medium text-xs md:text-sm text-primary">
+
                       {event.name}
                     </h3>
                     <span className="text-xs text-muted-foreground font-mono">

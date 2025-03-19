@@ -93,7 +93,9 @@ export const PortfolioCard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-row md:flex-row items-center gap-6 lg:gap-8">
+
+        <div className="flex flex-col md:flex-row items-center gap-6 lg:gap-8">
+
           <div className="w-full md:w-1/2 h-44">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
