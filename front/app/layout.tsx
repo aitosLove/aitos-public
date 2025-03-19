@@ -40,7 +40,10 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <main className="w-full ">
+              <div className="bg-primary-foreground -mb-2">
               <SidebarTrigger />
+
+              </div>
 
               {children}
             </main>

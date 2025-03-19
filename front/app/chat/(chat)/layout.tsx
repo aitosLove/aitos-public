@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen w-full relative bg-primary-foreground">
       <Header />
       {children}
       <Toaster />

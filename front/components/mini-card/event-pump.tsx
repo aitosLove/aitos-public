@@ -122,7 +122,7 @@ export const EventPumpsCard: React.FC = () => {
               </div>
               <div className="mt-2 text-sm ">
                 <p>Last Triggered: {pump.lastTriggered}</p>
-                <p className="mt-1">- {pump.description}</p>
+                <p className="mt-1 text-xs">- {pump.description}</p>
               </div>
             </div>
           ))}

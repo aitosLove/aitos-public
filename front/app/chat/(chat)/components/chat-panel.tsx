@@ -83,7 +83,7 @@ export function ChatPanel({
     >
       {messages.length === 0 && (
         <div className="mb-8">
-          <IconLogo className="size-12 text-muted-foreground" />
+          <IconLogo className="size-12 text-muted-foreground rounded-full shadow-sm" />
         </div>
       )}
       <form
@@ -93,7 +93,7 @@ export function ChatPanel({
           messages.length > 0 ? "px-2 py-4" : "px-6"
         )}
       >
-        <div className="relative flex flex-col w-full gap-2 bg-muted rounded-3xl border border-input">
+        <div className="relative flex flex-col w-full gap-2 rounded-3xl border-0 hover:shadow-md shadow-sm border-input bg-background">
           <Textarea
             ref={inputRef}
             name="input"

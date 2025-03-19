@@ -59,8 +59,8 @@ export function AppSidebar() {
                 <Image src="/suikai.png" alt="S" width={32} height={32} />
               </div>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <ThemeButton />
+            <SidebarMenuItem className="mt-4">
+              <ThemeButton/>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>

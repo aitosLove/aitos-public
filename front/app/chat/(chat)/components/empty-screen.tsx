@@ -21,8 +21,8 @@ export function EmptyScreen({
   className?: string;
 }) {
   return (
-    <div className={`mx-auto w-full transition-all ${className}`}>
-      <div className="bg-background p-2">
+    <div className={`mx-auto w-full transition-all  ${className}`}>
+      <div className="bg-muted shadow-sm p-4 rounded-3xl">
         <div className="mt-2 flex flex-col items-start space-y-2 mb-4">
           {exampleMessages.map((message, index) => (
             <Button
