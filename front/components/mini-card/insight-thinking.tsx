@@ -74,16 +74,19 @@ export function ThoughtStream() {
     <Card className="w-full bg-background border-0 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold text-primary">
-          <div className="flex items-center gap-2">
+          <div className="flex-col items-center gap-2">
             {/* <ArrowUpDown className="h-6 w-6 text-primary" /> */}
-            Thought Stream (Driven by Atoma & DeepSeek)
+            Thought Stream
+            <p className="text-sm font-normal">
+            Driven by Atoma & DeepSeek
+            </p>
           </div>
         </CardTitle>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
             disabled={currentPage === 0}
-            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-0 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-5 w-5 text-muted-foreground" />
           </button>
@@ -95,7 +98,7 @@ export function ThoughtStream() {
               setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
             }
             disabled={currentPage === totalPages - 1}
-            className="p-1 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-0 rounded hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight className="h-5 w-5 text-muted-foreground" />
           </button>
@@ -170,7 +173,7 @@ export function ThoughtStream() {
                     </blockquote>
                   ),
                   table: ({ children }) => (
-                    <div className="my-6 border rounded-lg overflow-hidden">
+                    <div className="my-6 border rounded-lg overflow-y-auto text-xs">
                       <table className="w-full">{children}</table>
                     </div>
                   ),
@@ -188,12 +191,12 @@ export function ThoughtStream() {
                     </tr>
                   ),
                   th: ({ children }) => (
-                    <th className="px-4 py-3 text-left font-medium text-foreground">
+                    <th className="px-2 py-3 text-left font-medium text-foreground">
                       {children}
                     </th>
                   ),
                   td: ({ children }) => (
-                    <td className="px-4 py-3 text-foreground">{children}</td>
+                    <td className="px-2 py-3 text-foreground">{children}</td>
                   )
                   
                 }}

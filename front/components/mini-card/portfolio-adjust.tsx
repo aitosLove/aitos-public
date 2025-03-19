@@ -48,9 +48,10 @@ export function PositionHistoryCard() {
     <Card className="w-full border-0 shadow-sm hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-start">
             {/* <History className="h-6 w-6" /> */}
-            Position Adjustments (Driven by Navi)
+            Position Adjustments
+            <p className="text-sm font-normal">Driven by Navi </p>
           </div>
         </CardTitle>
       </CardHeader>

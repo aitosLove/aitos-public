@@ -77,7 +77,7 @@ export function MarketPerception() {
           </div>
 
           <div className="font-normal md:text-sm text-xs text-muted">
-            <Badge variant="secondary" className="px-3 py-1 ">
+            <Badge variant="secondary" className="md:px-3 px-2 py-1 ">
 
               Updated every {REFRESH_INTERVAL / 1000}s
             </Badge>
@@ -93,16 +93,16 @@ export function MarketPerception() {
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-background z-20">
               <tr>
-                <th className="p-2 text-left min-w-[120px] sticky left-0 bg-background z-30">
+                <th className="p-2 text-left min-w-[100px] md:min-w-[120px] sticky left-0 bg-background z-30">
                   Pair
                 </th>
                 {timeframes.map((tf) => (
                   <th
                     key={tf}
-                    className="p-2 text-center min-w-[100px] border-l border-gray-100"
+                    className="p-2 text-center min-w-[100px] border-l border-muted-foreground"
                   >
                     <div className="flex flex-col items-center">
-                      <span className="font-medium">{tf}</span>
+                      <span className="font-medium text-xs">{tf}</span>
                       <span className="text-xs text-gray-500">24h</span>
                     </div>
                   </th>
@@ -116,9 +116,9 @@ export function MarketPerception() {
                   key={ratio.pair}
                   className="hover:bg-muted transition-colors"
                 >
-                  <td className="p-2 font-medium sticky left-0 bg-background z-20">
+                  <td className="p-2 font-medium md:text-sm text-xs sticky left-0 bg-background z-20">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-sky-300" />
+                      <div className="md:w-2 md:h-2 w-1.5 h-1.5 rounded-full bg-sky-300" />
                       {ratio.pair}
                     </div>
                   </td>
