@@ -106,14 +106,14 @@ export default function SuikaiDocumentation() {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-snug bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-snug bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
             Blockchain Intelligence,
             <br />
             <span className="leading-snug bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
               Simplified.
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
             Suikai transforms complex blockchain operations into simple,
             automated workflows. Manage investments, analyze markets, and
             optimize portfolios on SUI with
@@ -146,7 +146,7 @@ export default function SuikaiDocumentation() {
           {FEATURE_CARDS.map((card, index) => (
             <MotionCard
               key={index}
-              className={`rounded-2xl p-2 group h-full backdrop-blur-lg bg-gradient-to-br ${
+              className={`rounded-2xl py-1 group h-full backdrop-blur-lg bg-gradient-to-br ${
                 index % 2 === 0
                   ? "from-green-500/10 to-blue-500/10"
                   : "from-cyan-500/10 to-purple-500/10"
@@ -166,12 +166,12 @@ export default function SuikaiDocumentation() {
                   transition={{ duration: 0.3 }}
                 />
 
-                <CardHeader className="h-full justify-center pb-12">
-                  <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
+                <CardHeader className="h-full justify-center pb-10">
+                  <CardTitle className="flex items-center gap-3 text-lg md:text-xl">
                     <div
-                      className={`p-2 rounded-full ${
-                        index % 2 === 0 ? "bg-green-500/20" : "bg-cyan-500/20"
-                      } group-hover:bg-opacity-50`}
+                      // className={`p-2 rounded-full ${
+                      //   index % 2 === 0 ? "bg-green-500/20" : "bg-cyan-500/20"
+                      // } group-hover:bg-opacity-50`}
                     >
                       <card.icon
                         className={`h-6 w-6 md:h-8 md:w-8 ${
@@ -185,7 +185,7 @@ export default function SuikaiDocumentation() {
                       {card.title}
                     </h3>
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground/80 group-hover:text-foreground/90 transition-colors duration-300">
+                  <CardDescription className="text-muted-foreground/80 group-hover:text-foreground/90 transition-colors duration-300 pt-1">
                     {card.description}
                   </CardDescription>
                 </CardHeader>
