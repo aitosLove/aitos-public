@@ -26,6 +26,12 @@ export const insightStateTable = pgTable("insight_state", {
   insight: text().notNull(),
 });
 
+export const defiInsightTable = pgTable("defi_insight_state", {
+  id: uuid().primaryKey().defaultRandom(),
+  timestamp: timestamp().defaultNow().notNull(),
+  insight: text().notNull(),
+});
+
 export const holdingStateTable = pgTable("holding_state", {
   id: uuid().primaryKey().defaultRandom(),
   timestamp: timestamp().defaultNow().notNull(),
@@ -61,7 +67,11 @@ export const tasksTable = pgTable("tasks", {
   timestamp: timestamp().defaultNow().notNull(),
 });
 
-export const messageStatus = pgEnum("message_status", ["pending", "sent", "failed"])
+export const messageStatus = pgEnum("message_status", [
+  "pending",
+  "sent",
+  "failed",
+]);
 
 export const tgMessageTable = pgTable("tg_message", {
   id: uuid().primaryKey().defaultRandom(),
@@ -69,4 +79,3 @@ export const tgMessageTable = pgTable("tg_message", {
   sentAt: timestamp("sent_at").defaultNow(),
   status: messageStatus().notNull(),
 });
-

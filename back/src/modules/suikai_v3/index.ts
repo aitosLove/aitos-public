@@ -8,6 +8,7 @@ import {
   insightStateTable,
   marketStateTable,
   holdingStateTable,
+  defiInsightTable,
 } from "@/db/schema";
 import { adjustPortfolio_by_AI } from "./portfolio/ai_helper";
 import { analysis_config } from "./config/coin";
@@ -254,13 +255,13 @@ ${formattedString}
 
               console.log(`update defi insight is`, defiInsight);
 
-              //               // db.insert(insightStateTable)
-              //               //   .values({
-              //               //     insight: defiInsight,
-              //               //   })
-              //               //   .then((res) => {
-              //               //     console.log(`${Date.now()}insert defi insight success`);
-              //               //   });
+              db.insert(defiInsightTable)
+                .values({
+                  insight: defiInsight,
+                })
+                .then((res) => {
+                  console.log(`${Date.now()}insert defi insight success`);
+                });
             });
         } catch (error) {
           console.error("Error updating portfolio:", error);

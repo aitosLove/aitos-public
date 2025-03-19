@@ -10,6 +10,7 @@ import {
   Blocks,
   ChevronsLeftRightEllipsis,
   MessageCircleMore,
+  Anchor,
 } from "lucide-react";
 
 import {
@@ -60,7 +61,7 @@ export function AppSidebar() {
               </div>
             </SidebarMenuItem>
             <SidebarMenuItem className="mt-4">
-              <ThemeButton/>
+              <ThemeButton />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -127,8 +128,8 @@ export function AppSidebar() {
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
 
-                     {/* Telegram */}
-                     <SidebarMenuSubItem>
+                  {/* Telegram */}
+                  <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href={`/telegram`}>
                         <MessageCircleMore />
@@ -136,15 +137,14 @@ export function AppSidebar() {
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
-                  
 
                   {/* Defi */}
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild aria-disabled>
-                      <div>
-                        <Settings />
-                        <span>{`Defi (Coming Soon)`}</span>
-                      </div>
+                    <SidebarMenuSubButton asChild>
+                      <a href={`/defi`}>
+                        <Anchor />
+                        <span>{`Defi Strategy`}</span>
+                      </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
 

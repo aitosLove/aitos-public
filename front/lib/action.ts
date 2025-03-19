@@ -56,11 +56,30 @@ export async function getInsights() {
   }
 }
 
+export async function getDefiStrategies() {
+  try {
+    const defiStrategy = await db.query.defiInsightTable.findMany({
+      limit: 10,
+      orderBy: (insightStateTable, { desc }) => [
+        desc(insightStateTable.timestamp),
+      ],
+    });
+
+    if (!defiStrategy) {
+      throw new Error("No insight state found");
+    }
+
+    return defiStrategy;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 export async function getInsightContent(insightId: number): Promise<string> {
   try {
     const record = await db.query.insightStateTable.findFirst({
       where: eq(insightStateTable, insightId),
-    })
+    });
     if (!record) {
       throw new Error(`Insight ${insightId} not found`);
     }
@@ -153,14 +172,13 @@ export async function getActions() {
   }
 }
 
-
-export async function getTgMessageRecord(){
-    try {
-      return db.query.tgMessageTable.findMany({
-        orderBy: (tgMessageTable, { desc }) => [desc(tgMessageTable.sentAt)],
-        limit: 20,
-      });
-    } catch (e) {
-      console.log(e);
-    }
+export async function getTgMessageRecord() {
+  try {
+    return db.query.tgMessageTable.findMany({
+      orderBy: (tgMessageTable, { desc }) => [desc(tgMessageTable.sentAt)],
+      limit: 20,
+    });
+  } catch (e) {
+    console.log(e);
   }
+}
