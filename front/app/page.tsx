@@ -64,15 +64,15 @@ export default function SuikaiDocumentation() {
               height={40}
               className="rounded-lg"
             />
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-green-500 to-indigo-500 bg-clip-text text-transparent">
               Suikai
             </span>
           </motion.div>
 
           <div className="lg:hidden">
-            <Button variant="ghost" size="icon">
+            {/* <Button variant="ghost" size="icon">
               <MenuIcon className="h-6 w-6" />
-            </Button>
+            </Button> */}
           </div>
 
           {/* 包裹桌面导航项 */}
@@ -106,10 +106,10 @@ export default function SuikaiDocumentation() {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-snug bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-snug bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
             Blockchain Intelligence,
             <br />
-            <span className="leading-snug bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <span className="leading-snug bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
               Simplified.
             </span>
           </h1>
@@ -138,7 +138,7 @@ export default function SuikaiDocumentation() {
         </motion.div>
 
         <motion.div
-          className="flex-1 w-full  lg:px-0 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6"
+          className="flex-1 w-full lg:px-0 grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -146,20 +146,75 @@ export default function SuikaiDocumentation() {
           {FEATURE_CARDS.map((card, index) => (
             <MotionCard
               key={index}
-              className="rounded-2xl md:p-2 p-0.5 group hover:border-primary/50 h-full backdrop-blur-lg bg-background/50 shadow-xl"
-              whileHover={{ y: -5 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              className={`rounded-2xl p-2 group h-full backdrop-blur-lg bg-gradient-to-br ${
+                index % 2 === 0
+                  ? "from-green-500/10 to-blue-500/10"
+                  : "from-cyan-500/10 to-purple-500/10"
+              } shadow-xl relative overflow-hidden`}
+              whileHover={{
+                y: -5,
+                transition: { type: "spring", stiffness: 300 },
+              }}
             >
-              <Link href={card.link}>
-                <CardHeader className="h-full justify-center">
+              <Link href={card.link} className="block h-full">
+                <motion.div
+                  className={`absolute inset-0 bg-gradient-to-br ${
+                    index % 2 === 0
+                      ? "from-green-500/20 to-blue-500/20"
+                      : "from-cyan-500/20 to-purple-500/20"
+                  } opacity-0 group-hover:opacity-100`}
+                  transition={{ duration: 0.3 }}
+                />
+
+                <CardHeader className="h-full justify-center pb-12">
                   <CardTitle className="flex items-center gap-3 text-xl md:text-2xl">
-                    <card.icon className="h-6 w-6 md:h-8 md:w-8 text-primary" />
-                    <h3>{card.title}</h3>
+                    <div
+                      className={`p-2 rounded-full ${
+                        index % 2 === 0 ? "bg-green-500/20" : "bg-cyan-500/20"
+                      } group-hover:bg-opacity-50`}
+                    >
+                      <card.icon
+                        className={`h-6 w-6 md:h-8 md:w-8 ${
+                          index % 2 === 0 ? "text-green-500" : "text-cyan-500"
+                        } group-hover:${
+                          index % 2 === 0 ? "text-green-400" : "text-cyan-400"
+                        }`}
+                      />
+                    </div>
+                    <h3 className="font-bold group-hover:text-foreground/90">
+                      {card.title}
+                    </h3>
                   </CardTitle>
-                  <CardDescription className="text-muted-foreground/80">
+                  <CardDescription className="text-muted-foreground/80 group-hover:text-foreground/90 transition-colors duration-300">
                     {card.description}
                   </CardDescription>
                 </CardHeader>
+
+                <motion.div
+                  className={`absolute bottom-0 left-0 right-0 py-2 px-4 ${
+                    index % 2 === 0
+                      ? "bg-gradient-to-r from-green-400 to-blue-400"
+                      : "bg-gradient-to-r from-cyan-400 to-purple-400"
+                  } text-white font-medium text-center opacity-0 group-hover:opacity-100 transform translate-y-full group-hover:translate-y-0`}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="flex items-center justify-center gap-2 font-bold text-base">
+                    <span>Discover</span>
+                    <motion.span
+                      initial={{ x: 0 }}
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{
+                        repeat: Infinity,
+                        repeatType: "loop",
+                        duration: 1.5,
+                        ease: "easeInOut",
+                      }}
+                      className="text-lg"
+                    >
+                      →
+                    </motion.span>
+                  </div>
+                </motion.div>
               </Link>
             </MotionCard>
           ))}
@@ -169,12 +224,14 @@ export default function SuikaiDocumentation() {
       {/* 核心价值模块 */}
       <section id="overview" className="pb-0 pt-16 lg:pb-4">
         <motion.div
-          className="space-y-12"
+          className="space-y-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
         >
-          <h2 className="text-4xl font-bold text-center">Why Choose Suikai?</h2>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-start lg:text-center px-2">
+            Why Choose Suikai?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {VALUE_PROPS.map((value, index) => (
               <MotionCard
@@ -269,7 +326,7 @@ export default function SuikaiDocumentation() {
 
               {/* Intent Alignment Layer */}
               <motion.div
-                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-8"
+                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-4"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -295,7 +352,7 @@ export default function SuikaiDocumentation() {
 
               {/* Chain Abstraction Layer */}
               <motion.div
-                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-16"
+                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-8"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
@@ -496,7 +553,7 @@ export default function SuikaiDocumentation() {
       <section id="try" className="relative py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="relative z-10 text-center space-y-12 rounded-[3rem] p-16  border border-muted"
+            className="relative z-10 text-center space-y-12 rounded-[3rem]  border border-muted"
             initial={{ scale: 0.95 }}
             whileInView={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 50 }}
@@ -509,7 +566,7 @@ export default function SuikaiDocumentation() {
 
             <div className="space-y-8">
               <motion.h2
-                className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent"
+                className="text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent"
                 initial={{ y: 20 }}
                 whileInView={{ y: 0 }}
               >
@@ -521,13 +578,13 @@ export default function SuikaiDocumentation() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
               >
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Like commanding your first autonomous spacecraft, Suikai
                   equips you with:
                 </p>
 
                 <div className="flex flex-col items-center text-lg">
-                  <div className="flex items-center gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md rounded-full">
+                  <div className="flex items-center md:text-base text-sm gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md rounded-full">
                     <Bot className="h-5 w-5 text-primary" />
                     <span>24/7 AI Strategy Engine</span>
                     {/* <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" /> */}
@@ -535,14 +592,14 @@ export default function SuikaiDocumentation() {
 
                   <span className="text-muted-foreground">+</span>
 
-                  <div className="flex items-center gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md rounded-full">
+                  <div className="flex items-center md:text-base text-sm gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md rounded-full">
                     <BlocksIcon className="h-5 w-5 text-primary" />
                     <span>Modular DeFi Components</span>
                   </div>
 
                   <span className="text-muted-foreground">+</span>
 
-                  <div className="flex items-center gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md  rounded-full">
+                  <div className="flex items-center md:text-base text-sm gap-3 px-6 py-2 bg-background/90 shadow-sm hover:shadow-md  rounded-full">
                     <Wallet className="h-5 w-5 text-primary" />
                     <span>Self-Optimizing Portfolios</span>
                   </div>
@@ -550,19 +607,19 @@ export default function SuikaiDocumentation() {
               </motion.div>
 
               <motion.div
-                className="flex flex-col sm:flex-row justify-center gap-6"
+                className="flex flex-col sm:flex-row items-center justify-center gap-6"
                 initial={{ scale: 0.9 }}
                 whileInView={{ scale: 1 }}
               >
                 <MotionButton
                   asChild
-                  className="h-16 px-12 text-lg rounded-2xl gap-3 transition-transform"
+                  className="h-16 px-12 text-lg rounded-2xl gap-3 bg-foreground/95 transition-transform"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link href="/agent">
-                    <RocketIcon className="h-5 w-5" />
-                    <span className="bg-gradient-to-r from-primary-foreground to-purple-500 bg-clip-text text-transparent">
+                    <RocketIcon className="h-5 w-5 text-green-600" />
+                    <span className="text-base md:text-lg bg-gradient-to-r from-green-500 to-indigo-500 bg-clip-text text-transparent">
                       Activate AI Pilot
                     </span>
                   </Link>
@@ -573,19 +630,18 @@ export default function SuikaiDocumentation() {
                   className="h-16 px-12 text-lg rounded-2xl transition-transform "
                   whileHover={{ scale: 1.05 }}
                 >
-                  <Link
-                    href="/blueprint-gallery"
-                    className="flex items-center gap-3"
-                  >
+                  <Link href="/sui-market" className="flex items-center gap-3">
                     <LayoutTemplateIcon className="h-5 w-5 text-primary" />
-                    <span>Market Blueprint</span>
+                    <span className="text-base md:text-lg">
+                      Market Blueprint
+                    </span>
                   </Link>
                 </MotionButton>
               </motion.div>
 
               {/* User Journey Visualization */}
               <motion.div
-                className="mt-12 grid grid-cols-3 gap-8 text-left"
+                className="mt-12 grid  grid-cols-1 lg:grid-cols-3 gap-8 text-left"
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
               >
@@ -608,7 +664,7 @@ export default function SuikaiDocumentation() {
                 ].map((item, index) => (
                   <motion.div
                     key={index}
-                    className="p-6 bg-muted/5 rounded-xl border border-muted hover:border-primary/30 transition-colors"
+                    className="p-6 bg-background/90 rounded-xl hover:shadow-md shadow-sm transition-colors"
                     whileHover={{ y: -5 }}
                   >
                     <item.icon className="h-8 w-8 text-primary mb-4" />
