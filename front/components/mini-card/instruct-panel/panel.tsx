@@ -78,11 +78,11 @@ export const InstructPanel: React.FC<InstructPanelProps> = ({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-0 shadow-sm hover:shadow-md">
       {/* Card 头部：标题和编辑按钮 */}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-xl font-bold">{title}</CardTitle>
-        <Button onClick={handleEditClick} disabled={isLoading}>
+        <Button variant="ghost" onClick={handleEditClick} disabled={isLoading}>
           Edit
         </Button>
       </CardHeader>
@@ -111,7 +111,7 @@ export const InstructPanel: React.FC<InstructPanelProps> = ({
             <Textarea
               value={tempInstruct}
               onChange={(e) => setTempInstruct(e.target.value)}
-              className="min-h-[200px]"
+              className="min-h-[200px] focus-visible:ring-0"
               placeholder="Enter your instruct here..."
             />
             {/* 保存按钮 */}

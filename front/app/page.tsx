@@ -224,7 +224,7 @@ export default function SuikaiDocumentation() {
       {/* 核心价值模块 */}
       <section id="overview" className="pb-0 pt-16 lg:pb-4">
         <motion.div
-          className="space-y-8"
+          className="space-y-16"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-100px" }}
