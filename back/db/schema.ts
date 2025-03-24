@@ -26,16 +26,34 @@ export const insightStateTable = pgTable("insight_state", {
   insight: text().notNull(),
 });
 
+export const insightInstructTable = pgTable("insight_instruct", {
+  id: uuid().primaryKey().defaultRandom(),
+  timestamp: timestamp().defaultNow().notNull(),
+  instruct: text().notNull(),
+});
+
 export const defiInsightTable = pgTable("defi_insight_state", {
   id: uuid().primaryKey().defaultRandom(),
   timestamp: timestamp().defaultNow().notNull(),
   insight: text().notNull(),
 });
 
+export const defiInstructTable = pgTable("defi_instruct_state", {
+  id: uuid().primaryKey().defaultRandom(),
+  timestamp: timestamp().defaultNow().notNull(),
+  instruct: text().notNull(),
+});
+
 export const holdingStateTable = pgTable("holding_state", {
   id: uuid().primaryKey().defaultRandom(),
   timestamp: timestamp().defaultNow().notNull(),
   holding: jsonb().notNull(),
+});
+
+export const tradingInstructTable = pgTable("trading_instruct", {
+  id: uuid().primaryKey().defaultRandom(),
+  timestamp: timestamp().defaultNow().notNull(),
+  instruct: text().notNull(),
 });
 
 export const actionStateTable = pgTable("action_state", {

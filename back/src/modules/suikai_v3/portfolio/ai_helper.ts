@@ -14,6 +14,7 @@ import {
   NS,
   SuiCoin,
 } from "../config/coin";
+import { getNewestTradingInstruct } from "@/db/getInstruct";
 const select = "qwen";
 const provider = getProvider({ provider: select });
 const model = getModel({ inputModel: "large", provider: select });
@@ -76,6 +77,7 @@ export async function adjustPortfolio_by_AI({
   insight: string;
 }) {
   try {
+    const preference_instruct = await getNewestTradingInstruct();
     const { text, toolResults } = await generateText({
       model: provider(model),
       toolChoice: "required",
@@ -173,11 +175,14 @@ export async function adjustPortfolio_by_AI({
       messages: [
         {
           role: "system",
-          content: `You are a professional trader and you have a portfolio on SUI blockchain, which includes SUI, USDC and other potential altcoins. You want to adjust the portfolio to get best profit according to market situation. You main method is to adjust the weight of each token holding. \n Introduction of all tokens are ${token_portfolio.map(
-            (token) => {
-              return `${token.coinName}(${token.coinSymbol}):${token.description}\n`;
-            }
-          )} \nYour current portfolio is ${current_holding}.`,
+          content: `
+You are a professional trader and you have a portfolio on SUI blockchain, which includes SUI, USDC and other potential altcoins. You want to adjust the portfolio to get best profit according to market situation. You main method is to adjust the weight of each token holding. 
+
+User Preference is :${preference_instruct}
+
+Introduction of all tokens are ${token_portfolio.map((token) => {
+            return `${token.coinName}(${token.coinSymbol}):${token.description}\n`;
+          })} \nYour current portfolio is ${current_holding}.`,
         },
         {
           role: "user",

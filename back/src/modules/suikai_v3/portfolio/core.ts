@@ -336,18 +336,26 @@ async function planAdjustments(
         originalPortfolio.find((t) => t.coinType === cup.coinType)!.coinName
       }...`
     );
-    await swap({
-      inputAmount: sellAmount,
-      fromCoinAddress: bucket.coinType,
-      toCoinAddress: cup.coinType,
-      fromDecimals: originalPortfolio.find(
-        (t) => t.coinType === bucket.coinType
-      )!.decimals,
-      fromName: originalPortfolio.find((t) => t.coinType === bucket.coinType)!
-        .coinName,
-      toName: originalPortfolio.find((t) => t.coinType === cup.coinType)!
-        .coinName,
-    });
+
+    try {
+      await swap({
+        inputAmount: sellAmount,
+        fromCoinAddress: bucket.coinType,
+        toCoinAddress: cup.coinType,
+        fromDecimals: originalPortfolio.find(
+          (t) => t.coinType === bucket.coinType
+        )!.decimals,
+        fromName: originalPortfolio.find((t) => t.coinType === bucket.coinType)!
+          .coinName,
+        toName: originalPortfolio.find((t) => t.coinType === cup.coinType)!
+          .coinName,
+      });
+    } catch (e) {
+      console.log(
+        `error happens in swap ${bucket.coinType} to ${cup.coinType}`
+      );
+      console.log(e);
+    }
 
     // 更新调整量
     bucket.deltaPercentage += tradePercentage;
@@ -361,17 +369,23 @@ async function planAdjustments(
   for (const bucket of buckets) {
     const sellPercentage = -bucket.deltaPercentage;
     const sellAmount = (sellPercentage / 100) * bucket.balance;
-    await swap({
-      inputAmount: sellAmount,
-      fromCoinAddress: bucket.coinType,
-      toCoinAddress: USDC.coinType,
-      fromDecimals: originalPortfolio.find(
-        (t) => t.coinType === bucket.coinType
-      )!.decimals,
-      fromName: originalPortfolio.find((t) => t.coinType === bucket.coinType)!
-        .coinName,
-      toName: USDC.coinName,
-    });
+
+    try {
+      await swap({
+        inputAmount: sellAmount,
+        fromCoinAddress: bucket.coinType,
+        toCoinAddress: USDC.coinType,
+        fromDecimals: originalPortfolio.find(
+          (t) => t.coinType === bucket.coinType
+        )!.decimals,
+        fromName: originalPortfolio.find((t) => t.coinType === bucket.coinType)!
+          .coinName,
+        toName: USDC.coinName,
+      });
+    } catch (e) {
+      console.log(`error happens in swap ${bucket.coinType} to USDC`);
+      console.log(e);
+    }
   }
 
   // 处理剩余水杯：用USDC买入
@@ -381,15 +395,21 @@ async function planAdjustments(
       (t) => t.coinType === cup.coinType
     )!.balance;
     const buyAmount = (buyPercentage / 100) * targetBalance; // 基于目标代币的当前数量估算
-    await swap({
-      inputAmount: buyAmount,
-      fromCoinAddress: USDC.coinType,
-      toCoinAddress: cup.coinType,
-      fromDecimals: USDC.decimals,
-      fromName: USDC.coinName,
-      toName: originalPortfolio.find((t) => t.coinType === cup.coinType)!
-        .coinName,
-    });
+
+    try {
+      await swap({
+        inputAmount: buyAmount,
+        fromCoinAddress: USDC.coinType,
+        toCoinAddress: cup.coinType,
+        fromDecimals: USDC.decimals,
+        fromName: USDC.coinName,
+        toName: originalPortfolio.find((t) => t.coinType === cup.coinType)!
+          .coinName,
+      });
+    } catch (e) {
+      console.log(`error happens in swap USDC to ${cup.coinType}`);
+      console.log(e);
+    }
   }
 }
 
