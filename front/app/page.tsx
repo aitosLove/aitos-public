@@ -62,7 +62,7 @@ export default function SuikaiDocumentation() {
               alt="Suikai Logo"
               width={40}
               height={40}
-              className="rounded-lg"
+              className="rounded-2xl"
             />
             <span className="text-xl font-bold bg-gradient-to-r from-green-500 to-indigo-500 bg-clip-text text-transparent">
               Suikai
@@ -241,7 +241,7 @@ export default function SuikaiDocumentation() {
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
               >
-                <div className="md:h-12 md:w-12 h-10 w-10 mb-2 md:mb-4 bg-primary/10 rounded-xl flex items-center justify-center">
+                <div className="md:h-12 md:w-12 h-10 w-10 mb-2 md:mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
                   <value.icon className="h-5 w-5 md:h-8 md:w-8 text-primary" />
                 </div>
                 <h3 className="text-lg md:text-2xl font-semibold mb-1 md:mb-2">
@@ -281,7 +281,7 @@ export default function SuikaiDocumentation() {
                   whileInView={{ x: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <div className="flex-shrink-0 h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 h-12 w-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                     <item.icon className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -300,7 +300,7 @@ export default function SuikaiDocumentation() {
             <div className="relative h-full flex flex-col justify-between">
               {/* Contract Abstraction Layer */}
               <motion.div
-                className="p-6 bg-background border border-muted rounded-xl shadow-lg"
+                className="p-6 bg-background border border-muted rounded-2xl shadow-lg"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -326,7 +326,7 @@ export default function SuikaiDocumentation() {
 
               {/* Intent Alignment Layer */}
               <motion.div
-                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-4"
+                className="p-6 bg-background border border-muted rounded-2xl shadow-lg mx-4"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
@@ -352,7 +352,7 @@ export default function SuikaiDocumentation() {
 
               {/* Chain Abstraction Layer */}
               <motion.div
-                className="p-6 bg-background border border-muted rounded-xl shadow-lg mx-8"
+                className="p-6 bg-background border border-muted rounded-2xl shadow-lg mx-8"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
@@ -428,7 +428,7 @@ export default function SuikaiDocumentation() {
 
               {/* Agent状态头部 */}
               <div className="relative flex items-start gap-4 mb-6">
-                <div className="h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div className="h-12 w-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                   <Bot className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -447,7 +447,7 @@ export default function SuikaiDocumentation() {
               <div className="relative space-y-2 mb-6">
                 <h4 className="font-semibold text-lg">Active Strategies</h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-background/50 rounded-lg border border-muted">
+                  <div className="p-3 bg-background/50 rounded-2xl border border-muted">
                     <div className="flex items-center gap-2">
                       <FileSpreadsheetIcon className="h-4 w-4" />
                       <span className="font-medium text-sm md:text-base">
@@ -458,7 +458,7 @@ export default function SuikaiDocumentation() {
                       Dynamic asset allocation
                     </p> */}
                   </div>
-                  <div className="p-3 bg-background/50 rounded-lg border border-muted">
+                  <div className="p-3 bg-background/50 rounded-2xl border border-muted">
                     <div className="flex items-center gap-2">
                       <WorkflowIcon className="h-4 w-4" />
                       <span className="font-medium text-sm md:text-base">
@@ -477,7 +477,7 @@ export default function SuikaiDocumentation() {
                 <h4 className="font-semibold text-lg">Live Operations</h4>
                 <div className="space-y-3">
                   <motion.div
-                    className="p-3 bg-background/50 rounded-lg border border-muted flex items-center gap-3"
+                    className="p-3 bg-background/50 rounded-2xl border border-muted flex items-center gap-3"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
@@ -496,7 +496,7 @@ export default function SuikaiDocumentation() {
                   </motion.div>
 
                   {/* <motion.div
-                    className="p-3 bg-background/80 rounded-lg border border-muted flex items-center gap-3"
+                    className="p-3 bg-background/80 rounded-2xl border border-muted flex items-center gap-3"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
@@ -520,7 +520,7 @@ export default function SuikaiDocumentation() {
               <div className="relative mt-6 border-t border-muted/50">
                 <h4 className="font-semibold text-lg mb-4">Risk Management</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                  <div className="p-3 bg-background/50 rounded-lg">
+                  <div className="p-3 bg-background/50 rounded-2xl">
                     <p className="text-sm text-muted-foreground">
                       Slippage Control
                     </p>
@@ -528,7 +528,7 @@ export default function SuikaiDocumentation() {
                       Auto-adjusted
                     </div>
                   </div>
-                  <div className="p-3 bg-background/50 rounded-lg">
+                  <div className="p-3 bg-background/50 rounded-2xl">
                     <p className="text-sm text-muted-foreground">
                       Gas Optimization
                     </p>
@@ -536,7 +536,7 @@ export default function SuikaiDocumentation() {
                       Dynamic Pricing
                     </div>
                   </div>
-                  <div className="p-3 bg-background/50 rounded-lg">
+                  <div className="p-3 bg-background/50 rounded-2xl">
                     <p className="text-sm text-muted-foreground">
                       Circuit Breakers
                     </p>
@@ -553,7 +553,7 @@ export default function SuikaiDocumentation() {
       <section id="try" className="relative py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="relative z-10 text-center space-y-12 rounded-[3rem]  border border-muted"
+            className="relative z-10 text-center space-y-12 rounded-[3rem]"
             initial={{ scale: 0.95 }}
             whileInView={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 50 }}
@@ -664,7 +664,7 @@ export default function SuikaiDocumentation() {
                 ].map((item, index) => (
                   <motion.div
                     key={index}
-                    className="p-6 bg-background/90 rounded-xl hover:shadow-md shadow-sm transition-colors"
+                    className="p-6 bg-background/90 rounded-2xl hover:shadow-md shadow-sm transition-colors"
                     whileHover={{ y: -5 }}
                   >
                     <item.icon className="h-8 w-8 text-primary mb-4" />
