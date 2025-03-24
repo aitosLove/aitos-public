@@ -88,8 +88,8 @@ export function PositionCard() {
                   nameKey="token"
                   cx="50%"
                   cy="50%"
-                  innerRadius={90}
-                  outerRadius={120}
+                  innerRadius={60}
+                  outerRadius={80}
                   paddingAngle={2}
                   strokeWidth={0}
                 >

@@ -2,6 +2,7 @@ import { DefiInsight } from "@/components/mini-card/defi-insight";
 import { PositionCard } from "@/components/mini-card/wallet-preview";
 import { DefiInstructPanel } from "@/components/mini-card/instruct-panel";
 
+
 export default function AgentDashboard() {
   return (
     <div className="min-h-screen bg-primary-foreground p-6">
