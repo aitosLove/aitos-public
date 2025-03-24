@@ -44,3 +44,6 @@ next-env.d.ts
 pnpm-lock.yaml
 
 tips.md
+
+# backup ui style settings
+/uiStyle

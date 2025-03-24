@@ -38,9 +38,9 @@ Optional Security Data: Audit reports or security assessments of the protocols, 
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-0 shadow-sm">
       {/* Card 头部：标题和编辑按钮 */}
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-xl font-bold">Instruct Panel</CardTitle>
         <Button onClick={handleEditClick}>Edit</Button>
       </CardHeader>
