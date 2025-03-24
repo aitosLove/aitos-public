@@ -1,6 +1,5 @@
 import { NAVISDKClient } from "navi-sdk";
 import * as dotenv from "dotenv";
-// import { getRoute, swap, SwapOptions } from "navi-aggregator-sdk";
 import { client, account_v3 } from "../config/account";
 
 dotenv.config();

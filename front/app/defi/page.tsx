@@ -1,5 +1,7 @@
 import { DefiInsight } from "@/components/mini-card/defi-insight";
 import { PositionCard } from "@/components/mini-card/wallet-preview";
+import { DefiInstructPanel } from "@/components/mini-card/instruct-panel";
+
 
 export default function AgentDashboard() {
   return (
@@ -17,6 +19,7 @@ export default function AgentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <PositionCard />
+            <DefiInstructPanel />
           </div>
           <DefiInsight />
         </div>

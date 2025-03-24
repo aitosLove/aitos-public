@@ -16,6 +16,10 @@ import { getHolding } from "./portfolio/core";
 
 import { InvestmentState, getHistoricalData } from "./market/cmc";
 import { getPoolInfo } from "./defi/navi";
+import {
+  getNewestDefiInstruct,
+  getNewestMarketInstruct,
+} from "@/db/getInstruct";
 
 class InvestmentManager {
   private agent: Agent;
@@ -159,6 +163,8 @@ class InvestmentManager {
           console.log(marketData);
           console.log("-----");
 
+          const sui_instruct = await getMarketInsightPrompt();
+
           console.log(`system prompt is ${sui_instruct}${formattedString}`);
           this.agent.thinking
             .response({
@@ -230,6 +236,8 @@ ${formattedString}
         try {
           const { validPortfolio } = await getHolding();
           const { poolDescription } = await getPoolInfo();
+
+          const defi_instruct = await getDefiInsightPrompt();
 
           // console.log(`poolDescription is ${poolDescription}`);
           this.agent.thinking
@@ -344,21 +352,46 @@ export function enableInvestmentModule(agent: Agent) {
   //   timestamp: Date.now(),
   // });
 
+  // agent.sensing.emitEvent({
+  //   type: "UPDATE_INSIGHT_EVENT",
+  //   description: "Agent should update insight.",
+  //   payload: {},
+  //   timestamp: Date.now(),
+  // });
+
   agent.sensing.emitEvent({
-    type: "UPDATE_DEFI_STRATEGY_EVENT",
-    description: "Agent should update the strategy of defi.",
+    type: "UPDATE_PORTFOLIO_EVENT",
+    description: "Agent should update portfolio.",
     payload: {},
     timestamp: Date.now(),
   });
+
+  // agent.sensing.emitEvent({
+  //   type: "UPDATE_HOLDING_EVENT",
+  //   description: "Agent should update holding.",
+  //   payload: {},
+  //   timestamp: Date.now(),
+  // });
+  // agent.sensing.emitEvent({
+  //   type: "UPDATE_DEFI_STRATEGY_EVENT",
+  //   description: "Agent should update the strategy of defi.",
+  //   payload: {},
+  //   timestamp: Date.now(),
+  // });
 }
 
-const sui_instruct = `
+async function getMarketInsightPrompt() {
+  const preference_instruct = await getNewestMarketInstruct();
+  const sui_instruct = `
 Here are a few crypto asset ratio data for one month. Please analyze it. What do you think of the current market situation? And what's your opinion of SUI and its ecosystem?
 
 [Main Indicators Interpretation] 
 - ETH/BTC: Comprehensive on-chain sentiment indicator, which reflects the overall strength of on-chain activities. A stronger indicator represents a stronger on-chain activity. 
 - SUI/BTC: Cross-chain market sentiment indicator, which reflects the relative strength of the Sui network in comparison to Bitcoin. A stronger indicator suggests that Sui’s ecosystem is gaining traction or is more active than Bitcoin, especially within its decentralized finance or smart contract ecosystem.
 - SUI/ETH: Comparative ecosystem growth indicator, which measures the relative development of the Sui network compared to Ethereum. A stronger indicator indicates that Sui is showing better adoption, performance, or growth relative to Ethereum, potentially signaling its emergence as a new competitor in the smart contract and DeFi space.
+
+[Prefenence Instruct]
+${preference_instruct}
 
 [Potential Assets Indicators Interpretation] & [All these tokens are SUI ecosystem tokens]
 ${analysis_config
@@ -371,22 +404,34 @@ ${analysis_config
 [ratio data]
 `;
 
-const defi_instruct = `
-You are an expert in decentralized finance (DeFi) strategies. Your task is to formulate a DeFi strategy tailored to the user’s current holdings using the provided information about various DeFi protocol pools. You will receive:
+  return sui_instruct;
+}
 
+async function getDefiInsightPrompt() {
+  const preference_instruct = await getNewestDefiInstruct();
+  const defi_instruct = `
+You are an expert in decentralized finance (DeFi) strategies. Your task is to formulate a DeFi strategy tailored to the user’s current holdings using the provided information about various DeFi protocol pools. You will receive:
+{
 Pool Information: Details about each pool, including its size, annual percentage yield (APY), and the tokens involved.
 Token Explanations: Descriptions of the tokens corresponding to each pool.
 Optional Security Data: Audit reports or security assessments of the protocols, if available.
+}
+
 Your goal is to recommend one or more strategies that balance the following principles:
 
-Exposure Management:
+- Exposure Management:
 Exposure refers to how an asset’s price movement impacts the portfolio’s balance. Holding volatile assets like altcoins, BTC, or ETH without hedging creates exposure to their price fluctuations. For a USD-based portfolio, holding stablecoins (e.g., USDC, USDT) does not create exposure due to their pegged value. Minimize unnecessary exposure unless the user already holds the asset and accepts that risk.
 
-Security:
+- Security:
 Prioritize protocols with audited smart contracts and a strong security track record to reduce the risk of exploits or losses.
-Yield Optimization (Alpha Returns):
+
+- Yield Optimization (Alpha Returns):
 Identify pools or opportunities offering competitive yields while managing risks, aiming for the best possible returns given the user’s holdings and preferences.
 Strategies to Consider Based on Holdings:
+
+- User Preference:
+${preference_instruct}
+
 
 Based on the user’s current assets, evaluate the following options:
 
@@ -401,5 +446,6 @@ Propose depositing these assets into a lending protocol, borrowing altcoins, and
 Ensure the staking APY exceeds the borrowing interest rate to achieve a net positive return in altcoin terms (i.e., no loss in the altcoin’s native value).
 This strategy avoids creating additional exposure to altcoin price volatility by leveraging major assets.
 
-
 `;
+  return defi_instruct;
+}
