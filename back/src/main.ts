@@ -9,7 +9,7 @@
  */
 
 import { Agent } from "./agent";
-import { enableInvestmentModule } from "./modules/suikai_v3";
+import { enableInvestmentModule } from "./modules/suikai_v4";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
 import { HttpsProxyAgent } from "https-proxy-agent";
