@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 // import {
 //   Sheet,
@@ -22,11 +23,11 @@ import { useRouter } from "next/navigation";
 import { Suspense, useTransition } from "react";
 import { HistorySkeleton } from "./history-skeleton";
 
-type HistoryProps = {
-  children?: React.ReactNode;
-};
 
-export function History({ children }: HistoryProps) {
+
+export function History({ children }:Readonly<{
+  children: React.ReactNode;
+}>) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 

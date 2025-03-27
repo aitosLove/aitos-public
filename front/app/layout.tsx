@@ -41,7 +41,7 @@ export default function RootLayout({
             <AppSidebar />
             <main className="w-full ">
               <div className="bg-primary-foreground -mb-2">
-              <SidebarTrigger />
+              {/* <SidebarTrigger /> */}
 
               </div>
 
