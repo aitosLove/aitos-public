@@ -91,7 +91,7 @@ export const MarketInstructPanel = () => {
 
   return (
     <InstructPanel
-      title="AI Instruct Panel"
+      title="Analysis Instruct Panel"
       initialInstruct={defaultInstruct}
       fetchInstruct={fetchMarketInstruct}
       updateInstruct={updateMarketInstruct}
@@ -149,7 +149,7 @@ export const TradingInstructPanel = () => {
 
   return (
     <InstructPanel
-      title="Crypto Instruct Panel"
+      title="Investment Strategy Instruct"
       initialInstruct={defaultInstruct}
       fetchInstruct={fetchTradingInstruct}
       updateInstruct={updateTradingInstruct}
