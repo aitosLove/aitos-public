@@ -14,6 +14,7 @@ import { BlocksIcon, Bot, MessageCircle, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 
 const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#fb923c"];
@@ -50,9 +51,17 @@ const MotionButton = motion.create(Button);
 
 export default function HeroSection() {
     const { resolvedTheme } = useTheme();
-    const isLightTheme = resolvedTheme === "light";
+    // const isLightTheme = resolvedTheme === "light";
 
-    
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      setMounted(true);
+
+    },[])
+
+    const isLightTheme = mounted && resolvedTheme === "light";
+
+
   return (
     <div className="relative min-h-[80dvh] flex flex-col">
       <motion.div
@@ -72,9 +81,11 @@ export default function HeroSection() {
             repeatType: "mirror",
           }}
           style={{
-            backgroundImage: isLightTheme 
-              ? "radial-gradient(125% 125% at 50% 0%, #f8fafc 50%, var(--color))"
-              : "radial-gradient(125% 125% at 50% 0%, #020617 50%, var(--color))",
+            backgroundImage: mounted 
+              ? (isLightTheme 
+                ? "radial-gradient(125% 125% at 50% 0%, #f8fafc 50%, var(--color))"
+                : "radial-gradient(125% 125% at 50% 0%, #020617 50%, var(--color))")
+              : "radial-gradient(125% 125% at 50% 0%, #f8fafc 50%, #f8fafc)" // Neutral light background
           }}
           className="absolute inset-0 overflow-hidden rounded-b-2xl"
         >
