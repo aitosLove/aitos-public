@@ -15,11 +15,10 @@ import {
 } from "../config/coin";
 import { getHolding, TokenOnPortfolio } from "./holding";
 import { swap } from "../defi/swap";
-import { account_v3 } from "../config/account";
-import { getNAVIPortfolio } from "../defi/naviInfo";
 
 export interface TokenOnTargetPortfolio {
   coinType: string;
+  coinSymbol: string;
   targetPercentage: number; //整数，例如20%就是20
 }
 
@@ -307,30 +306,37 @@ async function testAdjustPortfolio() {
     const targetPortfolio: TokenOnTargetPortfolio[] = [
       {
         coinType: SUI_COIN.coinType,
+        coinSymbol: SUI_COIN.coinSymbol,
         targetPercentage: 20,
       },
       {
         coinType: USDC.coinType,
+        coinSymbol: USDC.coinSymbol,
         targetPercentage: 20,
       },
       {
         coinType: NAVX.coinType,
+        coinSymbol: NAVX.coinSymbol,
         targetPercentage: 10,
       },
       {
         coinType: SEND.coinType,
+        coinSymbol: SEND.coinSymbol,
         targetPercentage: 10,
       },
       {
         coinType: DEEP.coinType,
+        coinSymbol: DEEP.coinSymbol,
         targetPercentage: 10,
       },
       {
         coinType: CETUS.coinType,
+        coinSymbol: CETUS.coinSymbol,
         targetPercentage: 10,
       },
       {
         coinType: NS.coinType,
+        coinSymbol: NS.coinSymbol,
         targetPercentage: 20,
       },
     ];

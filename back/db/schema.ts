@@ -61,6 +61,7 @@ export const actionStateTable = pgTable("action_state", {
   timestamp: timestamp().defaultNow().notNull(),
   action: text().notNull(),
   reason: text().notNull(),
+  details: jsonb().notNull(),
 });
 
 export const eventsTable = pgTable("events", {

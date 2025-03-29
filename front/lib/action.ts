@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { insightStateTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { TokenOnTargetPortfolio } from "@/types/portfolio";
 
 interface PriceData {
   value: number;
@@ -159,14 +160,25 @@ export async function getNewestHolding() {
   }
 }
 
+export interface PositionHistory {
+  timestamp: Date;
+  action: string;
+  reason: string;
+  details: {
+    target_portfolio: TokenOnTargetPortfolio[];
+  };
+}
+
 export async function getActions() {
   try {
-    return db.query.actionStateTable.findMany({
+    const result = (await db.query.actionStateTable.findMany({
       orderBy: (actionStateTable, { desc }) => [
         desc(actionStateTable.timestamp),
       ],
       limit: 10,
-    });
+    })) as PositionHistory[];
+
+    return result;
   } catch (e) {
     console.log(e);
   }
@@ -174,7 +186,7 @@ export async function getActions() {
 
 export async function getTgMessageRecord() {
   try {
-    return db.query.tgMessageTable.findMany({
+    return await db.query.tgMessageTable.findMany({
       orderBy: (tgMessageTable, { desc }) => [desc(tgMessageTable.sentAt)],
       limit: 20,
     });

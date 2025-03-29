@@ -1,10 +1,10 @@
 import type { Agent } from "@/src/agent";
-import { analysis_config } from "../config/cmc-market-analysis";
 import { insightStateTable, marketStateTable } from "@/db/schema";
 import type { InvestmentState } from "../market/cmc";
 
 import { getNewestMarketInstruct } from "@/db/getInstruct";
 import { db } from "@/db";
+import { analysis_portfolio } from "../config/cmc-market-analysis";
 
 export function updateInsight(agent: Agent, investmentState: InvestmentState) {
   const insightsTask = agent.taskManager.createTask<null>({
@@ -14,7 +14,7 @@ export function updateInsight(agent: Agent, investmentState: InvestmentState) {
     callback: async () => {
       try {
         const { formattedString, marketData } =
-          investmentState.generateRate(analysis_config);
+          investmentState.generateRate(analysis_portfolio);
 
         console.log(marketData);
         console.log("-----");
@@ -96,11 +96,11 @@ async function getMarketInsightPrompt() {
   ${preference_instruct}
   
   [Potential Assets Indicators Interpretation] & [All these tokens are SUI ecosystem tokens]
-  ${analysis_config
-    .filter((coin) => coin.ratioToSui)
-    .filter((coin) => coin.altcoin)
-    .filter((coin) => coin.enabled)
-    .map((coin) => `- ${coin.ratioToSui}`)
+  ${analysis_portfolio
+    .map(
+      (coin) =>
+        `- ${coin.assetA.symbol}/ ${coin.assetB.symbol}: ${coin.A_on_B_introduction}`
+    )
     .join("\n")}
   
   [ratio data]

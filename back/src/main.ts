@@ -22,7 +22,7 @@ async function main() {
   // enableHookModule(agent);
 
   enableInvestmentModule(agent);
-  console.log("[main] Agent started with Suikai module enabled.");
+  console.log("[main] Agent started with Suikai V4 module enabled.");
 
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");

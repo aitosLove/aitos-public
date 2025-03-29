@@ -65,33 +65,6 @@ function createPortfolioSchema(tokens: SuiCoin[]) {
 //     .number()
 //     .min(0)
 //     .max(100)
-//     .describe("The weight of USDC holding in the portfolio"),
-//   navx_weight: z
-//     .number()
-//     .min(0)
-//     .max(100)
-//     .describe("The weight of NAVX holding in the portfolio"),
-//   send_weight: z
-//     .number()
-//     .min(0)
-//     .max(100)
-//     .describe("The weight of SEND holding in the portfolio"),
-//   deep_weight: z
-//     .number()
-//     .min(0)
-//     .max(100)
-//     .describe("The weight of DEEP holding in the portfolio"),
-//   cetus_weight: z
-//     .number()
-//     .min(0)
-//     .max(100)
-//     .describe("The weight of CETUS holding in the portfolio"),
-//   ns_weight: z
-//     .number()
-//     .min(0)
-//     .max(100)
-//     .describe("The weight of SuiNS holding in the portfolio"),
-// });
 
 // 使用函数创建 portfolioParams
 const portfolioParams = createPortfolioSchema(token_portfolio);
@@ -106,6 +79,7 @@ function extractWeightsFromResult(
     return {
       coinType: token.coinType,
       targetPercentage: result[weightKey] as number,
+      coinSymbol: token.coinSymbol,
     };
   });
 }
@@ -145,27 +119,6 @@ export async function adjustPortfolio_by_AI({
               //     coinType: USDC.coinType,
               //     targetPercentage: usdc_weight,
               //   },
-              //   {
-              //     coinType: NAVX.coinType,
-              //     targetPercentage: navx_weight,
-              //   },
-              //   {
-              //     coinType: SEND.coinType,
-              //     targetPercentage: send_weight,
-              //   },
-              //   {
-              //     coinType: DEEP.coinType,
-              //     targetPercentage: deep_weight,
-              //   },
-              //   {
-              //     coinType: CETUS.coinType,
-              //     targetPercentage: cetus_weight,
-              //   },
-              //   {
-              //     coinType: NS.coinType,
-              //     targetPercentage: ns_weight,
-              //   },
-              // ];
 
               console.log(`Thinking:`, thinking);
               console.log(`Target portfolio:`, target_portfolio);
@@ -182,6 +135,9 @@ export async function adjustPortfolio_by_AI({
                         }
                       )}`,
                       reason: thinking,
+                      details: {
+                        target_portfolio: target_portfolio,
+                      },
                     })
                     .then(() => {
                       console.log(`Save portfolio action in DB successfully`);

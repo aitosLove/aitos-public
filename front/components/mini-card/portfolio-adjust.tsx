@@ -3,14 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { REFRESH_INTERVAL } from "./config";
-import { getActions } from "@/lib/action";
+import { getActions, PositionHistory } from "@/lib/action";
 import { History } from "lucide-react";
-
-interface PositionHistory {
-  timestamp: string;
-  action: string;
-  reason: string;
-}
+import { TokenOnTargetPortfolio } from "@/types/portfolio";
 
 // 仓位历史记录组件
 export function PositionHistoryCard() {
@@ -22,11 +17,7 @@ export function PositionHistoryCard() {
         if (data) {
           setHistory(
             data.map((item) => {
-              return {
-                timestamp: item.timestamp.toISOString(),
-                action: item.action,
-                reason: item.reason,
-              };
+              return item;
             })
           );
         }
@@ -51,7 +42,6 @@ export function PositionHistoryCard() {
           <div className="flex flex-col items-start">
             {/* <History className="h-6 w-6" /> */}
             Position Adjustments
-            <p className="text-sm font-normal">Driven by Navi </p>
           </div>
         </CardTitle>
       </CardHeader>
@@ -63,9 +53,11 @@ export function PositionHistoryCard() {
               className="rounded-lg border bg-background p-4 hover:border-sky-300 hover:shadow-sm hover:shadow-sky-300/50 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
-                <h3 className="font-medium text-blue-600">{item.action}</h3>
+                <h3 className="font-medium text-blue-600">
+                  {JSON.stringify(item.details.target_portfolio)}
+                </h3>
                 <span className="text-sm text-gray-500">
-                  {formatTimestamp(item.timestamp)}
+                  {formatTimestamp(item.timestamp.toISOString())}
                 </span>
               </div>
               <p className="text-sm text-gray-600 line-clamp-3 hover:line-clamp-none transition-all">
