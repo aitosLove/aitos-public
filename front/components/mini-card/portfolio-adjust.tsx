@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { REFRESH_INTERVAL } from "./config";
 import { getActions, PositionHistory } from "@/lib/action";
 import { History } from "lucide-react";
-import { TokenOnTargetPortfolio } from "@/types/portfolio";
 
 // 仓位历史记录组件
 export function PositionHistoryCard() {

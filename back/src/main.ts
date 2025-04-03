@@ -9,10 +9,10 @@
  */
 
 import { Agent } from "./agent";
+// import { enableInvestmentModule } from "./modules/wonderland-v1";
 import { enableInvestmentModule } from "./modules/suikai_v4";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
-import { HttpsProxyAgent } from "https-proxy-agent";
 import { enableTgInsightModule } from "./modules/tg/throw_insight";
 
 export const agent = new Agent();
