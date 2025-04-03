@@ -54,7 +54,7 @@ export class TelegramBotManager {
 
       this.registerSystemListeners(agent);
       this.registerDefaultCommands();
-      this.registerCommandHandler();
+      this.registerCommandHandler(agent);
     }
     return this.bot;
   }
@@ -63,6 +63,15 @@ export class TelegramBotManager {
     agent.sensing.registerListener((evt: AgentEvent) => {
       // Handle agent events here
       console.log("Agent event received:", evt);
+    });
+  }
+
+  emitSystemEvents(agent: Agent) {
+    agent.sensing.emitEvent({
+      type: "TELEGRAM_REQUEST",
+      description: "User requests from telegram, agent should respond.",
+      payload: {},
+      timestamp: Date.now(),
     });
   }
 
@@ -75,7 +84,7 @@ export class TelegramBotManager {
       handler: async (msg) => {
         const helpText = this.generateHelpText();
         await this.bot!.sendMessage(msg.chat.id, helpText);
-      }
+      },
     });
 
     // Register test command
@@ -83,12 +92,12 @@ export class TelegramBotManager {
     //   command: "test",
     //   description: "Run a test command to verify bot functionality",
     //   handler: async (msg, args) => {
-    //     const testMessage = args 
-    //       ? `Test command executed with args: ${args}` 
+    //     const testMessage = args
+    //       ? `Test command executed with args: ${args}`
     //       : "Test command executed successfully!";
-          
+
     //     console.log(`[Telegram] Test command executed by user ${msg.from?.username || msg.from?.id}`);
-        
+
     //     // Create a mock response with system details
     //     const mockSystemInfo = {
     //       status: "operational",
@@ -97,7 +106,7 @@ export class TelegramBotManager {
     //       connections: 3,
     //       timestamp: new Date().toISOString()
     //     };
-        
+
     //     const response = `✅ ${testMessage}\n\n` +
     //       `🤖 *System Info*\n` +
     //       `Status: ${mockSystemInfo.status}\n` +
@@ -105,14 +114,14 @@ export class TelegramBotManager {
     //       `Memory: ${mockSystemInfo.memory}\n` +
     //       `Active connections: ${mockSystemInfo.connections}\n` +
     //       `Timestamp: ${mockSystemInfo.timestamp}`;
-          
+
     //     await this.bot!.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" });
     //   }
     // });
   }
 
   // Register command handler to process incoming messages
-  private registerCommandHandler() {
+  private registerCommandHandler(agent:Agent) {
     if (!this.bot) return;
 
     // Process all incoming messages
@@ -121,21 +130,41 @@ export class TelegramBotManager {
       if (msg.text && msg.text.startsWith("/")) {
         const [commandText, ...args] = msg.text.slice(1).split(" ");
         const commandName = commandText.toLowerCase();
-        
+
         // Find the appropriate handler
-        const handler = this.commandHandlers.find(h => h.command === commandName);
-        
+        const handler = this.commandHandlers.find(
+          (h) => h.command === commandName
+        );
+
         if (handler) {
           console.log(`[Telegram] Executing command: ${commandName}`);
+          this.emitSystemEvents(agent)
           try {
             await handler.handler(msg, args.join(" "));
           } catch (error) {
-            console.error(`[Telegram] Error executing command ${commandName}:`, error);
-            await this.bot!.sendMessage(msg.chat.id, `Error executing command: ${error.message}`);
-          }
+            console.error(
+              `[Telegram] Error executing command ${commandName}:`,
+              error
+            );
+          
+            if (error instanceof Error) {
+              await this.bot!.sendMessage(
+                msg.chat.id,
+                `Error executing command: ${error.message}`
+              );
+            } else {
+              await this.bot!.sendMessage(
+                msg.chat.id,
+                `Error executing command: An unknown error occurred`
+              );
+            }
+          }   
         } else {
           // Unknown command
-          await this.bot!.sendMessage(msg.chat.id, `Unknown command: ${commandName}. Use /help to see available commands.`);
+          await this.bot!.sendMessage(
+            msg.chat.id,
+            `Unknown command: ${commandName}. Use /help to see available commands.`
+          );
         }
       } else {
         // Handle regular messages
@@ -154,11 +183,11 @@ export class TelegramBotManager {
   // Generate help text from registered commands
   private generateHelpText(): string {
     let helpText = "🤖 <b>Available Commands</b>\n\n";
-    
-    this.commandHandlers.forEach(handler => {
+
+    this.commandHandlers.forEach((handler) => {
       helpText += `/${handler.command} - ${handler.description}\n`;
     });
-    
+
     return helpText;
   }
 

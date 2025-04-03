@@ -8,7 +8,7 @@ import { insightStateTable, tgMessageTable } from "@/db/schema";
 import cron from "node-cron";
 import { TelegramBotManager } from "./bot_manager";
 import { eq } from "drizzle-orm";
-import { registerInsightCommands } from "./insight-commands"
+import { registerInsightCommands } from "./handle-commands";
 
 export interface TGPayload {
   //   chatId: number;
@@ -33,7 +33,7 @@ export interface UpdateInsightEventPayload {}
 
 export type TGTask = AgentTask<TGPayload>;
 
-class InvestmentState {
+export class InvestmentState {
   private state: Map<string, any> = new Map();
 
   async getInsightContent({
@@ -56,18 +56,7 @@ class InvestmentState {
     }
   }
 
-  async storeInsightRecord({ content }: { content: string }): Promise<void> {
-    try {
-      // 同时存储 insightId 用于后续追踪
-      await db.insert(tgMessageTable).values({
-        content,
-        status: "sent",
-      });
-    } catch (error) {
-      console.error("Failed to store record:", error);
-      throw new Error("Failed to store insight record");
-    }
-  }
+  
 
   set(key: string, value: any) {
     this.state.set(key, value);
@@ -94,19 +83,19 @@ class InvestmentManager {
     // 初始化bot并连接Agent
     const botManager = TelegramBotManager.getInstance();
     botManager.initializeBot(this.agent);
-    
+
     // Register insight commands
     registerInsightCommands(botManager);
 
     // 注册事件监听
-    const commandHandler = this.agent.sensing.registerListener(
-      (evt: AgentEvent) => {
-        if (evt.type === "TELEGRAM_COMMAND") {
-          this.handleTelegramCommand(evt.payload);
-        }
-      }
-    );
-    this.offListeners.push(commandHandler);
+    // const commandHandler = this.agent.sensing.registerListener(
+    //   (evt: AgentEvent) => {
+    //     if (evt.type === "TELEGRAM_COMMAND") {
+    //       this.handleTelegramCommand(evt.payload);
+    //     }
+    //   }
+    // );
+    // this.offListeners.push(commandHandler);
 
     // 新增INSIGHT事件监听
     const insightHandler = this.agent.sensing.registerListener(
@@ -160,7 +149,7 @@ class InvestmentManager {
         try {
           // 1. 获取insight内容
           // console.log("getting new insight content");
-          
+
           // 换数据库了记得改这个地方拿insight
           const content = "another useless mock market insight!";
           // const content = await this.localState.getInsightContent({
@@ -174,7 +163,7 @@ class InvestmentManager {
 
           if (success) {
             // 3. 存储发送记录
-            await this.localState.storeInsightRecord({ content });
+            await storeMessageRecord({ content });
             // this.agent.logger.info(`Insight ${result.insightId} sent successfully`);
           }
         } catch (error) {
@@ -196,14 +185,9 @@ class InvestmentManager {
   }
 
   private handleTelegramCommand(payload: any) {
-    if (payload.command === "/market_insight") {
-      console.log("/coin_price command")
-      this.botManager.sendMessage(
-        JSON.stringify({
-          BTC: { source: "BTC/USD in Binance" },
-          ETH: { source: "ETH/USD in Binance" },
-        })
-      );
+    if (payload.command === "/coin_price") {
+      console.log("/coin_price command");
+      this.botManager.sendMessage("mock coin prices");
     }
   }
 }
@@ -215,4 +199,18 @@ export function enableTgInsightModule(agent: Agent) {
 
   // 若后续想关闭
   // scheduleMgr.teardown();
+}
+
+
+export async  function storeMessageRecord({ content }: { content: string }): Promise<void> {
+  try {
+    // 同时存储 insightId 用于后续追踪
+    await db.insert(tgMessageTable).values({
+      content,
+      status: "sent",
+    });
+  } catch (error) {
+    console.error("Failed to store record:", error);
+    throw new Error("Failed to store insight record");
+  }
 }
