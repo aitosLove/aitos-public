@@ -8,6 +8,7 @@ import { insightStateTable, tgMessageTable } from "@/db/schema";
 import cron from "node-cron";
 import { TelegramBotManager } from "./bot_manager";
 import { eq } from "drizzle-orm";
+import { registerInsightCommands } from "./insight-commands"
 
 export interface TGPayload {
   //   chatId: number;
@@ -91,7 +92,11 @@ class InvestmentManager {
 
   init() {
     // 初始化bot并连接Agent
-    this.botManager.initializeBot(this.agent);
+    const botManager = TelegramBotManager.getInstance();
+    botManager.initializeBot(this.agent);
+    
+    // Register insight commands
+    registerInsightCommands(botManager);
 
     // 注册事件监听
     const commandHandler = this.agent.sensing.registerListener(
@@ -115,7 +120,7 @@ class InvestmentManager {
     this.offListeners.push(insightHandler);
 
     // 设置定时任务
-    this.setupPriceScheduler();
+    // this.setupPriceScheduler();
 
     this.agent.sensing.registerListener((evt: AgentEvent) => {
       if (evt.type === "UPDATE_RATE_EVENT") {
@@ -125,25 +130,25 @@ class InvestmentManager {
   }
 
   // 模拟事件泵
-  private setupPriceScheduler() {
-    cron.schedule("*/10 * * * * *", () => {
-      this.agent.sensing.emitEvent({
-        type: "UPDATE_INSIGHT_COMPLETE",
-        description: "Price updated. Now you should update insight.",
-        payload: {},
-        timestamp: Date.now(),
-      });
-      // console.log("new insight event pumped");
+  // private setupPriceScheduler() {
+  //   cron.schedule("*/10 * * * * *", () => {
+  //     this.agent.sensing.emitEvent({
+  //       type: "UPDATE_INSIGHT_COMPLETE",
+  //       description: "Price updated. Now you should update insight.",
+  //       payload: {},
+  //       timestamp: Date.now(),
+  //     });
+  //     // console.log("event pump online");
 
-      // this.createAutomatedTask({
-      //   source: "BTC/USD in Binance: $61,234.56",
-      // });
+  //     // this.createAutomatedTask({
+  //     //   source: "BTC/USD in Binance: $61,234.56",
+  //     // });
 
-      // this.createAutomatedTask({
-      //   source: "ETH/USD in Binance: $3,456.78",
-      // });
-    });
-  }
+  //     // this.createAutomatedTask({
+  //     //   source: "ETH/USD in Binance: $3,456.78",
+  //     // });
+  //   });
+  // }
 
   // 任务
   private handleNewInsight(payload: InsightPayload) {
@@ -191,7 +196,8 @@ class InvestmentManager {
   }
 
   private handleTelegramCommand(payload: any) {
-    if (payload.command === "/coin_price") {
+    if (payload.command === "/market_insight") {
+      console.log("/coin_price command")
       this.botManager.sendMessage(
         JSON.stringify({
           BTC: { source: "BTC/USD in Binance" },
