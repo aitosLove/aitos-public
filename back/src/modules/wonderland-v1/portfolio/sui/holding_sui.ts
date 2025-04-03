@@ -22,7 +22,7 @@ const headers = {
   "x-api-key": process.env.BLUEBERRY_API,
 };
 
-export async function getHolding() {
+export async function getHolding_sui() {
   try {
     // 发起请求
     const response: AxiosResponse<BalanceOnScan[]> = await axios.get(url, {

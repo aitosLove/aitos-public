@@ -3,9 +3,10 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { getHolding } from "./holding_moralis";
+import { getHolding } from "./getHolding";
 import { TokenOnPortfolio } from "../config/holding-type";
-import { swap } from "../defi/swap";
+// import { swap } from "../defi/1inch/swap";
+import { swap } from "../defi/panora/swap";
 import { STABLE_COIN } from "../config/portfolio";
 export interface TokenOnTargetPortfolio {
   coinType: string;

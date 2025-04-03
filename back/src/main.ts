@@ -10,7 +10,7 @@
 
 import { Agent } from "./agent";
 // import { enableInvestmentModule } from "./modules/wonderland-v1";
-import { enableSuikaiModule } from "./modules/suikai_v4";
+import { enableSuikaiModule } from "./modules/suikai/suikai_v4";
 import { enableWonderlandModule } from "./modules/wonderland-v1";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";

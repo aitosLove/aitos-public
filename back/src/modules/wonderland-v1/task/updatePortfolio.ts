@@ -1,7 +1,7 @@
 import type { Agent } from "@/src/agent";
 import { adjustPortfolio_by_AI } from "../portfolio/ai-helper";
 import { db } from "@/db";
-import { getHolding } from "../portfolio/holding_moralis";
+import { getHolding } from "../portfolio/getHolding";
 
 export function updatePortfolio(agent: Agent) {
   const portfolioTask = agent.taskManager.createTask<null>({

@@ -1,7 +1,7 @@
 import type { Agent } from "@/src/agent";
 import { db } from "@/db";
 import { holdingStateTable } from "@/db/schema";
-import { getHolding } from "../portfolio/holding_moralis";
+import { getHolding } from "../portfolio/getHolding";
 export function updateHolding(agent: Agent) {
   const holdingTask = agent.taskManager.createTask<null>({
     type: "UPDATE_HOLDING_TASK",

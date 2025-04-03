@@ -1,6 +1,6 @@
 import type { Agent } from "@/src/agent";
 import { getPoolInfo } from "../defi/navi/naviInfo";
-import { getHolding } from "../portfolio/holding_moralis";
+import { getHolding } from "../portfolio/getHolding";
 import { getDefiInsightPrompt } from "../config/prompt";
 import { db } from "@/db";
 

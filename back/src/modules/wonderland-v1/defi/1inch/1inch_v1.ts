@@ -5,8 +5,8 @@ import {
   walletAddress,
   publicClient,
   walletClient,
-} from "../config/bsc/account";
-import { CHAIN_CONFIG } from "../config/chain-config";
+} from "../../config/bsc/account";
+import { CHAIN_CONFIG } from "../../config/chain-config";
 
 const API_KEY = process.env.ONE_INCH_API_KEY;
 
