@@ -74,7 +74,7 @@ class InvestmentManager {
   }
 }
 
-export function enableInvestmentModule(agent: Agent) {
+export function enableWonderlandModule(agent: Agent) {
   const investmentMgr = new InvestmentManager(agent);
   investmentMgr.init();
 

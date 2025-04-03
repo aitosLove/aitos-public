@@ -10,7 +10,8 @@
 
 import { Agent } from "./agent";
 // import { enableInvestmentModule } from "./modules/wonderland-v1";
-import { enableInvestmentModule } from "./modules/suikai_v4";
+import { enableSuikaiModule } from "./modules/suikai_v4";
+import { enableWonderlandModule } from "./modules/wonderland-v1";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
 import { enableTgInsightModule } from "./modules/tg/throw_insight";
@@ -21,8 +22,11 @@ async function main() {
   // enableScheduleModule(agent);
   // enableHookModule(agent);
 
-  enableInvestmentModule(agent);
-  console.log("[main] Agent started with Suikai V4 module enabled.");
+  // enableSuikaiModule(agent);
+  // console.log("[main] Agent started with Suikai V4 module enabled.");
+
+  enableWonderlandModule(agent);
+  console.log("[main] Agent started with Wonderland V1 module enabled.");
 
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
