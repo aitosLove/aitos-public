@@ -1,3 +1,5 @@
+// ---BSC---
+
 // import { BSC_CHAIN_CONFIG } from "./bsc/chain";
 // import { EVMCoin, USDT } from "./bsc/coin";
 
@@ -5,6 +7,7 @@
 
 // export type TOKEN_USE = EVMCoin;
 
+// ---APT---
 import { APT_CHAIN_CONFIG } from "./apt/chain";
 import { APTCoin } from "./apt/coin";
 

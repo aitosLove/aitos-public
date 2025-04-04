@@ -1,5 +1,5 @@
 import { createPublicClient, http, parseEther } from "viem";
-import { linea } from "viem/chains";
+import { bsc } from "viem/chains";
 import { createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import * as dotenv from "dotenv";
@@ -13,12 +13,12 @@ export const walletAddress = process.env.EVM_ADDRESS as `0x${string}`;
 // 初始化客户端
 export const account = privateKeyToAccount(privateKey);
 export const publicClient = createPublicClient({
-  chain: linea,
+  chain: bsc,
   transport: http(),
 });
 
 export const walletClient = createWalletClient({
   account,
-  chain: linea,
+  chain: bsc,
   transport: http(),
 });

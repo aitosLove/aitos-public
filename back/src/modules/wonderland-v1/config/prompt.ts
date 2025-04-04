@@ -1,3 +1,5 @@
+// ------BSC------
+
 // import {
 //   getDefiInsightPrompt_SUI,
 //   getMarketInsightPrompt_SUI,
@@ -18,6 +20,7 @@
 // export const getMarketInsightPrompt = getMarketInsightPrompt_BSC;
 // export const getTradingPrompt = getTradingPrompt_BSC;
 
+// ------APT------
 import {
   getDefiInsightPrompt_APT,
   getMarketInsightPrompt_APT,
