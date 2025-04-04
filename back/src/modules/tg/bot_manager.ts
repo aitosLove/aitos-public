@@ -1,8 +1,8 @@
 // src/modules/telegram/bot-manager.ts
 import TelegramBot from "node-telegram-bot-api";
-import { HttpsProxyAgent } from "https-proxy-agent";
 import { Agent } from "@/src/agent";
 import { AgentEvent } from "@/src/agent/core/EventTypes";
+import { chat_bot } from "./chat_bot";
 
 // Define command handler interface
 interface CommandHandler {
@@ -41,15 +41,8 @@ export class TelegramBotManager {
 
   public initializeBot(agent: Agent) {
     if (!this.bot) {
-      const proxyAgent = new HttpsProxyAgent("http://127.0.0.1:6789");
-
       this.bot = new TelegramBot(this.token, {
         polling: true,
-        // @ts-ignore
-        request: {
-          agent: proxyAgent,
-          timeout: 30000,
-        },
       });
 
       this.registerSystemListeners(agent);
@@ -86,42 +79,21 @@ export class TelegramBotManager {
         await this.bot!.sendMessage(msg.chat.id, helpText);
       },
     });
+    
+    this.registerCommand({
+      command: "echo",
+      description: "Repeats the message you sent",
+      handler: async (msg, args) => {
+        const usageMessage = args || "Empty message";
+        await this.bot!.sendMessage(msg.chat.id, chat_bot(usageMessage));
+      },
+    });
 
-    // Register test command
-    // this.registerCommand({
-    //   command: "test",
-    //   description: "Run a test command to verify bot functionality",
-    //   handler: async (msg, args) => {
-    //     const testMessage = args
-    //       ? `Test command executed with args: ${args}`
-    //       : "Test command executed successfully!";
-
-    //     console.log(`[Telegram] Test command executed by user ${msg.from?.username || msg.from?.id}`);
-
-    //     // Create a mock response with system details
-    //     const mockSystemInfo = {
-    //       status: "operational",
-    //       uptime: "3 days, 7 hours",
-    //       memory: "512MB / 2GB used",
-    //       connections: 3,
-    //       timestamp: new Date().toISOString()
-    //     };
-
-    //     const response = `✅ ${testMessage}\n\n` +
-    //       `🤖 *System Info*\n` +
-    //       `Status: ${mockSystemInfo.status}\n` +
-    //       `Uptime: ${mockSystemInfo.uptime}\n` +
-    //       `Memory: ${mockSystemInfo.memory}\n` +
-    //       `Active connections: ${mockSystemInfo.connections}\n` +
-    //       `Timestamp: ${mockSystemInfo.timestamp}`;
-
-    //     await this.bot!.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" });
-    //   }
-    // });
+    
   }
 
   // Register command handler to process incoming messages
-  private registerCommandHandler(agent:Agent) {
+  private registerCommandHandler(agent: Agent) {
     if (!this.bot) return;
 
     // Process all incoming messages
@@ -138,7 +110,7 @@ export class TelegramBotManager {
 
         if (handler) {
           console.log(`[Telegram] Executing command: ${commandName}`);
-          this.emitSystemEvents(agent)
+          this.emitSystemEvents(agent);
           try {
             await handler.handler(msg, args.join(" "));
           } catch (error) {
@@ -146,7 +118,7 @@ export class TelegramBotManager {
               `[Telegram] Error executing command ${commandName}:`,
               error
             );
-          
+
             if (error instanceof Error) {
               await this.bot!.sendMessage(
                 msg.chat.id,
@@ -158,7 +130,7 @@ export class TelegramBotManager {
                 `Error executing command: An unknown error occurred`
               );
             }
-          }   
+          }
         } else {
           // Unknown command
           await this.bot!.sendMessage(
