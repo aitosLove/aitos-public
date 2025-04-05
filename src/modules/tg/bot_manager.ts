@@ -80,8 +80,19 @@ export class TelegramBotManager {
     });
 
     this.registerCommand({
+      command: "start",
+      description: "Start chat with the bot",
+      handler: async (msg) => {
+        const welcomeMessage =
+          "Welcome to the Aitos Bot! Use /help to see available commands.";
+        await this.bot!.sendMessage(msg.chat.id, welcomeMessage);
+      },
+    });
+
+    this.registerCommand({
       command: "chat",
-      description: "Repeats the message you sent",
+
+      description: "Chat with the bot",
       handler: async (msg, args) => {
         const usageMessage = args || "Empty Message";
 
@@ -169,15 +180,38 @@ export class TelegramBotManager {
           }
         } else {
           // Unknown command
-          await this.bot!.sendMessage(
-            msg.chat.id,
-            `Unknown command: ${commandName}. Use /help to see available commands.`
-          );
+          // await this.bot!.sendMessage(
+          //   msg.chat.id,
+          //   `Unknown command: ${commandName}. Use /help to see available commands.`
+          // );
         }
       } else {
         // Handle regular messages
-        console.log(`[Telegram] Received message: ${msg.text}`);
+        // console.log(`[Telegram] Received message: ${msg.text}`);
         // Implement your message handling logic here
+
+        const reply = await agent.thinking.response({
+          input: msg.text || "Empty Message",
+          model: "large",
+          platform: "qwen",
+          systemPrompt: `
+You are a professional crypto assistant on Aptos blockchain. Your name is AITOS. You can answer question about Aptos and AITOS. 
+
+AITOS is an easy-to-use, automated, and scalable AI assistant on Aptos. AITOS allows users to easily per form functions such as
+- Analysis
+- Investment
+- Defi Management
+- etc.
+on the Aptos blockchain without needing any prior blockchain-related knowledge and without requiring excessive effort.
+In a word, select modules you need and deposit to your wallet, then dive into Aptos.
+
+
+And, you can remind user to use these command to control their AITOS agent:
+- market_insight - Get newest insight of Aptos Market
+- refresh_market_insight - Refresh market insight stored in Aitos
+- adjust_portfolio - Adjust your portfolio right now`,
+        });
+        await this.bot!.sendMessage(msg.chat.id, reply);
       }
     });
   }
