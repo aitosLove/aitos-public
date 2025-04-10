@@ -73,6 +73,4 @@ function generateUsedAssets(
   return Array.from(assetSet);
 }
 
-// const used_assets = [BTC, ETH, SUI, DEEP, CETUS, SEND, NS, NAVX];
-
 const used_assets = generateUsedAssets(analysis_portfolio);

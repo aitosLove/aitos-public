@@ -21,18 +21,18 @@ export function updateInsight(agent: Agent, investmentState: InvestmentState) {
         console.log("-----");
 
         const preference_instruct = await getNewestMarketInstruct();
-        const sui_instruct = await getMarketInsightPrompt({
+        const instruct = await getMarketInsightPrompt({
           analysis_portfolio,
           preference_instruct,
         });
 
-        console.log(`system prompt is ${sui_instruct}${formattedString}`);
+        console.log(`system prompt is ${instruct}${formattedString}`);
         agent.thinking
           .response({
             model: "reason",
             platform: "deepseek",
             input: `
-${sui_instruct}
+${instruct}
 ${formattedString}
 `,
             systemPrompt: `You are a professional crypto investor. Please analyze the current market situation.`,
@@ -86,25 +86,3 @@ ${formattedString}
     },
   });
 }
-
-// async function getMarketInsightPrompt() {
-//   const preference_instruct = await getNewestMarketInstruct();
-//   const sui_instruct = `
-//   Here are a few crypto asset ratio data for one month. Please analyze it. What do you think of the current market situation? And what's your opinion of BNB and its ecosystem?
-
-//   [Prefenence Instruct]
-//   ${preference_instruct}
-
-//   [Potential Assets Indicators Interpretation] & [All these tokens are BNB ecosystem tokens]
-//   ${analysis_portfolio
-//     .map(
-//       (coin) =>
-//         `- ${coin.assetA.symbol}/ ${coin.assetB.symbol}: ${coin.A_on_B_introduction}`
-//     )
-//     .join("\n")}
-
-//   [ratio data]
-//   `;
-
-//   return sui_instruct;
-// }

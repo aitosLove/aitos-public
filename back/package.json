@@ -16,7 +16,6 @@
     "@aptos-labs/ts-sdk": "^1.38.0",
     "@moralisweb3/common-evm-utils": "^2.27.2",
     "@mysten/sui": "^1.24.0",
-    "@mysten/sui.js": "^0.54.1",
     "@neondatabase/serverless": "^0.10.4",
     "@panoraexchange/swap-sdk": "^1.0.8",
     "@types/node-cron": "^3.0.11",

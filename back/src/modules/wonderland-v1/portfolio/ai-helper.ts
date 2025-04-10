@@ -68,21 +68,6 @@ export async function adjustPortfolio_by_AI({
     const { validPortfolio } = await getHolding();
     const preference_instruct = await getNewestTradingInstruct();
 
-    //     const systemPrompt = `
-    // You are a professional trader and you have a portfolio on SUI blockchain, which includes SUI, USDC and other potential altcoins. You want to adjust the portfolio to get best profit according to market situation. You main method is to adjust the weight of each token holding.
-
-    // User Preference is :${preference_instruct}
-
-    // Current portfolio is ${validPortfolio.map((coin) => {
-    //             return `
-    //               ${coin.coinSymbol}:${coin.percentage}%(value:${coin.balanceUsd})
-    //               `;
-    //           })}
-
-    // Introduction of all tokens are ${token_portfolio.map((token) => {
-    //             return `${token.coinName}(${token.coinSymbol}):${token.description}\n`;
-    //           })} \n`
-
     const systemPrompt = getTradingPrompt({
       current_holding: validPortfolio,
       token_portfolio: token_portfolio,
@@ -95,7 +80,7 @@ export async function adjustPortfolio_by_AI({
       tools: {
         adjust_portfolio: tool({
           description:
-            "This tool is used to adjust the portfolio. You can adjust weight of SUI holding to adjust the portfolio. Notice that the sum of all weights should be 100.",
+            "This tool is used to adjust the portfolio. You can adjust the portfolio. Notice that the sum of all weights should be 100.",
           parameters: portfolioParams,
           execute: async (result) => {
             const { thinking } = result;
@@ -130,7 +115,7 @@ export async function adjustPortfolio_by_AI({
                     });
                 })
                 .catch((e) => {
-                  console.log(`Error in adjustToTargetSUIProportion`);
+                  console.log(`Error in adjustToTargProportion`);
                   console.log(e);
                 });
 

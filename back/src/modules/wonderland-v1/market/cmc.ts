@@ -112,14 +112,6 @@ const calculateChangePercentage = (
 export class InvestmentState {
   private state: Map<string, any> = new Map(); // key: `asset-time`, value: price
 
-  // 固定的比值对
-  private fixedRatioPairs: { name: string; assetA: string; assetB: string }[] =
-    [
-      { name: "ETH/BTC", assetA: "ETH", assetB: "BTC" },
-      { name: "SUI/ETH", assetA: "SUI", assetB: "ETH" },
-      { name: "SUI/BTC", assetA: "SUI", assetB: "BTC" },
-    ];
-
   setPrice(asset: string, interval: string, price: number) {
     const key = `${asset}-${interval}`;
     this.state.set(key, price);
@@ -182,33 +174,6 @@ export class InvestmentState {
   generateRate(ratePairs: CMC_TOKEN_RATE_ANALYSIS[]) {
     const insightMap: { [key: string]: string[] } = {};
     const marketData: PairInfo[] = [];
-
-    // // 处理固定的比值对
-    // this.fixedRatioPairs.forEach(({ name, assetA, assetB }) => {
-    //   insightMap[name] = [];
-    //   const pairInfo = this.generatePairInfo(assetA, assetB);
-    //   marketData.push(pairInfo);
-
-    //   intervals.forEach((interval) => {
-    //     const changeStr = pairInfo[interval].change.toFixed(2) + "%";
-    //     insightMap[name].push(`${interval} ${changeStr}`);
-    //   });
-    // });
-
-    // // 动态生成 "XXX/SUI" 比值对
-    // coins.forEach((coin) => {
-    //   if (coin.enabled && coin.ratioToSui && coin.name !== "SUI") {
-    //     const pairName = `${coin.name}/SUI`;
-    //     insightMap[pairName] = [];
-    //     const pairInfo = this.generatePairInfo(coin.name, "SUI");
-    //     marketData.push(pairInfo);
-
-    //     intervals.forEach((interval) => {
-    //       const changeStr = pairInfo[interval].change.toFixed(2) + "%";
-    //       insightMap[pairName].push(`${interval} ${changeStr}`);
-    //     });
-    //   }
-    // });
 
     ratePairs.forEach(({ assetA, assetB, A_on_B_introduction }) => {
       const pairName = `${assetA.symbol}/${assetB.symbol}`;

@@ -5,7 +5,7 @@ import { getHolding } from "../portfolio/getHolding";
 export function updateHolding(agent: Agent) {
   const holdingTask = agent.taskManager.createTask<null>({
     type: "UPDATE_HOLDING_TASK",
-    descrpition: "Update Holding using SUI Scan",
+    descrpition: "Update Holding using getHolding Module",
     payload: null,
     callback: async () => {
       try {
