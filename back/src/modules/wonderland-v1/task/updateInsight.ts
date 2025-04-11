@@ -1,11 +1,11 @@
 import type { Agent } from "@/src/agent";
 import { insightStateTable, marketStateTable } from "@/db/schema";
 import type { InvestmentState } from "../market/cmc";
-import { getMarketInsightPrompt } from "../config/prompt";
+import { getMarketInsightPrompt } from "../config";
 
 import { getNewestMarketInstruct } from "@/db/getInstruct";
 import { db } from "@/db";
-import { analysis_portfolio } from "../config/cmc-market-analysis";
+import { analysis_portfolio } from "../config";
 
 export function updateInsight(agent: Agent, investmentState: InvestmentState) {
   const insightsTask = agent.taskManager.createTask<null>({

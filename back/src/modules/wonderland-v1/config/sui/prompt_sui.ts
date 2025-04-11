@@ -1,5 +1,5 @@
 import { CMC_TOKEN_RATE_ANALYSIS } from "../cmc/type";
-import { TOKEN_USE } from "../chain-config";
+import { TOKEN_USE } from "..";
 import { TokenOnPortfolio } from "../holding-type";
 
 export function getMarketInsightPrompt_SUI({

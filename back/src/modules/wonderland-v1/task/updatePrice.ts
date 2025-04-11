@@ -2,9 +2,8 @@ import type { Agent } from "@/src/agent";
 import pLimit from "p-limit";
 import { getHistoricalData } from "../market/cmc";
 import type { InvestmentState } from "../market/cmc";
-// import { analysis_config } from "../config/cmc-market-analysis";
-import { analysis_portfolio } from "../config/cmc-market-analysis";
-import { CMC_TOKEN, CMC_TOKEN_RATE_ANALYSIS } from "../config/cmc/type";
+import { analysis_portfolio } from "../config";
+import { CMC_TOKEN, CMC_TOKEN_RATE_ANALYSIS } from "../config";
 
 export function updatePrice(agent: Agent, investmentState: InvestmentState) {
   const priceUpdateTask = agent.taskManager.createTask<null>({

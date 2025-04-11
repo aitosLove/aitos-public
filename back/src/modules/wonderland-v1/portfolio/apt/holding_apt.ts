@@ -1,8 +1,8 @@
 import Axios, { AxiosResponse } from "axios";
 
 import { setupCache } from "axios-cache-interceptor";
-import { select_portfolio } from "../../config/portfolio";
-import { TokenOnPortfolio } from "../../config/holding-type";
+import { select_portfolio } from "../../config";
+import { TokenOnPortfolio } from "../../config";
 import { account, aptosClient } from "../../config/apt/account";
 import * as dotenv from "dotenv";
 dotenv.config();

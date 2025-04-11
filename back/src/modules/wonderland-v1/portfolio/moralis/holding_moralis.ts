@@ -2,9 +2,9 @@ import Axios, { AxiosResponse } from "axios";
 import Moralis from "moralis";
 
 import { setupCache } from "axios-cache-interceptor";
-import { select_portfolio } from "../../config/portfolio";
+import { select_portfolio } from "../../config";
 import * as dotenv from "dotenv";
-import { TokenOnPortfolio } from "../../config/holding-type";
+import { TokenOnPortfolio } from "../../config";
 dotenv.config();
 
 const instance = Axios.create();

@@ -134,6 +134,9 @@ importers:
       exa-js:
         specifier: ^1.4.10
         version: 1.4.10
+      framer-motion:
+        specifier: ^12.6.3
+        version: 12.6.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0

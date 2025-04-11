@@ -5,8 +5,8 @@ import { db } from "@/db";
 import { actionStateTable } from "@/db/schema";
 import { TokenOnTargetPortfolio, adjustPortfolio } from "./core";
 import { getHolding } from "./getHolding";
-import { TOKEN_USE } from "../config/chain-config";
-import { select_portfolio } from "../config/portfolio";
+import { TOKEN_USE } from "../config";
+import { select_portfolio } from "../config";
 
 import { getNewestTradingInstruct } from "@/db/getInstruct";
 import { getTradingPrompt } from "../config/prompt";
