@@ -11,7 +11,7 @@
 import { Agent } from "./agent";
 // import { enableInvestmentModule } from "./modules/wonderland-v1";
 import { enableSuikaiModule } from "./modules/suikai/suikai_v4";
-import { enableWonderlandModule } from "./modules/wonderland-v1";
+import { enableWonderlandModule } from "./modules/use-v2";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
 import { enableTgInsightModule } from "./modules/tg/throw_insight";
@@ -26,7 +26,7 @@ async function main() {
   // console.log("[main] Agent started with Suikai V4 module enabled.");
 
   enableWonderlandModule(agent);
-  console.log("[main] Agent started with Wonderland V1 module enabled.");
+  console.log("[main] Agent started with Wonderland V2 module enabled.");
 
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
