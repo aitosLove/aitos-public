@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 98%;
+    --foreground: 240 24% 12%;
+    --card-background: 0 0% 99%;
+    --card-foreground: 240 24% 4%;
+    --border: 240 5% 84%;
+    --input: 240 5% 90%;
+    --primary: 240 24% 12%;
+    --primary-foreground: 240 10% 98%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 24% 12%;
+    --accent: 262 67% 58%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 240 5% 64%;
+    --muted-foreground: 240 5% 46%;
+    --destructive: 0 84% 60%;
+    --positive: 142 76% 36%;
+    --ring: 262 67% 58%;
+  }
+
+  .dark {
+    --background: 240 24% 12%;
+    --foreground: 240 10% 98%;
+    --card-background: 240 22% 18%;
+    --card-foreground: 240 10% 98%;
+    --border: 240 22% 26%;
+    --input: 240 22% 24%;
+    --primary: 240 10% 98%;
+    --primary-foreground: 240 24% 12%;
+    --secondary: 240 22% 22%;
+    --secondary-foreground: 240 10% 98%;
+    --accent: 258 67% 70%;
+    --accent-foreground: 240 24% 12%;
+    --muted: 240 22% 44%;
+    --muted-foreground: 240 10% 70%;
+    --destructive: 0 84% 60%;
+    --positive: 142 76% 56%;
+    --ring: 258 67% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Smooth animations */
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 3s ease-in-out infinite;
+}

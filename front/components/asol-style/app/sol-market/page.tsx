@@ -1,0 +1,33 @@
+import { MarketPerception } from "@/components/minicard-bsc/ratio-chart";
+import { ThoughtStream } from "@/components/minicard-bsc/insight-thinking";
+import { MarketInstructPanel } from "@/components/minicard-bsc/instruct-panel";
+
+export default function AgentDashboard() {
+  return (
+    <div className="min-h-screen bg-background p-6">
+      <div className="mx-auto max-w-7xl space-y-6">
+      <div className="flex items-center pt-4  gap-4">
+          
+            <span className="text-xl  font-semibold tracking-tight">
+              Market Dashboard
+            </span>
+     
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+          {/* Left Column - Market Analysis */}
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1 md:col-span-2">
+                <MarketPerception />
+              </div>
+              <div className="col-span-1 md:col-span-1">
+                <MarketInstructPanel />
+              </div>
+            </div>
+            <ThoughtStream />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
