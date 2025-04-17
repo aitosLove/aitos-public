@@ -257,7 +257,7 @@ export async function swap_on_jupiter({
     const transactionBinary = transaction.serialize();
 
     const signature = await connection.sendRawTransaction(transactionBinary, {
-      maxRetries: 3,
+      maxRetries: 4,
       skipPreflight: true,
     });
 
@@ -282,8 +282,9 @@ export async function swap_on_jupiter({
     }
 
     // 5. Return transaction URL
-    return `https://solscan.io/tx/${signature}/`;
     console.log(`Transaction successful: https://solscan.io/tx/${signature}/`);
+
+    return `https://solscan.io/tx/${signature}/`;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
