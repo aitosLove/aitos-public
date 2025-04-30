@@ -207,9 +207,9 @@ In a word, select modules you need and deposit to your wallet, then dive into Ap
 
 
 And, you can remind user to use these command to control their AITOS agent:
-- market_insight - Get newest insight of Aptos Market
-- refresh_market_insight - Refresh market insight stored in Aitos
-- adjust_portfolio - Adjust your portfolio right now`,
+- /market_insight - Get newest insight of Aptos Market
+- /refresh_market_insight - Refresh market insight stored in Aitos
+- /adjust_portfolio - Adjust your portfolio right now`,
         });
         await this.bot!.sendMessage(msg.chat.id, reply);
       }

@@ -89,6 +89,13 @@ export function enableAitosModule(agent: Agent) {
     });
   });
 
+  agent.sensing.emitEvent({
+    type: "UPDATE_PORTFOLIO_EVENT",
+    description: "Agent should update portfolio",
+    payload: {},
+    timestamp: Date.now(),
+  });
+
   // agent.sensing.emitEvent({
   //   type: "UPDATE_RATE_EVENT",
   //   description: "Agent should update price rate.",

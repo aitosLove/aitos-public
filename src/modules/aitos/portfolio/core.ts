@@ -5,8 +5,7 @@ dotenv.config();
 
 import { getHolding } from "./getHolding";
 import { TokenOnPortfolio } from "../config/holding-type";
-// import { swap } from "../defi/1inch/swap";
-import { swap } from "../defi/panora/swap";
+import { swap } from "../defi/hyperion/swap";
 import { STABLE_COIN } from "../config/portfolio";
 export interface TokenOnTargetPortfolio {
   coinType: string;

@@ -6,6 +6,7 @@ import {
   SigningSchemeInput,
 } from "@aptos-labs/ts-sdk";
 import Panora, { PanoraConfig } from "@panoraexchange/swap-sdk";
+import { initHyperionSDK } from "@hyperionxyz/sdk";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -23,3 +24,5 @@ export const aptosClient = new Aptos(aptosConfig);
 
 export const panoraClient = new Panora(config);
 //   console.log(account.accountAddress.toString());
+
+export const hyperionSdk = initHyperionSDK({ network: Network.MAINNET });
