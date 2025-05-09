@@ -15,6 +15,7 @@ import { enableWonderlandModule } from "./modules/use-v2";
 import { enableThrowEventModule } from "./modules/test/throw_event";
 import TelegramBot from "node-telegram-bot-api";
 import { enableTgInsightModule } from "./modules/tg/throw_insight";
+import { enableXCrawlerModule } from "./modules/x-content-crawler";
 
 export const agent = new Agent();
 
@@ -25,14 +26,19 @@ async function main() {
   // enableSuikaiModule(agent);
   // console.log("[main] Agent started with Suikai V4 module enabled.");
 
-  enableWonderlandModule(agent);
-  console.log("[main] Agent started with Wonderland V2 module enabled.");
+  // enableWonderlandModule(agent);
+  // console.log("[main] Agent started with Wonderland V2 module enabled.");
 
   // enableThrowEventModule(agent);
   // console.log("[main] Agent started with ThrowEvent module enabled.");
 
   // enableTgInsightModule(agent);
   // console.log("[main] Agent started with TG message module enabled.");
+  
+  if (process.env.userId) {
+    enableXCrawlerModule(agent, process.env.userId);
+    console.log("[main] Agent started with X crawler module enabled.");
+  }
 }
 // 启动
 main().catch((err) => console.error(err));
