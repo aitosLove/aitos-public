@@ -91,15 +91,13 @@ export type BrowserElement = Element | null;
    * Insight extracted from content
    */
   export interface ContentInsight {
-    postId: string;
-    postUrl: string | null;
-    author: string;
-    timestamp: string | null;
-    originalText: string | null;
-    insightSummary: string;
-    insightType: 'crypto_trading' | 'crypto_project' | 'crypto_general';
-    confidence: number;
+    hasValue: boolean;
+    category: 'trading_idea' | 'project_intro' | 'market_insight' | 'none';
+    // keyDetails: string[];
+    summary: string;
+    source: string;
+    username: string;
+    timestamp: string;
   }
-
 
   

@@ -13,7 +13,7 @@ import {
   jsonb,
   pgEnum,
   real,
-  serial,
+  serial
 } from 'drizzle-orm/pg-core';
 import { relations, sql, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 
@@ -161,18 +161,18 @@ export const processedPosts = pgTable('processed_posts', {
   pk: primaryKey({ columns: [table.userId, table.postId] }),
 }));
 
-// Insights table - stores insights derived from posts
-export const insights = pgTable('insights', {
+export const insights = pgTable('content_insight', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id),
   postId: text('post_id').notNull().references(() => posts.id),
-  postUrl: text('post_url'),
+  hasValue: boolean('has_value').notNull(),
+  category: text('category', { 
+    enum: ['trading_idea', 'project_intro', 'market_insight', 'none'] 
+  }).notNull(),
+  summary: text('summary').notNull(),
+  source: text('source').notNull(),
   author: text('author').notNull(),
-  timestamp: text('timestamp'),
-  originalText: text('original_text'),
-  insightSummary: text('insight_summary').notNull(),
-  insightType: text('insight_type', { enum: ['crypto_trading', 'crypto_project', 'crypto_general'] }).notNull(),
-  confidence: real('confidence').notNull(),
+  timestamp: text('timestamp').notNull(),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 

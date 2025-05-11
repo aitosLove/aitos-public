@@ -112,7 +112,7 @@ export class XCrawlerModule {
    * Process content from a specific following
    * Returns the posts that were fetched
    */
-  public async processFollowingContent(): Promise<number> {
+  public async processFollowingContent(): Promise<Following[]> {
     this.checkInitialized();
     
     const followings = await getFollowings(this.userId);
@@ -120,36 +120,14 @@ export class XCrawlerModule {
       // Pass an array with the single following object
       const updatedFollowings = await this.crawler.processUserForPosts(followings);
       // Get the first (and only) item from the returned array
-      return updatedFollowings.length;
+      return updatedFollowings;
     } catch (error) {
-      return 0;
+      return [];
     }
   }
 
 
-  /**
-   * Check if a post has been processed
-   */
-  public async isPostProcessed(postId: string): Promise<boolean> {
-    this.checkInitialized();
-    return await isPostProcessed(this.userId, postId);
-  }
 
-  /**
-   * Save a processed post
-   */
-  public async saveProcessedPost(post: XPost): Promise<void> {
-    this.checkInitialized();
-    await saveProcessedPost(this.userId, post);
-  }
-
-  /**
-   * Save an insight
-   */
-  public async saveInsight(insight: ContentInsight): Promise<void> {
-    this.checkInitialized();
-    await saveInsight(this.userId, insight);
-  }
   
   /**
    * Shutdown the module and release resources

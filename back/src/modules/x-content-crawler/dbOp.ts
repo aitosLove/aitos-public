@@ -218,6 +218,7 @@ export async function isPostProcessed(
  */
 export async function saveInsight(
   userId: string,
+  postId: string,
   insight: ContentInsight
 ): Promise<void> {
   // Ensure user exists
@@ -226,48 +227,22 @@ export async function saveInsight(
   await db.insert(insights).values({
     id: uuidv4(),
     userId,
-    postId: insight.postId,
-    postUrl: insight.postUrl,
-    author: insight.author,
+    postId,
+    hasValue: insight.hasValue,
+    category: insight.category,
+    summary: insight.summary,
+    source: insight.source,
+    author: insight.username,
     timestamp: insight.timestamp,
-    originalText: insight.originalText,
-    insightSummary: insight.insightSummary,
-    insightType: insight.insightType,
-    confidence: insight.confidence,
   });
 
+
+
   console.log(
-    `[DB] Saved insight for post ${insight.postId} for user ${userId}`
+    `[DB] Saved insight for post ${postId} for user ${userId}`
   );
 }
 
-/**
- * Get all insights for a user
- */
-export async function getInsights(userId: string): Promise<ContentInsight[]> {
-  const userInsights = await db
-    .select({
-      postId: insights.postId,
-      postUrl: insights.postUrl,
-      author: insights.author,
-      timestamp: insights.timestamp,
-      originalText: insights.originalText,
-      insightSummary: insights.insightSummary,
-      insightType: insights.insightType,
-      confidence: insights.confidence,
-    })
-    .from(insights)
-    .where(eq(insights.userId, userId));
-
-  console.log(
-    `[DB] Retrieved ${userInsights.length} insights for user ${userId}`
-  );
-  return userInsights as ContentInsight[];
-}
-
-//
-// Helper methods
-//
 
 /**
  * Ensure a user exists in the database
@@ -287,9 +262,6 @@ export async function ensureUserExists(userId: string): Promise<void> {
   }
 }
 
-/**
- * Save a post to the database
- */
 /**
  * Save or update a post in the database
  */

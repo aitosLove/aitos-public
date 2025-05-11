@@ -374,58 +374,66 @@ export class XCrawler {
     if (!this.isInitialized || !this.page) {
       throw new Error("Crawler not initialized");
     }
-  
+
     // Get the minimum hours between updates from config, default to 24 if not specified
-    const minHoursBetweenUpdates = DEFAULT_CONFIG.limits.minHoursBetweenUpdates || 24;
-    
+    const minHoursBetweenUpdates =
+      DEFAULT_CONFIG.limits.minHoursBetweenUpdates || 24;
+
     // Filter followings that haven't been updated recently enough
     const now = new Date();
     const filteredFollowings = followings.filter((following) => {
       // Include if never updated
-      if (!following.lastUpdate){
+      if (!following.lastUpdate) {
         // console.log(`No lastUpdate for ${following.username}, including for update`);
         return true;
-      } 
-  
+      }
+
       try {
         // Parse the date safely
         const lastUpdateDate = new Date(following.lastUpdate);
-        
+
         // Validate the date is valid
         if (isNaN(lastUpdateDate.getTime())) {
-          console.warn(`Invalid lastUpdate date for ${following.username}: ${following.lastUpdate}`);
+          console.warn(
+            `Invalid lastUpdate date for ${following.username}: ${following.lastUpdate}`
+          );
           return true; // Include accounts with invalid dates to fix them
         }
-        
+
         const hoursSinceUpdate =
           (now.getTime() - lastUpdateDate.getTime()) / (1000 * 60 * 60);
-        console.log(hoursSinceUpdate)
-          
+        console.log(hoursSinceUpdate);
+
         return hoursSinceUpdate >= minHoursBetweenUpdates;
       } catch (error) {
-        console.warn(`Error calculating time gap for ${following.username}:`, error);
+        console.warn(
+          `Error calculating time gap for ${following.username}:`,
+          error
+        );
         return true; // Include in case of errors to fix the data
       }
     });
-  
+
     console.log(
       `Processing ${filteredFollowings.length} followings due for update (of ${followings.length} total)`
     );
-  
+
     // Sort followings by lastUpdate date (oldest first or null first)
     const sortedFollowings = [...filteredFollowings].sort((a, b) => {
       if (!a.lastUpdate) return -1; // Nulls first
       if (!b.lastUpdate) return 1;
-      return new Date(a.lastUpdate).getTime() - new Date(b.lastUpdate).getTime();
+      return (
+        new Date(a.lastUpdate).getTime() - new Date(b.lastUpdate).getTime()
+      );
     });
-  
+
     // Limit the number of followings to process
     const maxToProcess = DEFAULT_CONFIG.limits.maxFollowingsToProcess;
     const followingsToProcess = sortedFollowings.slice(0, maxToProcess);
-  
+
     // Process each following in sequence and collect results
     const updatedFollowings: Following[] = [];
-  
+
     for (const following of followingsToProcess) {
       try {
         const updated = await this.processSingleFollowing(following);
@@ -440,7 +448,7 @@ export class XCrawler {
         });
       }
     }
-  
+
     return updatedFollowings;
   }
 
@@ -1267,6 +1275,7 @@ export class XCrawler {
           !processedIds.has(post.id) &&
           allPosts.length < this.config.limits.maxPostsPerUser
         ) {
+          
           processedIds.add(post.id);
           allPosts.push(post);
           newPostsAdded++;
