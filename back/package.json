@@ -14,6 +14,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.1.9",
     "@aptos-labs/ts-sdk": "^1.38.0",
+    "@hyperionxyz/sdk": "^0.0.11",
     "@moralisweb3/common-evm-utils": "^2.27.2",
     "@mysten/sui": "^1.24.0",
     "@neondatabase/serverless": "^0.10.4",

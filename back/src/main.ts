@@ -34,7 +34,7 @@ async function main() {
 
   // enableTgInsightModule(agent);
   // console.log("[main] Agent started with TG message module enabled.");
-  
+
   if (process.env.userId) {
     enableXCrawlerModule(agent, process.env.userId);
     console.log("[main] Agent started with X crawler module enabled.");
