@@ -27,8 +27,11 @@ export class Agent {
   public state: IState; // 默认状态
   public reflection: IReflection; // 反射
   public monitoring: IMonitoring; // 监控
+  public agentId: string; // 唯一的 agentId，用于多实例检索
 
   constructor() {
+    // 1. 生成唯一的 agentId
+    this.agentId = `${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     // 1. 初始化感知层
     this.sensing = new DefaultSensing();
 

@@ -33,10 +33,10 @@ export async function saveFollowings(
   followingsData: Following[]
 ): Promise<void> {
   await ensureUserExists(userId);
-  
+
   let savedCount = 0;
   let updatedCount = 0;
-  
+
   for (const followingData of followingsData) {
     try {
       // Check if following already exists for this user
@@ -44,18 +44,19 @@ export async function saveFollowings(
         where: and(
           eq(followings.userId, userId),
           eq(followings.followingUsername, followingData.username)
-        )
+        ),
       });
-      
+
       // Declare followingId variable outside the conditional blocks
       let followingId: string;
-      
+
       if (existingFollowing) {
         // Use existing following ID
         followingId = existingFollowing.id;
-        
+
         // Update existing following record
-        await db.update(followings)
+        await db
+          .update(followings)
           .set({
             followingDisplayName: followingData.displayName,
             followingUrl: followingData.url,
@@ -63,12 +64,12 @@ export async function saveFollowings(
             error: followingData.error,
           })
           .where(eq(followings.id, followingId));
-          
+
         updatedCount++;
       } else {
         // Generate new following ID
         followingId = uuidv4();
-        
+
         await db.insert(followings).values({
           id: followingId,
           userId,
@@ -78,24 +79,25 @@ export async function saveFollowings(
           postsCollected: followingData.postsCollected,
           error: followingData.error,
         });
-        
+
         // Create relationship
         await db.insert(usersToFollowings).values({
           userId,
           followingId,
         });
-        
+
         savedCount++;
       }
-      
-      
-    
     } catch (error) {
-      console.error(`Error saving following ${followingData.username}: ${error}`);
+      console.error(
+        `Error saving following ${followingData.username}: ${error}`
+      );
     }
   }
-  
-  console.log(`[DB] Saved ${savedCount} new followings and updated ${updatedCount} existing followings for ${userId}`);
+
+  console.log(
+    `[DB] Saved ${savedCount} new followings and updated ${updatedCount} existing followings for ${userId}`
+  );
 }
 export async function updateFollowingLastUpdated(
   userId: string,
@@ -107,22 +109,29 @@ export async function updateFollowingLastUpdated(
       where: and(
         eq(followings.userId, userId),
         eq(followings.followingUsername, followingUsername)
-      )
+      ),
     });
-    
+
     if (existingFollowing) {
       // Update the lastUpdated field to the current timestamp
-      await db.update(followings)
-      .set({ lastUpdate: sql`NOW()` })
+      await db
+        .update(followings)
+        .set({ lastUpdate: sql`NOW()` })
 
         .where(eq(followings.id, existingFollowing.id));
-        
-      console.log(`[DB] Updated lastUpdated timestamp for following ${followingUsername} (user: ${userId})`);
+
+      console.log(
+        `[DB] Updated lastUpdated timestamp for following ${followingUsername} (user: ${userId})`
+      );
     } else {
-      console.warn(`[DB] Cannot update lastUpdated: Following ${followingUsername} not found for user ${userId}`);
+      console.warn(
+        `[DB] Cannot update lastUpdated: Following ${followingUsername} not found for user ${userId}`
+      );
     }
   } catch (error) {
-    console.error(`[DB] Error updating lastUpdated for following ${followingUsername}: ${error}`);
+    console.error(
+      `[DB] Error updating lastUpdated for following ${followingUsername}: ${error}`
+    );
   }
 }
 /**
@@ -155,7 +164,7 @@ export async function getFollowings(userId: string): Promise<Following[]> {
       posts: userPosts,
       postsCollected: following.postsCollected || 0,
       error: following.error,
-      lastUpdate: following.lastUpdate
+      lastUpdate: following.lastUpdate,
     });
   }
 
@@ -236,13 +245,8 @@ export async function saveInsight(
     timestamp: insight.timestamp,
   });
 
-
-
-  console.log(
-    `[DB] Saved insight for post ${postId} for user ${userId}`
-  );
+  console.log(`[DB] Saved insight for post ${postId} for user ${userId}`);
 }
-
 
 /**
  * Ensure a user exists in the database
@@ -290,7 +294,7 @@ export async function savePost(post: XPost): Promise<void> {
           retweets: post.metrics.retweets,
           likes: post.metrics.likes,
           views: post.metrics.views,
-        }
+        },
       });
   } catch (error) {
     console.error(`[DB] Error saving post ${post.id}:`, error);
@@ -346,30 +350,30 @@ export async function storeCookies(
   }
 }
 
-export async function getCookiesByUsername(username: string): Promise<Cookie | null> {
+export async function getCookiesByUsername(
+  username: string
+): Promise<Cookie | null> {
   try {
     const result = await db
       .select()
       .from(userCookies)
       .where(eq(userCookies.username, username))
       .limit(1);
-    
+
     if (result.length === 0) return null;
-    
+
     // Apply setSameSiteStrict to ensure all cookies have sameSite: "Strict"
     const record = result[0];
     if (record.cookieData) {
       record.cookieData = setSameSiteStrict(record.cookieData);
     }
-    
+
     return record;
   } catch (error) {
-    console.error('Error retrieving cookies:', error);
-    throw new Error('Failed to retrieve cookies');
+    console.error("Error retrieving cookies:", error);
+    throw new Error("Failed to retrieve cookies");
   }
 }
-
-
 
 export function setSameSiteStrict<T extends Cookie>(
   cookies: T[]
