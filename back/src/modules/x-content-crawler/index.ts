@@ -263,68 +263,7 @@ class XCrawlerManager {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // Example content analysis methods - replace with your actual implementation
-  private extractKeyTopics(post: XPost): string[] {
-    // Simple example - you would implement more sophisticated analysis
-    const text = post.text || "";
-    const words = text.toLowerCase().split(/\s+/);
-    const commonWords = new Set([
-      "the",
-      "and",
-      "is",
-      "in",
-      "to",
-      "of",
-      "a",
-      "for",
-      "with",
-      "on",
-      "at",
-    ]);
 
-    // Extract potential topics (words longer than 4 chars, not common words)
-    return [
-      ...new Set(
-        words.filter((word) => word.length > 4 && !commonWords.has(word))
-      ),
-    ].slice(0, 3); // Take top 3 as topics
-  }
-
-  private analyzeSentiment(post: XPost): string {
-    // Simple example - replace with actual sentiment analysis
-    const text = post.text || "";
-    const positiveWords = [
-      "good",
-      "great",
-      "excellent",
-      "amazing",
-      "wonderful",
-      "happy",
-    ];
-    const negativeWords = [
-      "bad",
-      "terrible",
-      "awful",
-      "sad",
-      "disappointed",
-      "angry",
-    ];
-
-    let positiveCount = 0;
-    let negativeCount = 0;
-
-    positiveWords.forEach((word) => {
-      if (text.toLowerCase().includes(word)) positiveCount++;
-    });
-
-    negativeWords.forEach((word) => {
-      if (text.toLowerCase().includes(word)) negativeCount++;
-    });
-
-    if (positiveCount > negativeCount) return "positive";
-    if (negativeCount > positiveCount) return "negative";
-    return "neutral";
-  }
 
   // Clean up resources
   async shutdown() {

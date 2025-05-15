@@ -161,7 +161,7 @@ export const processedPosts = pgTable('processed_posts', {
   pk: primaryKey({ columns: [table.userId, table.postId] }),
 }));
 
-export const insights = pgTable('content_insight', {
+export const insights = pgTable('processed_insight', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id),
   postId: text('post_id').notNull().references(() => posts.id),
@@ -198,6 +198,78 @@ export const userCookies = pgTable('user_cookies', {
   cookieData: json('cookie_data').$type<any[]>(), // Store array of JSON objects
   lastUpdate: timestamp('last_update').defaultNow(), // Automatically set to current time
 });
+
+export const contentInsights = pgTable('content_insights', {
+  id: serial('id').primaryKey(),
+  hasValue: boolean('has_value').notNull().default(false),
+  category: varchar('category', { length: 50 }).notNull().$type<'trading_idea' | 'project_intro' | 'market_insight' | 'none'>(),
+  summary: text('summary').notNull(),
+  source: text('source').notNull(),
+  username: varchar('username', { length: 255 }).notNull(),
+  timestamp: timestamp('timestamp').notNull(),
+  entity: jsonb('entity').default([]),
+  event: jsonb('event').default([]),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// Citation table
+export const citations = pgTable('citations', {
+  id: serial('id').primaryKey(),
+  url: text('url').notNull(),
+  title: text('title').notNull(),
+  perplexitySearchId: integer('perplexity_search_id').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// Perplexity Search Table
+export const perplexitySearches = pgTable('perplexity_searches', {
+  id: serial('id').primaryKey(),
+  query: text('query').notNull(),
+  response: text('response').notNull(),
+  // Metadata
+  model: text('model').notNull(),
+  timestamp: timestamp('timestamp').notNull(),
+  // Usage statistics
+  promptTokens: integer('prompt_tokens').notNull(),
+  completionTokens: integer('completion_tokens').notNull(),
+  totalTokens: integer('total_tokens').notNull(),
+  citationTokens: integer('citation_tokens'),
+  searchQueriesCount: integer('search_queries_count'),
+  // Related content
+  contentId: text('content_id').notNull(),
+  username: text('username').notNull(),
+  category: varchar('category', { length: 50 }).notNull(),
+  // Raw response (optional)
+  rawResponse: jsonb('raw_response'),
+  // System fields
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type ContentInsightModel = InferSelectModel<typeof contentInsights>;
+export type PerplexitySearchModel = InferSelectModel<typeof perplexitySearches>;
+export type CitationModel = InferSelectModel<typeof citations>;
+
+// FormattedCitation type
+export interface FormattedCitation {
+  url: string;
+  title: string;
+}
+
+// RelatedContent type
+export interface RelatedContent {
+  contentId: string;
+  username: string;
+  category: string;
+}
+
+export interface PerplexityUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  citation_tokens: number;
+  num_search_queries: number;
+}
+
 
 export type Cookie = InferSelectModel<typeof userCookies>; // Select type
 export type CookieInsert = InferInsertModel<typeof userCookies>; // Insert type

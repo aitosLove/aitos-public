@@ -29,7 +29,7 @@ export interface XUser {
     text: string | null;
     author: {
       username: string;
-      displayName: string | null;
+      displayName?: string | null;
     };
     metrics: {
       replies: number | null;
@@ -98,6 +98,109 @@ export type BrowserElement = Element | null;
     source: string;
     username: string;
     timestamp: string;
+    entity: Entity;
+    event: Event;
   }
 
   
+
+
+  export interface XPostPayload {
+  userId: string;
+  post_content: string;
+  authorUsername: string;
+  url?: string;
+  timestamp?: string;
+}
+
+
+export interface Entity {
+  name: string;
+  context: string;
+}
+export interface Event {
+  name: string;
+  details: string;
+}
+
+
+ 
+interface PerplexityUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  citation_tokens: number;
+  num_search_queries: number;
+}
+
+/**
+ * Message in the Perplexity API response
+ */
+interface PerplexityMessage {
+  role: 'assistant' | 'user' | 'system';
+  content: string;
+}
+
+/**
+ * Delta in Perplexity API response (for streaming)
+ */
+interface PerplexityDelta {
+  role?: 'assistant';
+  content: string;
+}
+
+/**
+ * Choice in Perplexity API response
+ */
+interface PerplexityChoice {
+  index: number;
+  finish_reason: 'stop' | 'length' | 'content_filter';
+  message: PerplexityMessage;
+  delta?: PerplexityDelta;
+}
+
+/**
+ * Raw Perplexity API response
+ */
+export interface PerplexityApiResponse {
+  id: string;
+  model: string;
+  created: number;
+  usage: PerplexityUsage;
+  citations: string[];
+  object: string;
+  choices: PerplexityChoice[];
+}
+
+/**
+ * Citation source with formatted title
+ */
+interface FormattedCitation {
+  url: string;
+  title: string;
+}
+
+/**
+ * Metadata about the content insight that triggered the search
+ */
+interface RelatedContent {
+  contentId: string;
+  username: string;
+  category: string;
+}
+
+/**
+ * Structured search result returned by usePerplexitySearch
+ */
+export interface PerplexitySearchResult {
+  query: string;
+  response: string;
+  citations: FormattedCitation[];
+  metadata: {
+    model: string;
+    usage: PerplexityUsage;
+    timestamp: string;
+  };
+  relatedTo: RelatedContent;
+  rawResponse?: PerplexityApiResponse; // Optional raw response for debugging
+}
