@@ -13,21 +13,47 @@ import {
   Cookie,
 } from "@/db/schema";
 
-import { db } from "@/db";
 
 import { Following, XPost, ContentInsight } from "./types";
 import { and, eq, sql } from "drizzle-orm";
+import { db } from "@/db";
 
-/**
- * Save followings for a user (modified to work without transactions)
- */
+export async function getFollowings(userId: string): Promise<Following[]> {
+  const userFollowingsRaw = await db
+    .select({
+      id: followings.id,
+      username: followings.followingUsername,
+      displayName: followings.followingDisplayName,
+      url: followings.followingUrl,
+      postsCollected: followings.postsCollected,
+      error: followings.error,
+      lastUpdate: followings.lastUpdate,
+    })
+    .from(followings)
+    .where(eq(followings.userId, userId));
 
-/**
- * Save followings for a user (modified to prevent duplicates)
- */
-/**
- * Save followings for a user (modified to prevent duplicates)
- */
+  const userFollowings: Following[] = [];
+
+  for (const following of userFollowingsRaw) {
+    // Get posts for this following
+    const userPosts = await getPostsForFollowing(following.username);
+
+    userFollowings.push({
+      username: following.username,
+      displayName: following.displayName,
+      url: following.url,
+      posts: userPosts,
+      postsCollected: following.postsCollected || 0,
+      error: following.error,
+      lastUpdate: following.lastUpdate,
+    });
+  }
+
+  console.log(
+    `[DB] Retrieved ${userFollowings.length} followings for user ${userId}`
+  );
+  return userFollowings;
+}
 export async function saveFollowings(
   userId: string,
   followingsData: Following[]
@@ -137,42 +163,7 @@ export async function updateFollowingLastUpdated(
 /**
  * Get followings for a user
  */
-export async function getFollowings(userId: string): Promise<Following[]> {
-  const userFollowingsRaw = await db
-    .select({
-      id: followings.id,
-      username: followings.followingUsername,
-      displayName: followings.followingDisplayName,
-      url: followings.followingUrl,
-      postsCollected: followings.postsCollected,
-      error: followings.error,
-      lastUpdate: followings.lastUpdate,
-    })
-    .from(followings)
-    .where(eq(followings.userId, userId));
 
-  const userFollowings: Following[] = [];
-
-  for (const following of userFollowingsRaw) {
-    // Get posts for this following
-    const userPosts = await getPostsForFollowing(following.username);
-
-    userFollowings.push({
-      username: following.username,
-      displayName: following.displayName,
-      url: following.url,
-      posts: userPosts,
-      postsCollected: following.postsCollected || 0,
-      error: following.error,
-      lastUpdate: following.lastUpdate,
-    });
-  }
-
-  console.log(
-    `[DB] Retrieved ${userFollowings.length} followings for user ${userId}`
-  );
-  return userFollowings;
-}
 
 /**
  * Save a processed post

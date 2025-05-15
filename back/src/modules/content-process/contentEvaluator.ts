@@ -1,29 +1,26 @@
 // contentEvaluator.ts - Evaluates post content for insights
 
-import { XPost, ContentInsight } from "@/src/modules/x-content-crawler/types";
-import { z } from "zod";
+import {
+  XPost,
+  ContentInsight,
+  XPostPayload,
+} from "@/src/modules/x-content-crawler/types";
+import { createOpenAI } from "@ai-sdk/openai";
 
-// Define the schema for content insights using Zod
-const contentInsightSchema = z.object({
-  has_value: z.boolean(),
-  category: z.enum(["trading_idea", "project_intro", "market_insight", "none"]),
-  key_details: z.array(z.string()),
-  summary: z.string(),
+const customOpenAI = createOpenAI({
+  baseURL: process.env.DEEPSEEK_REASONING_URL,
+  apiKey: process.env.DEEPSEEK_REASONING_API_KEY,
+  compatibility: "compatible",
 });
-
-const customOpenAI = {
-  baseURL:
-    process.env.DEEPSEEK_REASONING_URL || "https://your-custom-url.com/v1",
-  apiKey: process.env.DEEPSEEK_REASONING_API_KEY || "",
-  model: process.env.DEEPSEEK_REASONING_MODEL || "your-reasoning-model",
-};
 
 export class ContentEvaluator {
   /**
    * Evaluate a post for crypto insights
    */
-  public async evaluatePost(post: XPost): Promise<ContentInsight | null> {
-    if (!post.text || post.text.length < 20) {
+  public async evaluatePost(
+    post: XPostPayload
+  ): Promise<ContentInsight | null> {
+    if (!post.post_content || post.post_content.length < 20) {
       return null; // Skip short posts
     }
 
@@ -35,7 +32,8 @@ export class ContentEvaluator {
 ## Core Decision Process
 1. **Scan** for crypto terminology (blockchain, tokens, projects, trading)
 2. **Extract** distinct, specific information
-3. **Evaluate** usefulness to crypto audiences
+3. **Identify** key entity and event mentioned
+4. **Evaluate** usefulness to crypto audiences
 
 ## What Makes Information Valuable:
 
@@ -54,6 +52,27 @@ export class ContentEvaluator {
 - Regulatory updates
 - Educational content with substance
 
+## Entity Recognition Guidelines:
+Extract key entity mentioned in the post with their types:
+- **Person**: Individual names (founders, influencers, developers)
+- **Organization**: Companies, foundations, regulatory bodies
+- **Project**: Named blockchain projects or protocols
+- **Token**: Cryptocurrency tokens or coins (BTC, ETH, etc.)
+- **Blockchain**: Underlying blockchain networks
+- **Exchange**: Trading platforms or exchanges
+- **Other**: Any other notable entities
+
+## Event Recognition Guidelines:
+Identify key event mentioned in the post:
+- **Launch**: New product/token/feature releases
+- **Partnership**: Collaborations between projects/companies
+- **Funding**: Investment rounds, grants, fundraising
+- **Listing**: Token listings on exchanges
+- **Airdrop**: Token distribution events
+- **Hack**: Security breaches or exploits
+- **Regulation**: Regulatory announcements or changes
+- **Other**: Any other significant events
+
 ## Information Extraction Tips:
 - Focus on unique details (numbers, names, dates)
 - Identify actionable recommendations
@@ -63,8 +82,20 @@ export class ContentEvaluator {
 ## Output Format:
 Return a JSON object with the following structure:
 {
-  "has_value": true/false,
-  "category": "trading"/"project_intro"/"market_insight"/"none",
+  "has_value": true/false (boolean value),
+  "category": "trading_idea"/"project_intro"/"market_insight"/"none",
+  "entity": 
+    {
+      "name": "entity name",
+      "context": "brief context about this entity's mention"
+    }
+  ,
+  "event": 
+    {
+      "name": "event name",
+      "details": "brief details about the event"
+    }
+  ,
   "summary": "Brief extraction of essential information"
 }
       `;
@@ -74,38 +105,63 @@ Return a JSON object with the following structure:
 
       // Make the API call
       const completion = await customClient.chat.completions.create({
-        model: customOpenAI.model,
+        model: process.env.DEEPSEEK_REASONING_MODEL || "deepseek-reasoning",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Evaluate this post: "${post.text}"` },
+          {
+            role: "user",
+            content: `Evaluate this post: "${post.post_content}"`,
+          },
         ],
         response_format: { type: "json_object" },
       });
 
       // Extract the response content
       const responseContent = completion.choices[0].message.content;
+      console.log(responseContent);
 
-      if (!responseContent) {
-        throw new Error("No response content received");
+      const jsonContent = extractJsonFromResponse(responseContent);
+      let contentInsight: ContentInsight | null = null;
+
+      if (jsonContent) {
+        try {
+          const parsedResponse = JSON.parse(jsonContent);
+
+          // Convert to ContentInsight type
+          contentInsight = {
+            hasValue: parsedResponse.has_value,
+            category: parsedResponse.category || "none",
+            entity: {
+              name: parsedResponse.entity || "",
+              context: parsedResponse.entity_description || "",
+            },
+            event: {
+              name: parsedResponse.event || "",
+              details: parsedResponse.event_description || "",
+            },
+            summary: parsedResponse.summary,
+            source: post.url || "unknown",
+            username: post.authorUsername || "unknown",
+            timestamp: post.timestamp || new Date().toISOString(),
+          };
+
+          console.log("Successfully parsed content insight:", contentInsight);
+        } catch (error) {
+          console.error("Error parsing JSON content:", error);
+        }
+      } else {
+        console.error("Could not extract valid JSON from the response");
       }
 
-      // Parse the JSON response
-      const parsedResponse = JSON.parse(responseContent);
-
-      // Convert to ContentInsight type
-      const contentInsight: ContentInsight = {
-        hasValue: parsedResponse.has_value,
-        category: parsedResponse.category,
-        // keyDetails: parsedResponse.key_details,
-        summary: parsedResponse.summary,
-        source: post.url || "unknown",
-        username: post.author.username || "unknown",
-        timestamp: post.timestamp || new Date().toISOString(),
-      };
-
-      return contentInsight;
+      // Only proceed if we have a valid content insight
+      if (contentInsight) {
+        return contentInsight;
+      } else {
+        console.error("Failed to generate valid content insight");
+        return null;
+      }
     } catch (error) {
-      console.error("Error evaluating post content:", error);
+      console.error("Error evaluating post:", error);
       return null;
     }
   }
@@ -117,8 +173,9 @@ class OpenAIClient {
   apiKey: string;
 
   constructor() {
-    this.baseUrl = customOpenAI.baseURL;
-    this.apiKey = customOpenAI.apiKey;
+    (this.baseUrl =
+      process.env.DEEPSEEK_REASONING_URL || "https://your-custom-url.com/v1"),
+      (this.apiKey = process.env.DEEPSEEK_REASONING_API_KEY || "");
   }
 
   chat = {
@@ -141,4 +198,36 @@ class OpenAIClient {
       },
     },
   };
+}
+
+function extractJsonFromResponse(responseContent: string): string | null {
+  try {
+    // Find the first opening brace
+    const firstBraceIndex = responseContent.indexOf("{");
+    if (firstBraceIndex === -1) {
+      console.error("No JSON object found in response (missing opening brace)");
+      return null;
+    }
+
+    // Find the last closing brace
+    const lastBraceIndex = responseContent.lastIndexOf("}");
+    if (lastBraceIndex === -1) {
+      console.error("No JSON object found in response (missing closing brace)");
+      return null;
+    }
+
+    // Extract the content between the braces (inclusive)
+    const jsonContent = responseContent.substring(
+      firstBraceIndex,
+      lastBraceIndex + 1
+    );
+
+    // Validate that it's actually valid JSON
+    JSON.parse(jsonContent); // This will throw if invalid
+
+    return jsonContent;
+  } catch (error) {
+    console.error("Failed to extract valid JSON from response:", error);
+    return null;
+  }
 }
