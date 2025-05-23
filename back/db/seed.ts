@@ -1,5 +1,4 @@
 import "dotenv/config";
-import { jsonLearnTable } from "./schema";
 import { db } from ".";
 import { eq } from "drizzle-orm";
 

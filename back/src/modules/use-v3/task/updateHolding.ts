@@ -1,6 +1,6 @@
 import type { Agent } from "@/src/agent";
 import { db } from "@/db";
-import { holdingStateTable } from "@/db/schema";
+import { holdingStateTable } from "@/db/schema/moduleSchema";
 import { getHolding } from "../portfolio/getHolding";
 export function updateHolding(agent: Agent) {
   const holdingTask = agent.taskManager.createTask<null>({

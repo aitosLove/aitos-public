@@ -2,7 +2,7 @@ import { getProvider, getModel } from "@/utils/ai";
 import { z } from "zod";
 import { generateText, tool } from "ai";
 import { db } from "@/db";
-import { actionStateTable } from "@/db/schema";
+import { actionStateTable } from "@/db/schema/moduleSchema";
 import { TokenOnTargetPortfolio, adjustPortfolio } from "./core";
 import { getHolding } from "./getHolding";
 import { TOKEN_USE } from "../config";

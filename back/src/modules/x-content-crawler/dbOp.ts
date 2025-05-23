@@ -11,8 +11,7 @@ import {
   insights,
   userCookies,
   Cookie,
-} from "@/db/schema";
-
+} from "@/db/schema/moduleSchema";
 
 import { Following, XPost, ContentInsight } from "./types";
 import { and, eq, sql } from "drizzle-orm";
@@ -163,7 +162,6 @@ export async function updateFollowingLastUpdated(
 /**
  * Get followings for a user
  */
-
 
 /**
  * Save a processed post

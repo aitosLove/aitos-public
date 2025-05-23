@@ -15,7 +15,7 @@ export interface AgentTask<TPayload = any> {
    * 例如："CRON_TASK"、"WEBHOOK_TASK" 等
    */
   type: string;
-  descrpition: string;
+  description: string;
 
   /**
    * 模块自定义的负载类型

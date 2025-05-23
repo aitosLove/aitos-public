@@ -1,5 +1,5 @@
 import type { Agent } from "@/src/agent";
-import { insightStateTable, marketStateTable } from "@/db/schema";
+import { insightStateTable, marketStateTable } from "@/db/schema/moduleSchema";
 import type { InvestmentState } from "../market/cmc";
 import { getMarketInsightPrompt } from "../config";
 
@@ -10,7 +10,7 @@ import { analysis_portfolio } from "../config";
 export function updateInsight(agent: Agent, investmentState: InvestmentState) {
   const insightsTask = agent.taskManager.createTask<null>({
     type: "UPDATE_INSIGHT_TASK",
-    descrpition: "Update Insight according to Price Ratios",
+    description: "Update Insight according to Price Ratios",
     payload: null,
     callback: async () => {
       try {

@@ -4,7 +4,7 @@ import {
   insightInstructTable,
   defiInsightTable,
   insightStateTable,
-} from "@/db/schema";
+} from "@/db/schema/moduleSchema";
 import { db } from "@/db";
 import { desc } from "drizzle-orm";
 import { storeMessageRecord } from "./throw_insight";

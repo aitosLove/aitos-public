@@ -4,13 +4,13 @@ import { getHolding } from "../portfolio/getHolding";
 import { getDefiInsightPrompt } from "../config";
 import { db } from "@/db";
 
-import { defiInsightTable } from "@/db/schema";
+import { defiInsightTable } from "@/db/schema/moduleSchema";
 import { getNewestDefiInstruct } from "@/db/getInstruct";
 
 export function updateDefiStrategy(agent: Agent) {
   const defiStrategyTask = agent.taskManager.createTask<null>({
     type: "UPDATE_DEFI_STRATEGY_TASK",
-    descrpition: "Update Defi Strategy using AI",
+    description: "Update Defi Strategy using AI",
     payload: null,
     callback: async () => {
       try {

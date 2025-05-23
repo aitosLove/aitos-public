@@ -1,84 +1,84 @@
-import { db } from "@/db";
-import { eventsTable, tasksTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
+/**
+ * Database.ts
+ *
+ * 定义统一的数据库接口，用于存储事件和任务
+ */
 
-export async function saveEvent({
-  name,
-  description,
-  timeStamp,
-}: {
-  name: string;
-  description: string;
-  timeStamp?: number | undefined;
-}) {
-  try {
-    const result = await db
-      .insert(eventsTable)
-      .values({
-        type: name,
-        description,
-        timestamp: timeStamp ? new Date(timeStamp) : undefined,
-      })
-      .returning();
+export interface IDatabase {
+  /**
+   * 保存事件到数据库
+   * @param eventData 事件数据
+   */
+  saveEvent(eventData: {
+    name: string;
+    description: string;
+    // agentId: string;
+  }): void;
 
-    return result[0];
-  } catch (e) {
-    console.log(`Error in saveEvent: ${e}`);
-  }
+  /**
+   * 保存任务到数据库
+   * @param taskData 任务数据
+   */
+  saveTask(taskData: {
+    id: string;
+    type: string;
+    description: string;
+    status: string;
+    // agentId: string;
+  }): void;
+
+  /**
+   * 更新任务状态
+   * @param taskData 任务状态数据
+   */
+  editTaskStatus(taskData: { id: string; status: string }): void;
+
+  /**
+   * 生成唯一ID
+   */
+  generateId(): string;
 }
 
-export async function saveTask({
-  id,
-  type,
-  description,
-  status,
-  timeStamp,
-}: {
-  id: string;
-  type: string;
-  description: string;
-  status: "pending" | "completed" | "running" | "failed";
-  timeStamp?: number | undefined;
-}) {
-  try {
-    const result = await db
-      .insert(tasksTable)
-      .values({
-        id: id,
-        type: type,
-        description: description,
-        status: status,
-        timestamp: timeStamp ? new Date(timeStamp) : undefined,
-      })
-      .returning();
+/**
+ * 空数据库实现，不执行任何实际操作
+ */
+export class NullDatabase implements IDatabase {
+  private detailed: boolean;
 
-    return result[0];
-  } catch (e) {
-    console.log(`Error in saveTask: ${e}`);
+  constructor(detailed: boolean = false) {
+    this.detailed = detailed;
+    // if (this.detailed) {
+    //   console.log("NullDatabase initialized with detailed logging.");
+    // }
   }
-}
 
-export async function editTaskStatus({
-  id,
-  status,
-}: {
-  id: string;
-  status: "pending" | "completed" | "running" | "failed";
-}) {
-  try {
-    const result = await db
-      .update(tasksTable)
-      .set({ status: status })
-      .where(eq(tasksTable.id, id))
-      .returning();
-
-    return result[0];
-  } catch (e) {
-    console.log(`Error in editTaskStatus: ${e}`);
+  saveEvent(_eventData: { name: string; description: string }): void {
+    // 空实现
+    if (this.detailed) {
+      console.log("Event saved to NullDatabase:", _eventData);
+    }
   }
-}
 
-export function generateId() {
-  return uuidv4();
+  saveTask(_taskData: {
+    id: string;
+    type: string;
+    description: string;
+    status: string;
+  }): void {
+    // 空实现
+    if (this.detailed) {
+      console.log("Task saved to NullDatabase:", _taskData);
+    }
+  }
+
+  editTaskStatus(_taskData: { id: string; status: string }): void {
+    // 空实现
+    if (this.detailed) {
+      console.log("Task status updated in NullDatabase:", _taskData);
+    }
+  }
+
+  generateId(): string {
+    return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+  }
 }

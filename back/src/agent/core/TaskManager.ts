@@ -12,7 +12,7 @@
 
 import { AgentTask } from "./AgentTask";
 import { ISensing } from "./Sensing";
-import { saveTask, editTaskStatus, generateId } from "./Store";
+import { IDatabase } from "./Store";
 
 export class TaskManager {
   /** 存储所有已创建的任务 */
@@ -21,8 +21,12 @@ export class TaskManager {
   /** 与感知层交互，用于发事件 */
   private sensing: ISensing;
 
-  constructor(sensing: ISensing) {
+  /** 数据库实例 */
+  private db: IDatabase;
+
+  constructor(sensing: ISensing, db: IDatabase) {
     this.sensing = sensing;
+    this.db = db;
   }
 
   /**
@@ -63,12 +67,12 @@ export class TaskManager {
   private executeTask<T>(task: AgentTask<T>) {
     task.status = "running";
 
-    const taskId = generateId();
+    const taskId = this.db.generateId();
 
-    saveTask({
+    this.db.saveTask({
       id: taskId,
       type: task.type,
-      description: task.descrpition,
+      description: task.description,
       status: task.status,
     });
 
@@ -98,7 +102,7 @@ export class TaskManager {
         task.result = task.callback(task.payload); // 执行回调
         task.status = "completed"; // 标记为完成
 
-        editTaskStatus({
+        this.db.editTaskStatus({
           id: taskId,
           status: "completed",
         });
@@ -110,7 +114,7 @@ export class TaskManager {
       } catch (error) {
         task.status = "failed"; // 如果回调执行失败，标记为失败
 
-        editTaskStatus({
+        this.db.editTaskStatus({
           id: taskId,
           status: "failed",
         });

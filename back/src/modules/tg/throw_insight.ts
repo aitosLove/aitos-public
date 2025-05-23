@@ -4,7 +4,7 @@ import { AgentEvent } from "@/src/agent/core/EventTypes";
 import TelegramBot from "node-telegram-bot-api";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { db } from "@/db";
-import { insightStateTable, tgMessageTable } from "@/db/schema";
+import { insightStateTable, tgMessageTable } from "@/db/schema/moduleSchema";
 import cron from "node-cron";
 import { TelegramBotManager } from "./bot_manager";
 import { eq } from "drizzle-orm";
@@ -55,8 +55,6 @@ export class InvestmentState {
       throw new Error("Failed to retrieve insight content");
     }
   }
-
-  
 
   set(key: string, value: any) {
     this.state.set(key, value);
@@ -201,8 +199,11 @@ export function enableTgInsightModule(agent: Agent) {
   // scheduleMgr.teardown();
 }
 
-
-export async  function storeMessageRecord({ content }: { content: string }): Promise<void> {
+export async function storeMessageRecord({
+  content,
+}: {
+  content: string;
+}): Promise<void> {
   try {
     // 同时存储 insightId 用于后续追踪
     await db.insert(tgMessageTable).values({

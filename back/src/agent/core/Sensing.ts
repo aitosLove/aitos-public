@@ -6,11 +6,11 @@
  * - 允许 emitEvent(evt) 向系统发布事件
  * - registerListener 返回一个函数，可供调用者移除该监听器
  *
- * 这样就实现了“统一的事件中心”，各模块可通过该中心进行事件交互。
+ * 这样就实现了"统一的事件中心"，各模块可通过该中心进行事件交互。
  */
 
 import { AgentEvent } from "./EventTypes";
-import { saveEvent } from "./Store";
+import { IDatabase } from "./Store";
 
 /** 感知层接口 */
 export interface ISensing {
@@ -35,10 +35,32 @@ export interface ISensing {
   showStatus(): void;
 }
 
+/** 感知层配置选项 */
+export interface SensingOptions {
+  /** 数据库实例 */
+  db: IDatabase;
+  /** 感知ID，用于区分不同的感知层 */
+  sensingId?: string;
+}
+
 /** 默认的感知层实现 */
 export class DefaultSensing implements ISensing {
   /** 内部维护一个监听器数组 */
   private listeners: Array<(evt: AgentEvent) => void> = [];
+  /** 数据库实例 */
+  private db: IDatabase;
+
+  /** 感知ID，用于区分不同的感知层 */
+  private sensingId: string;
+
+  /**
+   * 构造函数，接收感知层配置选项
+   * @param options 感知层配置选项
+   */
+  constructor(options: SensingOptions) {
+    this.db = options.db;
+    this.sensingId = options.sensingId || "default-sensing";
+  }
 
   registerListener(fn: (evt: AgentEvent) => void): () => void {
     this.listeners.push(fn);
@@ -53,9 +75,11 @@ export class DefaultSensing implements ISensing {
     // 依次调用所有注册的监听器
     this.listeners.forEach((listener) => listener(evt));
 
-    saveEvent({
+    // 使用数据库保存事件
+    this.db.saveEvent({
       name: evt.type,
       description: evt.description,
+      // agentId: evt.agentId,
     });
   }
 

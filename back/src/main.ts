@@ -9,18 +9,32 @@
  */
 
 import { Agent } from "./agent";
+import { DefaultSensing } from "./agent/core/Sensing";
+import { NullDatabase } from "./agent/core/Store";
 // import { enableInvestmentModule } from "./modules/wonderland-v1";
 import { enableWonderlandModule } from "./modules/use-v3";
 import { enableXCrawlerModule } from "./modules/x-content-crawler";
+import { DrizzleDatabase } from "./templateDB";
 
-export const agent = new Agent();
+const nullDatabase = new NullDatabase();
+const groupChannel = new DefaultSensing({
+  db: nullDatabase,
+  sensingId: "wonderland-v2-group-sensing",
+});
+
+const agentId = "new-wonderland-v2-test";
+
+export const mainAgent = new Agent({
+  db: new DrizzleDatabase(agentId),
+  groupSensing: groupChannel,
+});
 
 async function main() {
-  enableWonderlandModule(agent);
+  enableWonderlandModule(mainAgent);
   console.log("[main] Agent started with Wonderland V3 module enabled.");
 
   if (process.env.userId) {
-    enableXCrawlerModule(agent, process.env.userId);
+    enableXCrawlerModule(mainAgent, process.env.userId);
     console.log("[main] Agent started with X crawler module enabled.");
   }
 }
