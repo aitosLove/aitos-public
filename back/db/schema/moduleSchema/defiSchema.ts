@@ -65,6 +65,15 @@ export const tradingInstructTable = pgTable("trading_instruct", {
   agentId: uuid().notNull(),
 });
 
+export const portfolioSuggestionTable = pgTable("portfolio_suggestion", {
+  id: uuid().primaryKey().defaultRandom(),
+  timestamp: timestamp().defaultNow().notNull(),
+  suggestion: jsonb().notNull(),
+  executionStatus: text().notNull().default("pending"),
+  executionTime: timestamp(),
+  agentId: uuid().notNull(),
+});
+
 export const actionStateTable = pgTable("action_state", {
   id: uuid().primaryKey().defaultRandom(),
   timestamp: timestamp().defaultNow().notNull(),

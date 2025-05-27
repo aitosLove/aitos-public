@@ -7,16 +7,21 @@ import { InvestmentState } from "./cmc";
 
 interface AnalysisOptions {
   analysisPortfolio: RateAnalysis[];
+  detailed?: boolean;
 }
 
 export function enableAnalystModule(
   agent: Agent,
-  { analysisPortfolio }: AnalysisOptions
+  { analysisPortfolio, detailed = false }: AnalysisOptions
 ) {
   const investmentState = new InvestmentState();
 
-  const offUpdatePriceListener = agent.groupSensing.registerListener(
+  const offUpdatePriceListener = agent.sensing.registerListener(
     (evt: AgentEvent) => {
+      if (detailed) {
+        console.log("Received update price event. Starting task...");
+      }
+
       if (evt.type === "UPDATE_PRICE_USE_CMC") {
         agent.taskManager.createTask<null>({
           type: "UPDATE_PRICE_TASK",
@@ -51,9 +56,12 @@ export function enableAnalystModule(
     }
   );
 
-  const offUpdateInsightListener = agent.groupSensing.registerListener(
+  const offUpdateInsightListener = agent.sensing.registerListener(
     (evt: AgentEvent) => {
       if (evt.type === "UPDATE_INSIGHT") {
+        if (detailed) {
+          console.log("Received update insight event. Starting task...");
+        }
         agent.taskManager.createTask<null>({
           type: "UPDATE_INSIGHT_TASK",
           description: "Update Insight by CoinMarketCap API",
