@@ -1,14 +1,29 @@
 // src/modules/telegram/insight-commands.ts
 import { TelegramBotManager } from "./bot_manager";
+import { EnhancedTelegramBotManager } from "./enhanced-bot-manager";
 import {
   insightInstructTable,
   defiInsightTable,
   insightStateTable,
-} from "@/db/schema/moduleSchema";
+} from "@/db/schema/moduleSchema/defiSchema";
 import { db } from "@/db";
 import { desc } from "drizzle-orm";
 import { storeMessageRecord } from "./throw_insight";
-export function registerInsightCommands(botManager: TelegramBotManager) {
+
+// Create a type that includes common methods between both bot manager implementations
+type BotManagerWithCommands = {
+  registerCommand: (handler: {
+    command: string;
+    description: string;
+    handler: (msg: any, args?: string) => Promise<void>;
+  }) => void;
+  sendMessage: (content: string) => Promise<boolean>;
+  sendMessageWithOptions?: (chatId: number | string, message: string, options?: any) => Promise<any>;
+  bot?: any;
+};
+
+// Define a compatible function signature
+export function registerInsightCommands(botManager: BotManagerWithCommands) {
   // Command to get the latest instruct insight
   botManager.registerCommand({
     command: "market_insight",
@@ -21,86 +36,45 @@ export function registerInsightCommands(botManager: TelegramBotManager) {
           .orderBy(desc(insightStateTable.timestamp))
           .limit(1);
 
-        if (latestInstruct.length === 0) {
-          await botManager.bot!.sendMessage(
-            msg.chat.id,
-            "No market insights available."
-          );
-          return;
+        if (latestInstruct && latestInstruct.length > 0) {
+          const insight = latestInstruct[0].insight;
+
+          // Send insight to user
+          const messageContent = `📊 **最新市场洞察**\n\n${insight}`;
+          
+          // Different bot managers might have different ways to send messages
+          if (botManager.sendMessageWithOptions) {
+            await botManager.sendMessageWithOptions(
+              msg.chat.id, 
+              messageContent,
+              { parse_mode: "Markdown" }
+            );
+          } else {
+            await botManager.sendMessage(messageContent);
+          }
+
+          // Store the insight message in the database
+          await storeMessageRecord({ content: insight });
+        } else {
+          if (botManager.sendMessageWithOptions) {
+            await botManager.sendMessageWithOptions(
+              msg.chat.id,
+              "No market insights available at the moment."
+            );
+          } else {
+            await botManager.sendMessage("No market insights available at the moment.");
+          }
         }
-
-        const insight = latestInstruct[0];
-        const formattedDate = new Date(insight.timestamp).toLocaleString();
-
-        const response =
-          `📊 *Latest Market Insight*\n\n` +
-          `*Timestamp:* ${formattedDate}\n\n` +
-          `${insight.insight}`;
-
-        await botManager.bot!.sendMessage(msg.chat.id, response, {
-          parse_mode: "Markdown",
-        });
-        storeMessageRecord({ content: response });
       } catch (error) {
         console.error("[Telegram] Error fetching market insight:", error);
 
-        if (error instanceof Error) {
-          await botManager.bot!.sendMessage(
+        if (error instanceof Error && botManager.bot) {
+          await botManager.bot.sendMessage(
             msg.chat.id,
             `Error fetching market insight: ${error.message}`
           );
-        } else {
-          await botManager.bot!.sendMessage(
-            msg.chat.id,
-            "Error fetching market insight: An unknown error occurred."
-          );
-        }
-      }
-    },
-  });
-
-  // Command to get the latest DeFi insight
-  botManager.registerCommand({
-    command: "defi_insight",
-    description: "Get the latest DeFi insight",
-    handler: async (msg) => {
-      try {
-        // Query the latest insight from defi_insight_state table
-        const latestDefiInsight = await db
-          .select()
-          .from(defiInsightTable)
-          .orderBy(desc(defiInsightTable.timestamp))
-          .limit(1);
-
-        if (latestDefiInsight.length === 0) {
-          await botManager.bot!.sendMessage(
-            msg.chat.id,
-            "No DeFi insights available."
-          );
-          return;
-        }
-
-        const insight = latestDefiInsight[0];
-        const formattedDate = new Date(insight.timestamp).toLocaleString();
-
-        const response =
-          `💰 *Latest DeFi Insight*\n\n` +
-          `*Timestamp:* ${formattedDate}\n\n` +
-          `${insight.insight}`;
-
-        await botManager.bot!.sendMessage(msg.chat.id, response, {
-          parse_mode: "Markdown",
-        });
-        storeMessageRecord({ content: response });
-      } catch (error) {
-        console.error("[Telegram] Error fetching DeFi insight:", error);
-        if (error instanceof Error) {
-          await botManager.bot!.sendMessage(
-            msg.chat.id,
-            `Error fetching market insight: ${error.message}`
-          );
-        } else {
-          await botManager.bot!.sendMessage(
+        } else if (botManager.bot) {
+          await botManager.bot.sendMessage(
             msg.chat.id,
             "Error fetching market insight: An unknown error occurred."
           );

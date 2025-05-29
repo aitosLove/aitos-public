@@ -1,3 +1,12 @@
+/**
+ * Twitter Schema for X Content Crawler
+ * 
+ * Naming conventions:
+ * - All tables are prefixed with 'x' (e.g., xUsers, xPosts)
+ * - Database column names use snake_case
+ * - TypeScript variable names use camelCase
+ * - Relations are named consistently with their tables
+ */
 import {
   pgTable,
   varchar,
@@ -23,38 +32,39 @@ import {
 } from "drizzle-orm";
 
 // Users table
-export const users = pgTable("users", {
+export const xUsers = pgTable("users", {
   id: text("id").primaryKey(),
   username: text("username").notNull(),
+  agentId: text("agent_id").notNull(),
   // Additional user fields can be added here
 });
 
 // Followings table - stores users that are followed by other users
-export const followings = pgTable("followings", {
+export const xFollowings = pgTable("followings", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => xUsers.id),
+  agentId: text("agent_id").notNull(),
   followingUsername: text("following_username").notNull(),
   followingDisplayName: text("following_display_name"),
-  // Fixed: Ensuring the column name matches what's in the database
-  // If the column doesn't exist yet in the database, you'll need to run a migration
-  followingUrl: text("followingUrl"), // Changed to match JS property name or create a new migration
+  followingUrl: text("following_url"), // Fixed column name to follow snake_case convention
   postsCollected: integer("posts_collected").default(0),
   lastUpdate: timestamp("last_update", { withTimezone: true }),
   error: text("error"),
 });
 
 // Many-to-many relation is reflected with a join table
-export const usersToFollowings = pgTable(
+export const xUsersToFollowings = pgTable(
   "users_to_followings",
   {
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => xUsers.id),
     followingId: text("following_id")
       .notNull()
-      .references(() => followings.id),
+      .references(() => xFollowings.id),
+    agentId: text("agent_id").notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.followingId] }),
@@ -62,8 +72,9 @@ export const usersToFollowings = pgTable(
 );
 
 // Posts table
-export const posts = pgTable("posts", {
+export const xPosts = pgTable("posts", {
   id: text("id").primaryKey(),
+  agentId: text("agent_id").notNull(),
   url: text("url"),
   timestamp: text("timestamp"),
   text: text("text"),
@@ -76,29 +87,31 @@ export const posts = pgTable("posts", {
 });
 
 // ProcessedPosts table - tracks which posts have been processed by which users
-export const processedPosts = pgTable(
+export const xProcessedPosts = pgTable(
   "processed_posts",
   {
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => xUsers.id),
     postId: text("post_id")
       .notNull()
-      .references(() => posts.id),
+      .references(() => xPosts.id),
+    agentId: text("agent_id").notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.postId] }),
   })
 );
 
-export const insights = pgTable("processed_insight", {
+export const xPostInsights = pgTable("post_insights", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => xUsers.id),
   postId: text("post_id")
     .notNull()
-    .references(() => posts.id),
+    .references(() => xPosts.id),
+  agentId: text("agent_id").notNull(),
   hasValue: boolean("has_value").notNull(),
   category: text("category", {
     enum: ["trading_idea", "project_intro", "market_insight", "none"],
@@ -111,29 +124,31 @@ export const insights = pgTable("processed_insight", {
 });
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
-  followings: many(usersToFollowings),
-  processedPosts: many(processedPosts),
-  insights: many(insights),
+export const xUsersRelations = relations(xUsers, ({ many }) => ({
+  followings: many(xUsersToFollowings),
+  processedPosts: many(xProcessedPosts),
+  insights: many(xPostInsights),
 }));
 
-export const followingsRelations = relations(followings, ({ many }) => ({
-  users: many(usersToFollowings),
+export const xFollowingsRelations = relations(xFollowings, ({ many }) => ({
+  users: many(xUsersToFollowings),
 }));
 
-export const postsRelations = relations(posts, ({ many }) => ({
-  processedBy: many(processedPosts),
-  insights: many(insights),
+export const xPostsRelations = relations(xPosts, ({ many }) => ({
+  processedBy: many(xProcessedPosts),
+  insights: many(xPostInsights),
 }));
 
-export const userCookies = pgTable("user_cookies", {
+export const xUserCookies = pgTable("user_cookies", {
   username: text("username").primaryKey(),
+  agentId: text("agent_id").notNull(),
   cookieData: json("cookie_data").$type<any[]>(), // Store array of JSON objects
   lastUpdate: timestamp("last_update").defaultNow(), // Automatically set to current time
 });
 
-export const contentInsights = pgTable("content_insights", {
+export const xContentInsights = pgTable("content_insights", {
   id: serial("id").primaryKey(),
+  agentId: text("agent_id").notNull(),
   hasValue: boolean("has_value").notNull().default(false),
   category: varchar("category", { length: 50 })
     .notNull()
@@ -148,8 +163,9 @@ export const contentInsights = pgTable("content_insights", {
 });
 
 // Citation table
-export const citations = pgTable("citations", {
+export const xDeepSearchCitations = pgTable("deep_search_citations", {
   id: serial("id").primaryKey(),
+  agentId: text("agent_id").notNull(),
   url: text("url").notNull(),
   title: text("title").notNull(),
   perplexitySearchId: integer("perplexity_search_id").notNull(),
@@ -157,8 +173,9 @@ export const citations = pgTable("citations", {
 });
 
 // Perplexity Search Table
-export const perplexitySearches = pgTable("perplexity_searches", {
+export const xDeepSearches = pgTable("deep_searches", {
   id: serial("id").primaryKey(),
+  agentId: text("agent_id").notNull(),
   query: text("query").notNull(),
   response: text("response").notNull(),
   // Metadata
@@ -180,9 +197,9 @@ export const perplexitySearches = pgTable("perplexity_searches", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export type ContentInsightModel = InferSelectModel<typeof contentInsights>;
-export type PerplexitySearchModel = InferSelectModel<typeof perplexitySearches>;
-export type CitationModel = InferSelectModel<typeof citations>;
+export type ContentInsightModel = InferSelectModel<typeof xContentInsights>;
+export type PerplexitySearchModel = InferSelectModel<typeof xDeepSearches>;
+export type CitationModel = InferSelectModel<typeof xDeepSearchCitations>;
 
 // FormattedCitation type
 export interface FormattedCitation {
@@ -205,5 +222,5 @@ export interface PerplexityUsage {
   num_search_queries: number;
 }
 
-export type Cookie = InferSelectModel<typeof userCookies>; // Select type
-export type CookieInsert = InferInsertModel<typeof userCookies>; // Insert type
+export type Cookie = InferSelectModel<typeof xUserCookies>; // Select type
+export type CookieInsert = InferInsertModel<typeof xUserCookies>; // Insert type
