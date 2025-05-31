@@ -120,14 +120,9 @@ export function enableAptosPortfolioModule(
 
         const getSuggestionEvent = evt as GetSuggestionEvent;
 
-        const holdingResult = await accountManager.getHolding({
+        const currentHolding = await accountManager.getHolding({
           selectPortfolio: selectedTokens,
         });
-
-        // Ensure we have a valid portfolio array
-        if (!holdingResult.validPortfolio || !Array.isArray(holdingResult.validPortfolio)) {
-          throw new Error("Invalid portfolio data: validPortfolio is not an array");
-        }
 
         agent.taskManager.createTask<{
           insight: string;
@@ -137,7 +132,8 @@ export function enableAptosPortfolioModule(
           description: "Get investment suggestion for Aptos portfolio",
           payload: {
             insight: getSuggestionEvent.payload.insight,
-            currentHolding: holdingResult.validPortfolio,
+            // currentHolding: getSuggestionEvent.payload.currentHolding,
+            currentHolding: currentHolding.validPortfolio,
           },
           callback: async (payload) => {
             try {
