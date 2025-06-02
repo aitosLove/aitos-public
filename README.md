@@ -1,13 +1,13 @@
-# Wonderland V2
+# AITOS V2
 
-Welcome to Wonderland V2! This project is a multi-agent system designed with a focus on modularity, extensible blueprints, and a runtime-centric approach to agent instantiation.
+Welcome to AITOS V2! This project is a multi-agent system designed with a focus on modularity, extensible blueprints, and a runtime-centric approach to agent instantiation.
 
 ## Key Features
 
-*   **Multi-Agent Architecture:** Wonderland V2 is built around the concept of multiple agents that can communicate and collaborate.
+*   **Multi-Agent Architecture:** AITOS V2 is built around the concept of multiple agents that can communicate and collaborate.
 *   **Group Sensing:** The system incorporates an upgraded multi-agent communication mechanism called "group sensing."
 *   **Modular Design:** The project emphasizes a modular structure, allowing for the clear separation and organization of different functionalities into "modules."
-*   **Blueprints:** Wonderland V2 utilizes "blueprints" to define and configure agent behaviors and capabilities.
+*   **Blueprints:** AITOS V2 utilizes "blueprints" to define and configure agent behaviors and capabilities.
 *   **Runtime Instantiation:** Agents are instantiated at runtime, providing flexibility and dynamic control over the system.
 
 ## Project Structure
@@ -16,11 +16,11 @@ The project is organized into the following main directories:
 
 *   `back/`: Contains the backend logic, including agent core, modules, blueprints, and database interactions.
 *   `front/`: Houses the frontend application, likely for user interaction and visualization.
-*   `aitos-docs/`: Contains documentation related to Aitos, which appears to be a key component or concept within Wonderland.
+*   `aitos-docs/`: Contains documentation related to Aitos, which appears to be a key component or concept within AITOS.
 
 ## Getting Started
 
-This section will guide you through setting up and running the Wonderland V2 project, including both the backend and frontend components.
+This section will guide you through setting up and running the AITOS V2 project, including both the backend and frontend components.
 
 ### Prerequisites
 
@@ -88,7 +88,7 @@ This section will guide you through setting up and running the Wonderland V2 pro
 
 ### Running Your Own Aitos Agent/Blueprint
 
-To quickly start your own project or agent instance within Wonderland V2:
+To quickly start your own project or agent instance within AITOS V2:
 
 1.  **Understand Blueprints:** Familiarize yourself with the concept of `Blueprints` in the `back/src/blueprints/` directory. Blueprints define the core logic and module composition for an agent.
 The `aitosBlueprint.ts` is a good example.
@@ -120,7 +120,7 @@ This provides a basic template. You'll need to verify the exact script names fro
 
 ## Future Development (V3 Roadmap)
 
-The V3 roadmap aims to further enhance the Wonderland V2 platform with the following key improvements:
+The V3 roadmap aims to further enhance the AITOS V2 platform with the following key improvements:
 
 *   **Typed Events and Tasks:**
     *   **Goal:** Introduce strong typing for all events and tasks within the agent system.
