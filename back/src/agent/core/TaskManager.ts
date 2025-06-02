@@ -1,13 +1,14 @@
+// filepath: /Users/ryuko/dev/24531/wonderland-v2/back/src/agent/core/TaskManager.ts
 /**
  * TaskManager.ts
  *
- * 负责创建和执行任务，并在任务的不同阶段发出相应事件：
+ * Responsible for creating and executing tasks, and emitting appropriate events at different stages:
  * - TASK_CREATED
  * - TASK_STARTED
  * - TASK_COMPLETED
- * - (可扩展) TASK_FAILED, etc.
+ * - (extensible) TASK_FAILED, etc.
  *
- * 这是一个最简实现，演示如何与 Sensing 搭配使用。
+ * This is a minimal implementation demonstrating how to use with Sensing.
  */
 
 import { AgentTask } from "./AgentTask";
@@ -15,13 +16,13 @@ import { ISensing } from "./Sensing";
 import { IDatabase } from "./Store";
 
 export class TaskManager {
-  /** 存储所有已创建的任务 */
+  /** Stores all created tasks */
   private tasks: AgentTask[] = [];
 
-  /** 与感知层交互，用于发事件 */
+  /** Interacts with the perception layer for emitting events */
   private sensing: ISensing;
 
-  /** 数据库实例 */
+  /** Database instance */
   private db: IDatabase;
 
   constructor(sensing: ISensing, db: IDatabase) {
@@ -30,38 +31,38 @@ export class TaskManager {
   }
 
   /**
-   * 创建一个新任务，并立刻执行
-   * @param partialTask 不包含 id、createdAt、status 的部分
-   * @returns 完整的 AgentTask
+   * Creates a new task and executes it immediately
+   * @param partialTask The part that doesn't include id, createdAt, status
+   * @returns Complete AgentTask
    */
   createTask<T>(
     partialTask: Omit<AgentTask<T>, "id" | "createdAt" | "status">
   ): AgentTask<T> {
     const newTask: AgentTask<T> = {
       ...partialTask,
-      id: `task-${Date.now()}`, // 简单生成ID
+      id: `task-${Date.now()}`, // Simple ID generation
       createdAt: Date.now(),
       status: "pending",
     };
 
-    // 保存到本地任务列表
+    // Save to local task list
     this.tasks.push(newTask);
 
-    // 发出 TASK_CREATED 事件
+    // Emit TASK_CREATED event
     // this.sensing.emitEvent({
     //   type: "TASK_CREATED",
     //   payload: newTask,
     //   timestamp: Date.now(),
     // });
 
-    // 启动执行
+    // Start execution
     this.executeTask(newTask);
 
     return newTask;
   }
 
   /**
-   * 模拟执行任务的逻辑
+   * Logic to simulate task execution
    * @param task AgentTask
    */
   private executeTask<T>(task: AgentTask<T>) {
@@ -76,19 +77,19 @@ export class TaskManager {
       status: task.status,
     });
 
-    // 发出开始事件
+    // Emit start event
     // this.sensing.emitEvent({
     //   type: "TASK_STARTED",
     //   payload: task,
     //   timestamp: Date.now(),
     // });
 
-    // // 模拟异步执行：此处仅用 setTimeout
+    // // Simulate async execution: just using setTimeout here
     // setTimeout(() => {
     //   task.status = "completed";
     //   task.result = "some result";
 
-    //   // 发出完成事件
+    //   // Emit completion event
     //   this.sensing.emitEvent({
     //     type: "TASK_COMPLETED",
     //     payload: task,
@@ -96,11 +97,11 @@ export class TaskManager {
     //   });
     // }, 500);
 
-    // 如果任务包含 callback，则执行它
+    // If the task includes a callback, execute it
     if (task.callback) {
       try {
-        task.result = task.callback(task.payload); // 执行回调
-        task.status = "completed"; // 标记为完成
+        task.result = task.callback(task.payload); // Execute callback
+        task.status = "completed"; // Mark as complete
 
         this.db.editTaskStatus({
           id: taskId,
@@ -112,7 +113,7 @@ export class TaskManager {
         //   timestamp: Date.now(),
         // });
       } catch (error) {
-        task.status = "failed"; // 如果回调执行失败，标记为失败
+        task.status = "failed"; // If callback execution fails, mark as failed
 
         this.db.editTaskStatus({
           id: taskId,
@@ -129,13 +130,13 @@ export class TaskManager {
   }
 
   /**
-   * 返回当前所有任务 (可供监控)
+   * Return all current tasks (for monitoring)
    */
   getTasks(): AgentTask[] {
     return this.tasks;
   }
 
-  /** 输出当前任务的状态 */
+  /** Output the current task status */
   showStatus() {
     console.log(`TaskManager Status:`);
     console.log(`- Total tasks: ${this.tasks.length}`);

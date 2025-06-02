@@ -1,61 +1,61 @@
 /**
  * Sensing.ts
  *
- * 感知层接口与默认实现。
- * - 提供对外的 registerListener(fn) 方法，用来注册监听器
- * - 允许 emitEvent(evt) 向系统发布事件
- * - registerListener 返回一个函数，可供调用者移除该监听器
+ * Interface and default implementation for the perception layer.
+ * - Provides the external registerListener(fn) method to register listeners
+ * - Allows emitEvent(evt) to publish events to the system
+ * - registerListener returns a function that callers can use to remove the listener
  *
- * 这样就实现了"统一的事件中心"，各模块可通过该中心进行事件交互。
+ * This implements a "unified event center" where modules can interact through events.
  */
 
 import { AgentEvent } from "./EventTypes";
 import { IDatabase } from "./Store";
 
-/** 感知层接口 */
+/** Perception layer interface */
 export interface ISensing {
   /**
-   * 注册一个事件监听函数
-   * @param fn 监听器回调 (evt: AgentEvent) => void
-   * @returns 一个关闭函数，用来移除这个监听器
+   * Register an event listener function
+   * @param fn Listener callback (evt: AgentEvent) => void
+   * @returns A cleanup function to remove this listener
    */
   registerListener(fn: (evt: AgentEvent) => void): () => void;
 
   /**
-   * 发出一个事件。系统内所有监听器都会收到该事件
+   * Emit an event. All listeners in the system will receive this event
    * @param evt AgentEvent
    */
   emitEvent(evt: AgentEvent): void;
 
   /**
-   * 获取当前感知层的状态 (供监控使用)
+   * Get the current state of the perception layer (for monitoring)
    */
   getStatus(): any;
 
   showStatus(): void;
 }
 
-/** 感知层配置选项 */
+/** Perception layer configuration options */
 export interface SensingOptions {
-  /** 数据库实例 */
+  /** Database instance */
   db: IDatabase;
-  /** 感知ID，用于区分不同的感知层 */
+  /** Sensing ID, used to differentiate between different perception layers */
   sensingId?: string;
 }
 
-/** 默认的感知层实现 */
+/** Default implementation of the perception layer */
 export class DefaultSensing implements ISensing {
-  /** 内部维护一个监听器数组 */
+  /** Internally maintains an array of listeners */
   private listeners: Array<(evt: AgentEvent) => void> = [];
-  /** 数据库实例 */
+  /** Database instance */
   private db: IDatabase;
 
-  /** 感知ID，用于区分不同的感知层 */
+  /** Sensing ID, used to differentiate between different perception layers */
   private sensingId: string;
 
   /**
-   * 构造函数，接收感知层配置选项
-   * @param options 感知层配置选项
+   * Constructor, receives perception layer configuration options
+   * @param options Perception layer configuration options
    */
   constructor(options: SensingOptions) {
     this.db = options.db;
@@ -65,17 +65,17 @@ export class DefaultSensing implements ISensing {
   registerListener(fn: (evt: AgentEvent) => void): () => void {
     this.listeners.push(fn);
 
-    // 返回一个函数，用于移除该listener
+    // Return a function to remove this listener
     return () => {
       this.listeners = this.listeners.filter((listener) => listener !== fn);
     };
   }
 
   emitEvent(evt: AgentEvent): void {
-    // 依次调用所有注册的监听器
+    // Call all registered listeners in sequence
     this.listeners.forEach((listener) => listener(evt));
 
-    // 使用数据库保存事件
+    // Save the event using the database
     this.db.saveEvent({
       name: evt.type,
       description: evt.description,
@@ -89,7 +89,7 @@ export class DefaultSensing implements ISensing {
     };
   }
 
-  /** 输出当前监听器的状态 */
+  /** Output the current status of listeners */
   showStatus() {
     console.log(`Sensing Status:`);
     console.log(`- Listener count: ${this.listeners.length}`);

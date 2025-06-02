@@ -1,8 +1,8 @@
 /**
  * State.ts
  *
- * Agent 的默认状态管理。
- * 提供简单的内存存储，也可扩展成 DB、Redis 等。
+ * Default state management for the Agent.
+ * Provides simple in-memory storage, can be extended to use DB, Redis, etc.
  */
 
 export interface IState {
@@ -12,7 +12,7 @@ export interface IState {
   showStatus(): void;
 }
 
-/** 默认状态实现 (仅内存) */
+/** Default state implementation (memory only) */
 export class DefaultState implements IState {
   private store: Record<string, any> = {};
 

@@ -122,7 +122,7 @@ export async function getHolding_apt(
       select_portfolio: select_portfolio,
     });
 
-    console.log("Holding data:", coinHolding);
+    // console.log("Holding data:", coinHolding);
 
     return coinHolding;
   } catch (error: any) {
@@ -168,8 +168,8 @@ async function processHoldings({
     return isInPortfolio && hasUsdValue;
   });
 
-  console.log(`Token filtered out: `);
-  console.log(filteredOutTokens);
+  // console.log(`Token filtered out: `);
+  // console.log(filteredOutTokens);
 
   // 创建 Map 便于查找用户持仓
   const holdingMap = new Map<string, BalanceOnScan>();

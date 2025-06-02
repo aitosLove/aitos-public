@@ -1,22 +1,23 @@
+// filepath: /Users/ryuko/dev/24531/wonderland-v2/back/src/agent/core/EventTypes.ts
 /**
  * EventTypes.ts
  *
- * 定义在 Agent 中流转的事件结构。
- * 这些事件由 Sensing.ts（感知层）负责接收和分发，
- * 模块或任务可通过 Sensing.emitEvent() 注入事件。
+ * Defines the event structure flowing through the Agent.
+ * These events are received and distributed by Sensing.ts (perception layer),
+ * and modules or tasks can inject events via Sensing.emitEvent().
  */
 
-/** Agent 里通用的事件接口 */
+/** Common event interface in the Agent */
 export interface AgentEvent {
-  /** 事件类型 (如 "TASK_CREATED", "CREATE_CRON_TASK" 等) */
+  /** Event type (e.g., "TASK_CREATED", "CREATE_CRON_TASK", etc.) */
   type: string;
 
-  /** 事件负载，具体数据由事件类型决定 */
+  /** Event payload, specific data determined by the event type */
   payload?: any;
 
   /** EventDescription */
   description: string;
 
-  /** 事件触发的时间戳 */
+  /** Timestamp when the event was triggered */
   timestamp: number;
 }

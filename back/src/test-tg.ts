@@ -11,11 +11,13 @@
 import { Agent } from "./agent";
 import { DefaultSensing } from "./agent/core/Sensing";
 import { NullDatabase } from "./agent/core/Store";
-// import { enableInvestmentModule } from "./modules/wonderland-v1";
-import { enableWonderlandModule } from "./modules/use-v3";
 import { enableXCrawlerModule } from "./modules/xContentCrawler";
 import { enableTelegramModule } from "./modules/telegram";
+import { enableAitosBlueprint } from "./blueprints";
 import { DrizzleDatabase } from "./templateDB";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const nullDatabase = new NullDatabase();
 const groupChannel = new DefaultSensing({
@@ -31,13 +33,17 @@ export const mainAgent = new Agent({
 });
 
 async function main() {
-  enableWonderlandModule(mainAgent);
-  console.log("[main] Agent started with Wonderland V3 module enabled.");
-
   // 启用TG模块
   try {
-    await enableTelegramModule(mainAgent);
-    console.log("[main] Telegram module enabled successfully.");
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    if (!botToken) {
+      console.error("[main] 错误: 缺少 TELEGRAM_BOT_TOKEN 环境变量");
+    } else {
+      await enableTelegramModule(mainAgent, {
+        botToken: botToken,
+      });
+      console.log("[main] Telegram module enabled successfully.");
+    }
   } catch (error) {
     console.error("[main] Failed to enable Telegram module:", error);
   }
@@ -46,6 +52,7 @@ async function main() {
     enableXCrawlerModule(mainAgent, process.env.userId);
     console.log("[main] Agent started with X crawler module enabled.");
   }
+  
 }
 // 启动
 main().catch((err) => console.error(err));

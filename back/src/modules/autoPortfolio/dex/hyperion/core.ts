@@ -131,7 +131,8 @@ export const swap_on_hyperion = async (
       data: executedTransaction,
     };
   } catch (error) {
-    console.error(`Error swapping from ${params.from} to ${params.to}:`, error);
+    console.error(`Error swapping from ${params.from} to ${params.to}:`);
+    
     return {
       success: false,
       error,

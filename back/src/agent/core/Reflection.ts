@@ -1,23 +1,24 @@
+// filepath: /Users/ryuko/dev/24531/wonderland-v2/back/src/agent/core/Reflection.ts
 /**
  * Reflection.ts
  *
- * 反射层，用于处理紧急或快速响应的场景。
- * 不走正常的任务或感知事件流程，而是直接调用相关接口。
+ * Reflection layer, used for emergency or quick response scenarios.
+ * It bypasses the normal task or event flow, directly calling relevant interfaces.
  */
 
 export interface IReflection {
-  /** 紧急关闭或其他快速响应操作 */
+  /** Emergency shutdown or other quick response operations */
   shutdown(): void;
 
   getStatus(): any;
   showStatus(): void;
 }
 
-/** 默认反射实现 */
+/** Default reflection implementation */
 export class DefaultReflection implements IReflection {
   shutdown(): void {
     console.log("[DefaultReflection] immediate shutdown triggered!");
-    // 你可以在这里做如：关闭所有任务 或 发出系统停止信号 等快速动作
+    // You can perform quick actions here such as: closing all tasks or sending system stop signals
   }
 
   getStatus() {

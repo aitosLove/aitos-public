@@ -55,7 +55,8 @@ export async function setupAptosPortfolioSystem() {
   // 注册一些事件监听器来展示功能
   const offGetHoldingListener = agent.sensing.registerListener(async (evt) => {
     if (evt.type === "GET_HOLDING_RESULT") {
-      console.log("收到持仓数据:", evt.payload.holdings);
+      // console.log("收到持仓数据:", evt.payload.holdings);
+      console.log("收到持仓数据");
     }
 
     if (evt.type === "GET_PORTFOLIO_SUGGESTION_RESULT") {

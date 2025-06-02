@@ -1,15 +1,16 @@
+// filepath: /Users/ryuko/dev/24531/wonderland-v2/back/src/agent/index.ts
 /**
  * agent/index.ts
  *
- * 定义 Agent 类，整合核心模块：
- * - sensing (事件感知)
- * - taskManager (任务管理)
- * - thinking (思维)
- * - state (状态)
- * - reflection (反射)
- * - monitoring (监控)
+ * Defines the Agent class, integrating core modules:
+ * - sensing (event perception)
+ * - taskManager (task management)
+ * - thinking (cognitive processing)
+ * - state (status management)
+ * - reflection (self-reflection)
+ * - monitoring (system monitoring)
  *
- * 这样就形成“一个Agent实例”，外部可调用其方法，也可将其注入模块中。
+ * This forms "an Agent instance" that external systems can call methods on, or inject into modules.
  */
 
 import { DefaultSensing, ISensing } from "./core/Sensing";
@@ -23,57 +24,57 @@ import { v4 as uuidV4 } from "uuid";
 
 export interface AgentOptions {
   db?: IDatabase;
-  groupSensing?: ISensing; // 共享的感知层
-  agentId?: string; // 唯一的 agentId，用于多实例检索
-  name?: string; // agent的名字
+  groupSensing?: ISensing; // Shared perception layer
+  agentId?: string; // Unique agentId for multi-instance lookup
+  name?: string; // Name of the agent
 }
 
 export class Agent {
-  // 暴露给外界的核心组件
+  // Core components exposed to the outside world
 
-  public sensing: ISensing; // 事件感知
-  public groupSensing: ISensing; // 所有 Agent共用的大感知层
+  public sensing: ISensing; // Event perception
+  public groupSensing: ISensing; // Large perception layer shared by all Agents
 
-  public taskManager: TaskManager; // 任务管理
-  public thinking: IThinking; // 思维
-  public state: IState; // 默认状态
-  public reflection: IReflection; // 反射
-  // public monitoring: IMonitoring; // 监控
-  public agentId: string; // 唯一的 agentId，用于多实例检索
-  public db: IDatabase; // 数据库实例
-  public name: string; // agent的名字
+  public taskManager: TaskManager; // Task management
+  public thinking: IThinking; // Thinking
+  public state: IState; // Default state
+  public reflection: IReflection; // Reflection
+  // public monitoring: IMonitoring; // Monitoring
+  public agentId: string; // Unique agentId for multi-instance lookup
+  public db: IDatabase; // Database instance
+  public name: string; // Name of the agent
 
   constructor(options: AgentOptions = {}) {
-    // 1. 生成唯一的 agentId
+    // 1. Generate a unique agentId
     this.agentId = options.agentId || uuidV4();
 
-    // 2. 设置 agent 名字
+    // 2. Set agent name
     this.name = options.name || `Agent-${this.agentId.slice(0, 8)}`;
 
-    // 使用提供的数据库或创建空实现
+    // Use provided database or create a null implementation
     this.db = options.db || new NullDatabase();
 
-    // 1. 初始化感知层
+    // 1. Initialize perception layer
     this.sensing = new DefaultSensing({ db: this.db });
 
-    // 共享感知层，如果初始化没有传入，则 Agent 自己拉一个群
+    // Shared perception layer, if not passed during initialization, Agent creates its own group
     this.groupSensing =
       options.groupSensing ||
       new DefaultSensing({
         db: this.db,
       });
 
-    // 2. 初始化任务管理 (需要注入sensing, 用于发事件)
+    // 2. Initialize task management (inject sensing for event emission)
     this.taskManager = new TaskManager(this.sensing, this.db);
 
-    // 3. 初始化其他默认模块
+    // 3. Initialize other default modules
     this.thinking = new DefaultThinking();
     this.state = new DefaultState();
     this.reflection = new DefaultReflection();
     // this.monitoring = new DefaultMonitoring();
 
-    // // 4. 可选：把核心模块的 getStatus() 也加到 monitoring 中
-    // //    以便在 getOverallStatus() 里看到它们的状态
+    // // 4. Optional: Add core modules' getStatus() to monitoring
+    // //    to see their status in getOverallStatus()
     // this.monitoring.addModuleStatusGetter("core_sensing", () =>
     //   this.sensing.getStatus()
     // );
