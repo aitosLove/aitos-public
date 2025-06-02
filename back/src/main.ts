@@ -14,7 +14,7 @@ import { NullDatabase } from "./agent/core/Store";
 // import { enableInvestmentModule } from "./modules/wonderland-v1";
 import { enableWonderlandModule } from "./modules/use-v3";
 import { enableXCrawlerModule } from "./modules/xContentCrawler";
-import { enableEnhancedTelegramModule } from "./modules/tg";
+import { enableTelegramModule } from "./modules/telegram";
 import { DrizzleDatabase } from "./templateDB";
 
 const nullDatabase = new NullDatabase();
@@ -36,8 +36,8 @@ async function main() {
 
   // 启用TG模块
   try {
-    await enableEnhancedTelegramModule(mainAgent);
-    console.log("[main] Enhanced Telegram module enabled successfully.");
+    await enableTelegramModule(mainAgent);
+    console.log("[main] Telegram module enabled successfully.");
   } catch (error) {
     console.error("[main] Failed to enable Telegram module:", error);
   }

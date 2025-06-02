@@ -1,8 +1,7 @@
 import { Agent } from "@/src/agent";
 import { NullDatabase } from "@/src/agent/core/Store";
 import { enableAnalystModule } from "@/src/modules/cmcAnalysis";
-import { analysis_portfolio_apt } from "@/src/modules/use-v3/config/apt/rate-analysis-cmc";
-
+import { analysis_portfolio_apt } from "../autoPortfolio/chain/apt/rate-analysis-cmc";
 const nullDatabase = new NullDatabase();
 
 const mainAgent = new Agent({

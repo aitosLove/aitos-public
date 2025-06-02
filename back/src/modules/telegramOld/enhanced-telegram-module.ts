@@ -311,23 +311,75 @@ export class EnhancedTelegramModule {
   }
 
   /**
-   * 生成AI回复（简单实现）
+   * 生成AI回复
    */
   private async generateAIResponse(
     message: string, 
     history: any[]
   ): Promise<string> {
-    // 这里应该集成真正的AI服务
-    // 暂时返回一个智能的默认回复
-    
-    const responses = [
-      "很有趣的问题！基于当前市场情况，我建议您关注风险管理。",
-      "从技术分析角度来看，这是一个值得深入研究的话题。",
-      "根据您的问题，我推荐您查看最新的市场洞察报告。",
-      "这确实是一个复杂的问题，让我为您分析一下相关因素。"
-    ];
-
-    return responses[Math.floor(Math.random() * responses.length)];
+    try {
+      // 导入统一 AI 客户端
+      const { aiClient } = await import('./ai-client');
+      
+      if (!aiClient) {
+        console.error('[EnhancedTelegramModule] AI 客户端未初始化');
+        throw new Error('AI 客户端未初始化');
+      }
+      
+      console.log('[EnhancedTelegramModule] 调用统一 AI 客户端生成回复');
+      
+      // 记录请求开始时间
+      const startTime = Date.now();
+      
+      // 准备上下文消息
+      const messages = [
+        { role: 'system', content: '你是增强版 Telegram 机器人中的智能助手，请提供简洁、专业的回答，特别是关于加密货币和市场分析的问题。保持回答友好且有帮助性。' }
+      ];
+      
+      // 添加历史消息
+      if (history && history.length > 0) {
+        messages.push(...history.map((item: any) => ({
+          role: item.role,
+          content: item.content
+        })));
+      }
+      
+      // 添加当前用户消息
+      messages.push({ role: 'user', content: message });
+      
+      // 调用 AI 生成回复
+      const response = await aiClient.chat.completions.create({
+        messages,
+        model: process.env.TELEGRAM_CHAT_AI_ENDPOINT,
+        temperature: 0.7,
+        max_tokens: 800
+      });
+      
+      // 计算响应时间
+      const responseTime = Date.now() - startTime;
+      console.log(`[EnhancedTelegramModule] AI 响应时间: ${responseTime}ms`);
+      
+      // 提取生成的回复
+      const aiResponse = response.choices?.[0]?.message?.content || "抱歉，我无法生成回复。";
+      
+      // 添加调试信息
+      console.log(`[EnhancedTelegramModule] AI 回复长度: ${aiResponse.length}字符`);
+      
+      return aiResponse;
+      
+    } catch (error) {
+      console.error('[EnhancedTelegramModule] AI 生成回复失败:', error);
+      
+      // 返回备用回复
+      const fallbackResponses = [
+        "很抱歉，我目前无法处理您的请求。请稍后再试。",
+        "遇到了一些技术问题，无法连接到 AI 服务。",
+        "我的 AI 服务暂时不可用，请您稍后再试。",
+        "抱歉，我无法回答这个问题，请尝试其他问题或稍后再试。"
+      ];
+      
+      return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    }
   }
 
   /**

@@ -172,13 +172,37 @@ export class EnhancedTelegramBotManager {
           // 构建上下文提示
           const contextPrompt = this.buildContextPrompt(session, context!);
           
-          const response = await agent.thinking.response({
-            input: args,
-            model: "large",
-            platform: "qwen",
-            systemPrompt: contextPrompt,
+          // 导入统一 AI 客户端
+          const { aiClient } = await import('./ai-client');
+          
+          if (!aiClient) {
+            throw new Error('AI 客户端未初始化');
+          }
+          
+          console.log("[Telegram] 调用 AI 客户端生成聊天回复");
+          
+          // 构建消息历史数组，仅保留最近的对话历史
+          const recentHistory = session.conversationHistory
+            .slice(-6) // 保留最近的6条消息
+            .map((msg: any) => ({
+              role: msg.role,
+              content: msg.content
+            }));
+            
+          // 调用统一 AI 客户端
+          const aiResponse = await aiClient.chat.completions.create({
+            messages: [
+              { role: 'system', content: contextPrompt },
+              ...recentHistory
+            ],
+            model: process.env.TELEGRAM_CHAT_AI_ENDPOINT,
+            temperature: 0.7,
+            max_tokens: 800
           });
-
+          
+          // 从响应中提取AI回复
+          const response = aiResponse.choices?.[0]?.message?.content || "抱歉，我无法生成回复。";
+          
           // 添加助手回复到历史
           session.conversationHistory.push({
             role: "assistant",

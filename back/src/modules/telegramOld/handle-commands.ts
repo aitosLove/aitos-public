@@ -8,7 +8,7 @@ import {
 } from "@/db/schema/moduleSchema/defiSchema";
 import { db } from "@/db";
 import { desc } from "drizzle-orm";
-import { storeMessageRecord } from "./throw_insight";
+import { tgMessageTable } from "@/db/schema/moduleSchema/tgSchema";
 
 // Create a type that includes common methods between both bot manager implementations
 type BotManagerWithCommands = {
@@ -82,4 +82,25 @@ export function registerInsightCommands(botManager: BotManagerWithCommands) {
       }
     },
   });
+}
+
+
+export async function storeMessageRecord({
+  content,
+}: {
+  content: string;
+}): Promise<void> {
+  try {
+    // 同时存储 insightId 用于后续追踪
+    await db.insert(tgMessageTable).values({
+      userId: "agent", // Default agent user ID
+      role: "assistant",
+      content,
+      messageType: "notification",
+      status: "sent",
+    });
+  } catch (error) {
+    console.error("Failed to store record:", error);
+    throw new Error("Failed to store insight record");
+  }
 }

@@ -167,6 +167,12 @@ export class InteractionFlowManager {
     const step = flow.steps.get(stepId);
     if (!step) return;
 
+    // AI聊天流程的特殊处理
+    if (flow.id === "ai_chat" && stepId === "process") {
+      await this.handleAIChatProcess(session);
+      return;
+    }
+
     let message = step.message;
     
     // 替换变量
@@ -208,6 +214,111 @@ export class InteractionFlowManager {
       default:
         await this.botManager.sendMessageWithOptions(session.chatId, message);
         break;
+    }
+  }
+
+  /**
+   * 处理 AI 聊天流程的 process 步骤
+   */
+  private async handleAIChatProcess(session: UserSession): Promise<void> {
+    try {
+      // 获取用户消息
+      const userMessage = session.data.start || session.data.response;
+      if (!userMessage) {
+        await this.botManager.sendMessageWithOptions(
+          session.chatId,
+          "❌ 无法处理空消息"
+        );
+        return;
+      }
+      
+      // 显示正在输入状态
+      await this.botManager.sendChatAction(session.chatId, "typing");
+      
+      // 导入统一 AI 客户端
+      const { aiClient } = await import('./ai-client');
+      
+      if (!aiClient) {
+        throw new Error('AI 客户端未初始化');
+      }
+      
+      console.log("[InteractionFlow] AI聊天处理中:", userMessage);
+      
+      // 记录请求开始时间
+      const startTime = Date.now();
+      
+      // 从会话历史中提取对话上下文
+      const conversationHistory = session.data.history || [];
+      
+      // 准备上下文消息
+      const messages = [
+        { 
+          role: 'system', 
+          content: '你是一个加密货币和投资方面的专业顾问。提供清晰、简洁且有见地的回答，尤其是关于市场分析、投资策略和风险管理的问题。'
+        }
+      ];
+      
+      // 添加历史消息
+      if (conversationHistory.length > 0) {
+        // 只取最近的几条对话记录
+        const recentHistory = conversationHistory.slice(-4); 
+        messages.push(...recentHistory);
+      }
+      
+      // 添加当前用户消息
+      messages.push({ role: 'user', content: userMessage });
+      
+      // 调用统一 AI 客户端
+      const response = await aiClient.chat.completions.create({
+        messages,
+        model: process.env.TELEGRAM_CHAT_AI_ENDPOINT,
+        temperature: 0.7,
+        max_tokens: 800
+      });
+      
+      // 计算响应时间
+      const responseTime = Date.now() - startTime;
+      console.log(`[InteractionFlow] AI 响应时间: ${responseTime}ms`);
+      
+      // 提取 AI 回复
+      const aiResponse = response.choices?.[0]?.message?.content || "抱歉，我无法生成回复。";
+      
+      // 更新会话历史
+      if (!session.data.history) {
+        session.data.history = [];
+      }
+      
+      // 添加用户消息和AI回复到历史
+      session.data.history.push(
+        { role: 'user', content: userMessage },
+        { role: 'assistant', content: aiResponse }
+      );
+      
+      // 限制历史长度
+      if (session.data.history.length > 10) {
+        session.data.history = session.data.history.slice(-10);
+      }
+      
+      // 保存结果并进入下一步
+      session.data.aiResponse = aiResponse;
+      session.data.responseTime = responseTime;
+      session.currentStep = "response";
+      
+      // 执行响应步骤
+      await this.executeStep(session, "response");
+      
+    } catch (error) {
+      console.error("[InteractionFlow] AI聊天处理失败:", error);
+      
+      // 发送错误消息
+      await this.botManager.sendMessageWithOptions(
+        session.chatId,
+        "❌ 处理您的请求时出现错误，请稍后再试。"
+      );
+      
+      // 重新开始对话
+      session.currentStep = "start";
+      await this.executeStep(session, "start");
     }
   }
 

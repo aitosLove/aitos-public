@@ -1,4 +1,13 @@
-import { AgentTask } from "@/src/agent/core/AgentTask";
+import { AgentTask } from "@/src/agent/core/Aclass InvestmentManager {
+  private agent: Agent;
+  private localState: InvestmentState = new InvestmentState();
+  private offListeners: Array<() => void> = []; // 存"关闭监听器"的函数
+  private botManager: EnhancedTelegramBotManager;
+
+  constructor(agent: Agent) {
+    this.agent = agent;
+    this.botManager = EnhancedTelegramBotManager.getInstance();
+  }
 import { Agent } from "@/src/agent";
 import { AgentEvent } from "@/src/agent/core/EventTypes";
 import TelegramBot from "node-telegram-bot-api";
@@ -45,8 +54,8 @@ export class InvestmentState {
 
 class InvestmentManager {
   private agent: Agent;
-  private localState: InvestmentState = new InvestmentState();
-  private offListeners: Array<() => void> = []; // 存"关闭监听器"的函数
+  private localState: InvestmentState;
+  private offListeners: Array<() => void> = []; // 存“关闭监听器”的函数
   private botManager: EnhancedTelegramBotManager;
 
   constructor(agent: Agent) {
@@ -55,30 +64,60 @@ class InvestmentManager {
   }
 
   init() {
-    // No need to initialize bot manager here, as it's now managed by the enhanced module
-    // Just register insight commands directly with the bot manager instance
-    // Note: registerInsightCommands should be updated to accept EnhancedTelegramBotManager
-    
-    // Skip command registration here, as it will be handled by the enhanced module
-    // Focus only on event listening for insights
+    // Register insight commands
+    registerInsightCommands(this.botManager);
+
+    // 注册事件监听
+    // const commandHandler = this.agent.sensing.registerListener(
+    //   (evt: AgentEvent) => {
+    //     if (evt.type === "TELEGRAM_COMMAND") {
+    //       this.handleTelegramCommand(evt.payload);
+    //     }
+    //   }
+    // );
+    // this.offListeners.push(commandHandler);
 
     // 新增INSIGHT事件监听
     const insightHandler = this.agent.sensing.registerListener(
       (evt: AgentEvent) => {
         if (evt.type === "UPDATE_INSIGHT_COMPLETE") {
           this.handleNewInsight(evt.payload as InsightPayload);
+          // console.log("new insight event listened");
         }
       }
     );
     this.offListeners.push(insightHandler);
 
-    // Other event listeners
+    // 设置定时任务
+    // this.setupPriceScheduler();
+
     this.agent.sensing.registerListener((evt: AgentEvent) => {
       if (evt.type === "UPDATE_RATE_EVENT") {
-        // Handle rate update events
+        this;
       }
     });
   }
+
+  // 模拟事件泵
+  // private setupPriceScheduler() {
+  //   cron.schedule("*/10 * * * * *", () => {
+  //     this.agent.sensing.emitEvent({
+  //       type: "UPDATE_INSIGHT_COMPLETE",
+  //       description: "Price updated. Now you should update insight.",
+  //       payload: {},
+  //       timestamp: Date.now(),
+  //     });
+  //     // console.log("event pump online");
+
+  //     // this.createAutomatedTask({
+  //     //   source: "BTC/USD in Binance: $61,234.56",
+  //     // });
+
+  //     // this.createAutomatedTask({
+  //     //   source: "ETH/USD in Binance: $3,456.78",
+  //     // });
+  //   });
+  // }
 
   // 任务
   private handleNewInsight(payload: InsightPayload) {
@@ -89,17 +128,26 @@ class InvestmentManager {
       callback: async (payload) => {
         try {
           // 1. 获取insight内容
-          const content = await this.localState.getInsightContent(payload.insightId);
+          // console.log("getting new insight content");
+
+          // 换数据库了记得改这个地方拿insight
+          const content = "another useless mock market insight!";
+          // const content = await this.localState.getInsightContent({
+          //   insightId: payload.insightId,
+          // });
 
           // 2. 发送Telegram消息
+          // console.log("sending to tg insight content");
+
           const success = await this.botManager.sendMessage(content);
 
           if (success) {
             // 3. 存储发送记录
             await storeMessageRecord({ content });
+            // this.agent.logger.info(`Insight ${result.insightId} sent successfully`);
           }
         } catch (error) {
-          console.error("Insight sending failed:", error);
+          // this.agent.logger.error(`Insight sending failed: ${error.message}`);
         }
       },
     });
@@ -110,8 +158,8 @@ class InvestmentManager {
       type: "AUTO_PRICE_UPDATE",
       description: "Automatic price reporting",
       payload,
-      callback: async (payload) => {
-        const success = await this.botManager.sendMessage(payload.source);
+      callback: async (result) => {
+        const success = await this.botManager.sendMessage(result.source);
       },
     });
   }
@@ -144,17 +192,17 @@ export function enableTgInsightModule(agent: Agent) {
   const listener = agent.sensing.registerListener((evt: AgentEvent) => {
     if (evt.type === "ENHANCED_TG_MODULE_READY") {
       initInvestmentLogic();
-      listener(); // Clean up listener
     } else if (evt.type === "ENHANCED_TG_MODULE_AVAILABLE") {
       // Module was already initialized
       initInvestmentLogic();
-      listener(); // Clean up listener
+      // Remove listener since we don't need it anymore
+      listener();
     }
   });
 
   // After 5 seconds, if we haven't received a response, initialize anyway
   setTimeout(() => {
-    console.log("[enableTgInsightModule] Proceeding with initialization anyway...");
+    console.log("[enableTgInsightModule] Proceeding with initialization...");
     initInvestmentLogic();
     listener(); // Clean up listener
   }, 5000);
