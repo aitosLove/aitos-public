@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx tsx src/main.ts",
-    "db:push": "npx drizzle-kit push"
+    "db:push": "npx drizzle-kit push",
+    "test:tg-simple": "npx tsx src/modules/tg/simple-test.ts"
   },
   "author": "",
   "license": "ISC",

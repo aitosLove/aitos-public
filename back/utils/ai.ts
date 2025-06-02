@@ -37,11 +37,11 @@ const MODEL_MAPPING: ModelMapping = {
   //   reason: "deepseek-reasoner",
   // },
   deepseek: {
-    small: "deepseek-r1-250120",
-    medium: "deepseek-r1-250120",
-    large: "deepseek-r1-250120",
-    xlarge: "deepseek-r1-250120",
-    reason: "deepseek-r1-250120",
+    small: "deepseek-v3-250324",
+    medium: "deepseek-r1-250528",
+    large: "deepseek-r1-250528",
+    xlarge: "deepseek-r1-250528",
+    reason: "deepseek-r1-250528",
   },
   atoma: {
     small: "meta-llama/Llama-3.3-70B-Instruct",
