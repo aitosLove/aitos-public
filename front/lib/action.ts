@@ -194,3 +194,69 @@ export async function getTgMessageRecord() {
     console.log(e);
   }
 }
+
+
+
+
+// Get all posts
+export async function getXPostsRecord() {
+  try {
+    const posts = await db.query.posts.findMany({
+      orderBy: (posts, { desc }) => [desc(posts.timestamp)]
+    });
+    
+    return posts;
+  } catch (error) {
+    console.error('Error fetching X posts:', error);
+    throw new Error('Failed to fetch X posts');
+  }
+}
+
+// Get all content insights
+export async function getAllContentInsights() {
+  try {
+    const allContentInsights = await db.query.contentInsights.findMany();
+    return allContentInsights;
+  } catch (error) {
+    console.error("Failed to fetch content insights:", error);
+    throw new Error("Failed to retrieve content insights");
+  }
+}
+
+// Get all processed insights
+export async function getAllProcessedInsights() {
+  try {
+    const allInsights = await db.query.insights.findMany();
+    return allInsights;
+  } catch (error) {
+    console.error("Failed to fetch processed insights:", error);
+    throw new Error("Failed to retrieve processed insights");
+  }
+}
+
+// Get all perplexity searches
+export async function getPerplexitySearchesRecord() {
+  try {
+    const searches = await db.query.perplexitySearches.findMany({
+      orderBy: (searches, { desc }) => [desc(searches.timestamp)]
+    });
+    
+    return searches;
+  } catch (error) {
+    console.error('Error fetching perplexity searches:', error);
+    throw new Error('Failed to fetch perplexity searches');
+  }
+}
+
+export async function getContentInsightsRecord() {
+  try {
+    const insights = await db.query.contentInsights.findMany({
+      orderBy: (insights, { desc }) => [desc(insights.timestamp)]
+    });
+    
+    return insights;
+  } catch (error) {
+    console.error('Error fetching content insights:', error);
+    throw new Error('Failed to fetch content insights');
+  }
+}

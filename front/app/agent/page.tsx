@@ -1,42 +1,38 @@
-import AgentSummaryCard from '@/components/mini-agent-card/AgentSummaryCard';
-import EventPumpSection from '@/components/mini-agent-card/EventPump';
-import EventPoolSection from '@/components/mini-agent-card/EventPool';
-import TaskPool from '@/components/mini-agent-card/TaskPool';
-import { MarketAnalysisCard } from '@/components/mini-agent-card/MarketAnalysis';
-import PortfolioCard from '@/components/mini-agent-card/Portfolio';
-import { SuiAnalysisMiniCard } from '@/components/mini-agent-card/MarketAnalysisMini';
+// pages/dashboard.tsx
+"use client";
+
+import { useState } from "react";
+import EventPumpSection from "@/components/minicard-aptos/EventPump";
+import EventPoolSection from "@/components/minicard-aptos/EventPool";
+import TaskPool from "@/components/minicard-aptos/TaskPool";
+import AgentProfile from "@/components/minicard-aptos/AgentProfile";
 
 export default function Dashboard() {
-  return (
-    <div className="bg-primary-foreground min-h-screen p-6">
-      <div className="max-w-8xl mx-auto">
-        <header className="mb-8">
-          {/* <h1 className="text-3xl font-bold text-gray-800 mb-4">Agent Dashboard</h1> */}
-          <AgentSummaryCard />
-        </header>
-        
-        {/* Main Grid */}
-        <div className="grid grid-cols-3 gap-6">
-          {/* Row 1 */}
-          <div className="col-span-4 md:col-span-1 bg-background rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <EventPumpSection />
-          </div>
-          
-          <div className="col-span-4 md:col-span-1 bg-background rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <EventPoolSection />
-          </div>
-          
-          <div className="col-span-4 md:col-span-1 bg-background rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <TaskPool />
-          </div>
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-          {/* Row 2 */}
-          <div className="col-span-4 md:col-span-2 bg-background rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <SuiAnalysisMiniCard />
-          </div>
-          
-          <div className="col-span-4 md:col-span-1 bg-background rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-            <PortfolioCard />
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    // Simulate refresh action
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        {/* Agent Profile Card */}
+        <AgentProfile />
+
+        <div className="w-full">
+          {/* Event Pump Section */}
+          <EventPumpSection />
+
+          {/* Task and Event Pools */}
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6 ">
+            <EventPoolSection />
+            <TaskPool />
           </div>
         </div>
       </div>
