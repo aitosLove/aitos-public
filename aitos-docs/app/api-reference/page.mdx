@@ -1,0 +1,229 @@
+# API Reference
+
+This page provides a reference of the key interfaces and types in the AITOS framework.
+
+## Core Interfaces
+
+### Agent
+
+The central entity in the AITOS framework.
+
+```typescript
+interface AgentOptions {
+  db?: IDatabase;
+  groupSensing?: ISensing; // Shared perception layer
+  agentId?: string; // Unique agentId for multi-instance lookup
+  name?: string; // Name of the agent
+}
+
+class Agent {
+  public sensing: ISensing; // Event perception
+  public groupSensing: ISensing; // Large perception layer shared by all Agents
+  public taskManager: TaskManager; // Task management
+  public thinking: IThinking; // Thinking
+  public state: IState; // Default state
+  public reflection: IReflection; // Reflection
+  public agentId: string; // Unique agentId for multi-instance lookup
+  public db: IDatabase; // Database instance
+  public name: string; // Name of the agent
+
+  constructor(options: AgentOptions = {}) { /* ... */ }
+  on(): void { /* ... */ }
+}
+```
+
+### Events
+
+Events represent state changes or external triggers within the system.
+
+```typescript
+interface AgentEvent {
+  /** Event type (e.g., "TASK_CREATED", "CREATE_CRON_TASK", etc.) */
+  type: string;
+
+  /** Event payload, specific data determined by the event type */
+  payload?: any;
+
+  /** EventDescription */
+  description: string;
+
+  /** Timestamp when the event was triggered */
+  timestamp: number;
+}
+```
+
+### Tasks
+
+Tasks are units of work created in response to events.
+
+```typescript
+interface AgentTask<TPayload = any> {
+  /** Task unique ID (automatically generated when created by TaskManager) */
+  id: string;
+
+  /**
+   * Task type, used to distinguish tasks from different modules or logic
+   * For example: "CRON_TASK", "WEBHOOK_TASK", etc.
+   */
+  type: string;
+  description: string;
+
+  /**
+   * Module-defined payload type
+   * For example: CronTaskPayload, WebhookPayload, etc.
+   */
+  payload: TPayload;
+
+  /** Task creation timestamp */
+  createdAt: number;
+
+  /** Task status */
+  status: "pending" | "running" | "completed" | "failed";
+
+  /** Task final result (if needed) */
+  result?: any;
+
+  // Callback function invoked when the task is executed
+  callback?: (payload: TPayload) => any;
+}
+```
+
+### Sensing
+
+The Sensing system serves as the event perception layer for agents.
+
+```typescript
+interface ISensing {
+  /**
+   * Register an event listener function
+   * @param fn Listener callback (evt: AgentEvent) => void
+   * @returns A cleanup function to remove this listener
+   */
+  registerListener: (fn: EventListenerFn) => UnregisterFn;
+
+  /**
+   * Emit an event to all registered listeners
+   * @param evt The event to emit
+   */
+  emitEvent: (evt: AgentEvent) => void;
+}
+
+type EventListenerFn = (evt: AgentEvent) => void;
+type UnregisterFn = () => void;
+```
+
+### Task Manager
+
+The TaskManager handles the creation and execution of tasks within an agent.
+
+```typescript
+interface ITaskManager {
+  /**
+   * Create a new task and execute it
+   * @param task Task details
+   * @returns The created task with its ID
+   */
+  createTask: <TPayload = any>(task: Omit<AgentTask<TPayload>, "id" | "status" | "createdAt">) => AgentTask<TPayload>;
+
+  /**
+   * Get a task by its ID
+   * @param taskId The task ID
+   * @returns The task or undefined if not found
+   */
+  getTask: (taskId: string) => AgentTask | undefined;
+  
+  /**
+   * Get all tasks in the system
+   * @returns Array of tasks
+   */
+  getTasks: () => AgentTask[];
+}
+```
+
+### Database
+
+The database interface for storing agent data.
+
+```typescript
+interface IDatabase {
+  /**
+   * Store data in the database
+   * @param key The key to store data under
+   * @param data The data to store
+   */
+  set: (key: string, data: any) => Promise<void>;
+
+  /**
+   * Retrieve data from the database
+   * @param key The key to retrieve
+   * @returns The stored data or null if not found
+   */
+  get: (key: string) => Promise<any | null>;
+
+  /**
+   * Delete data from the database
+   * @param key The key to delete
+   */
+  delete: (key: string) => Promise<void>;
+
+  /**
+   * List all keys in the database
+   * @returns Array of keys
+   */
+  keys: () => Promise<string[]>;
+}
+```
+
+## Blueprint Interface
+
+Blueprints define reusable agent configurations.
+
+```typescript
+type Blueprint = (agent: Agent) => (() => void);
+```
+
+A blueprint takes an agent instance and returns a cleanup function that disables all the modules it enabled.
+
+## Module Interfaces
+
+Though modules don't have a strict interface, they typically follow this pattern:
+
+```typescript
+// Sample module interface
+interface ModuleOptions {
+  // Module-specific configuration options
+  [key: string]: any;
+}
+
+type ModuleEnableFn = (agent: Agent, options: ModuleOptions) => ModuleDisableFn;
+type ModuleDisableFn = () => void;
+```
+
+## Helper Types
+
+### Event Type Constants
+
+```typescript
+export const AgentEventTypes = {
+  // Core events
+  AGENT_STARTED: "AGENT_STARTED",
+  AGENT_STOPPED: "AGENT_STOPPED",
+  
+  // Task events
+  TASK_CREATED: "TASK_CREATED",
+  TASK_STARTED: "TASK_STARTED",
+  TASK_COMPLETED: "TASK_COMPLETED",
+  TASK_FAILED: "TASK_FAILED",
+  
+  // Common module events
+  THINKING_STARTED: "THINKING_STARTED",
+  THINKING_COMPLETED: "THINKING_COMPLETED",
+  STATE_UPDATED: "STATE_UPDATED",
+  STATE_QUERY: "STATE_QUERY",
+};
+```
+
+## Next Steps
+
+- Explore [Code Examples](/code-examples) demonstrating how to use these interfaces
+- Learn about [Extensibility](/extensibility) through modules and blueprints

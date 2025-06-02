@@ -1,0 +1,330 @@
+# Code Examples
+
+This page provides practical code examples for common AITOS operations to help you implement your agent systems effectively.
+
+## Basic Agent Setup
+
+Creating and configuring a basic agent:
+
+```typescript
+import { Agent } from "@/src/agent";
+import { DefaultSensing } from "@/src/agent/core/Sensing";
+import { NullDatabase } from "@/src/agent/core/Store";
+
+// Create a group sensing channel for multi-agent communication
+const groupChannel = new DefaultSensing({
+  db: new NullDatabase(),
+  sensingId: "my-group-sensing",
+});
+
+// Create an agent
+const myAgent = new Agent({
+  agentId: "my-agent-id",  // Optional, will generate UUID if not provided
+  name: "My Agent",        // Optional, defaults to "Agent-{first 8 chars of agentId}"
+  groupSensing: groupChannel,
+  db: new NullDatabase(),  // Optional, defaults to NullDatabase
+});
+
+// Output agent information
+console.log(`Agent ID: ${myAgent.agentId}`);
+console.log(`Agent Name: ${myAgent.name}`);
+```
+
+## Event Handling
+
+### Emitting Events
+
+```typescript
+// Emit an event on the private sensing channel
+myAgent.sensing.emitEvent({
+  type: "DATA_UPDATE_REQUIRED",
+  description: "Data update is needed",
+  payload: {
+    dataType: "market",
+    priority: "high",
+  },
+  timestamp: Date.now(),
+});
+
+// Emit an event on the shared group sensing channel
+myAgent.groupSensing.emitEvent({
+  type: "GLOBAL_MARKET_UPDATE",
+  description: "Market update for all agents",
+  payload: {
+    market: "crypto",
+    trend: "bullish",
+    timestamp: Date.now(),
+  },
+  timestamp: Date.now(),
+});
+```
+
+### Listening for Events
+
+```typescript
+// Register a listener for specific events
+const offListener = myAgent.sensing.registerListener((event) => {
+  if (event.type === "DATA_UPDATE_REQUIRED") {
+    console.log(`Received data update request: ${event.description}`);
+    console.log(`Payload:`, event.payload);
+    
+    // Process the event...
+  }
+});
+
+// Register a listener on the group sensing channel
+const offGroupListener = myAgent.groupSensing.registerListener((event) => {
+  if (event.type === "GLOBAL_MARKET_UPDATE" && event.payload.trend === "bullish") {
+    console.log(`Received bullish market update in shared channel`);
+    
+    // Process the shared event...
+  }
+});
+
+// Later, clean up the listeners
+offListener();
+offGroupListener();
+```
+
+## Task Creation and Execution
+
+```typescript
+// Create and execute a task
+const task = myAgent.taskManager.createTask({
+  type: "PROCESS_DATA_TASK",
+  description: "Process market data",
+  payload: {
+    market: "crypto",
+    assets: ["BTC", "ETH", "SOL"],
+    timeframe: "1h",
+  },
+  callback: async (payload) => {
+    try {
+      // Simulate processing
+      console.log(`Processing data for ${payload.assets.length} assets...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Return results
+      const processed = payload.assets.map(asset => ({
+        symbol: asset,
+        price: Math.random() * 10000,
+        change: (Math.random() * 20) - 10,
+      }));
+      
+      // Emit an event on task completion
+      myAgent.sensing.emitEvent({
+        type: "DATA_PROCESSING_COMPLETED",
+        description: "Market data processing completed",
+        payload: {
+          market: payload.market,
+          results: processed,
+        },
+        timestamp: Date.now(),
+      });
+      
+      return processed;
+    } catch (error) {
+      console.error('Task failed:', error);
+      throw error;
+    }
+  },
+});
+
+// Check task status
+console.log(`Task ID: ${task.id}`);
+console.log(`Task Status: ${task.status}`);
+
+// Wait for task completion
+setTimeout(() => {
+  if (task.status === "completed") {
+    console.log("Task completed with result:", task.result);
+  }
+}, 2000);
+```
+
+## Custom Module Implementation
+
+Example of a complete custom module:
+
+```typescript
+// src/modules/marketMonitor/index.ts
+import { Agent } from "@/src/agent";
+import { AgentEvent } from "@/src/agent/core/EventTypes";
+
+// Module options interface
+interface MarketMonitorOptions {
+  assets: string[];
+  updateInterval: number;
+  alertThreshold?: number;
+}
+
+/**
+ * Enable market monitoring module on an agent
+ */
+export function enableMarketMonitor(agent: Agent, options: MarketMonitorOptions) {
+  const { assets, updateInterval, alertThreshold = 5.0 } = options;
+  
+  // Store market data
+  const marketData: Record<string, { price: number; lastUpdate: number }> = {};
+  
+  // Set up interval for market data polling
+  const intervalId = setInterval(async () => {
+    try {
+      // Simulate fetching market data
+      for (const asset of assets) {
+        const oldPrice = marketData[asset]?.price || 0;
+        const newPrice = oldPrice * (1 + ((Math.random() * 0.1) - 0.05));
+        const priceChange = oldPrice ? ((newPrice - oldPrice) / oldPrice) * 100 : 0;
+        
+        marketData[asset] = { price: newPrice, lastUpdate: Date.now() };
+        
+        // Emit regular update event
+        agent.sensing.emitEvent({
+          type: "MARKET_DATA_UPDATED",
+          description: `Market data updated for ${asset}`,
+          payload: {
+            asset,
+            price: newPrice,
+            change: priceChange,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+        });
+        
+        // Check if change exceeds threshold for alerts
+        if (Math.abs(priceChange) > alertThreshold) {
+          agent.sensing.emitEvent({
+            type: "PRICE_ALERT",
+            description: `Price alert for ${asset}: ${priceChange.toFixed(2)}% change`,
+            payload: {
+              asset,
+              price: newPrice,
+              change: priceChange,
+              threshold: alertThreshold,
+              alert: priceChange > 0 ? "BULLISH" : "BEARISH",
+              timestamp: Date.now(),
+            },
+            timestamp: Date.now(),
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error in market monitor:", error);
+      agent.sensing.emitEvent({
+        type: "MARKET_MONITOR_ERROR",
+        description: "Error in market monitoring module",
+        payload: { error: String(error) },
+        timestamp: Date.now(),
+      });
+    }
+  }, updateInterval);
+  
+  // Set up listener for data requests
+  const offDataRequestListener = agent.sensing.registerListener((event: AgentEvent) => {
+    if (event.type === "MARKET_DATA_REQUEST") {
+      const requestedAsset = event.payload.asset;
+      
+      // Handle the request
+      if (requestedAsset && assets.includes(requestedAsset)) {
+        const data = marketData[requestedAsset];
+        
+        if (data) {
+          agent.sensing.emitEvent({
+            type: "MARKET_DATA_RESPONSE",
+            description: `Market data for ${requestedAsset}`,
+            payload: {
+              asset: requestedAsset,
+              price: data.price,
+              lastUpdate: data.lastUpdate,
+              requestId: event.payload.requestId,
+            },
+            timestamp: Date.now(),
+          });
+        } else {
+          agent.sensing.emitEvent({
+            type: "MARKET_DATA_RESPONSE",
+            description: `No data available for ${requestedAsset}`,
+            payload: {
+              asset: requestedAsset,
+              available: false,
+              requestId: event.payload.requestId,
+            },
+            timestamp: Date.now(),
+          });
+        }
+      }
+    }
+  });
+  
+  // Return cleanup function
+  return function disableMarketMonitor() {
+    clearInterval(intervalId);
+    offDataRequestListener();
+    console.log("Market monitor module disabled");
+  };
+}
+```
+
+## Blueprint Implementation
+
+Example of a custom blueprint combining multiple modules:
+
+```typescript
+// src/blueprints/MarketAnalystBlueprint.ts
+import { Agent } from "@/src/agent";
+import { enableMarketMonitor } from "@/src/modules/marketMonitor";
+import { enableNewsModule } from "@/src/modules/news";
+import { enableTradingModule } from "@/src/modules/trading";
+
+export function MarketAnalystBlueprint(agent: Agent) {
+  // Enable necessary modules with configuration
+  const disableMarketMonitor = enableMarketMonitor(agent, {
+    assets: ["BTC", "ETH", "SOL", "ADA"],
+    updateInterval: 60000, // 1 minute
+    alertThreshold: 3.0,
+  });
+  
+  const disableNewsModule = enableNewsModule(agent, {
+    sources: ["coindesk", "cointelegraph"],
+    refreshInterval: 300000, // 5 minutes
+  });
+  
+  const disableTradingModule = enableTradingModule(agent, {
+    maxTradeSize: 5000,
+    enabledAssets: ["BTC", "ETH"],
+    tradingEnabled: false, // Paper trading only by default
+  });
+  
+  // Return a cleanup function that disables all modules
+  return function disableMarketAnalystBlueprint() {
+    disableMarketMonitor();
+    disableNewsModule();
+    disableTradingModule();
+    console.log("Market Analyst blueprint disabled");
+  };
+}
+```
+
+## Using the Custom Blueprint
+
+```typescript
+import { Agent } from "@/src/agent";
+import { MarketAnalystBlueprint } from "@/src/blueprints/MarketAnalystBlueprint";
+
+// Create an agent with the custom blueprint
+const analystAgent = new Agent({
+  agentId: "crypto-analyst-1",
+  name: "Crypto Market Analyst",
+  blueprint: MarketAnalystBlueprint,
+});
+
+console.log(`${analystAgent.name} is now monitoring markets`);
+
+// Later, if needed, the blueprint can be disabled
+// analystAgent.disableBlueprint();
+```
+
+## Next Steps
+
+- Check out the [API Reference](/api-reference) for detailed documentation on all classes and interfaces
+- Learn about advanced [Multi-Agent Communication](/multi-agent) patterns

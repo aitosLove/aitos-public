@@ -1,0 +1,200 @@
+# Event-Task System
+
+The Event-Task system is the core operational mechanism in AITOS that enables asynchronous, decoupled processing. This design allows agents to respond to various triggers while maintaining a clean separation of concerns.
+
+<div className="mt-8 mb-12 flex justify-center">
+  <img src="/images/event-task-system.svg" alt="Event-Task System Flow Diagram" width="800" />
+</div>
+
+## Key Concepts
+
+### Events
+
+Events represent state changes or external triggers within the system. Every event in AITOS includes:
+
+- **type**: A string identifier for the event category
+- **payload**: Data associated with the event
+- **description**: Human-readable description of the event
+- **timestamp**: When the event occurred
+
+```typescript
+interface AgentEvent {
+  type: string;
+  payload?: any;
+  description: string;
+  timestamp: number;
+}
+```
+
+Events can be emitted by any component that has access to a Sensing instance:
+
+```typescript
+agent.sensing.emitEvent({
+  type: "UPDATE_PRICE_REQUEST",
+  description: "Request to update asset price information",
+  payload: { assets: ["BTC", "ETH"] },
+  timestamp: Date.now(),
+});
+```
+
+### Tasks
+
+Tasks are units of work created in response to events. They include:
+
+- **id**: Unique identifier (generated automatically)
+- **type**: String identifier for the task category
+- **description**: Human-readable description
+- **payload**: Data needed to execute the task
+- **callback**: Function to execute when the task runs
+- **status**: Current state of the task ("pending", "running", "completed", "failed")
+
+```typescript
+interface AgentTask<TPayload = any> {
+  id: string;
+  type: string;
+  description: string;
+  payload: TPayload;
+  createdAt: number;
+  status: "pending" | "running" | "completed" | "failed";
+  result?: any;
+  callback?: (payload: TPayload) => any;
+}
+```
+
+Tasks are created through the TaskManager:
+
+```typescript
+agent.taskManager.createTask({
+  type: "PROCESS_PRICE_DATA",
+  description: "Process received price data",
+  payload: priceData,
+  callback: async (data) => {
+    // Process the data
+    const result = await processData(data);
+    return result;
+  },
+});
+```
+
+## Workflow
+
+The Event-Task system follows this general workflow:
+
+1. **Event Emission**: An event is published to the sensing layer
+2. **Event Detection**: Listeners detect the event
+3. **Task Creation**: A task is created in response to the event
+4. **Task Execution**: The task executes asynchronously
+5. **Result**: The task may emit new events upon completion
+
+This creates a chain of events and tasks that drive the agent's behavior.
+
+## Example: Basic Event-Task Flow
+
+```typescript
+// 1. Register a listener for a specific event type
+agent.sensing.registerListener((evt) => {
+  if (evt.type === "NEW_DATA_AVAILABLE") {
+    console.log("New data detected, creating processing task");
+    
+    // 2. Create a task in response to the event
+    agent.taskManager.createTask({
+      type: "PROCESS_DATA_TASK",
+      description: "Process newly available data",
+      payload: evt.payload,
+      callback: async (data) => {
+        // 3. Process the data
+        const processedResult = await processData(data);
+        
+        // 4. Emit a new event upon completion
+        agent.sensing.emitEvent({
+          type: "DATA_PROCESSING_COMPLETED",
+          description: "Data has been processed successfully",
+          payload: processedResult,
+          timestamp: Date.now(),
+        });
+        
+        return processedResult;
+      },
+    });
+  }
+});
+
+// Later, trigger the flow by emitting an event
+agent.sensing.emitEvent({
+  type: "NEW_DATA_AVAILABLE",
+  description: "New market data is available",
+  payload: { source: "binance", data: [/* ... */] },
+  timestamp: Date.now(),
+});
+```
+
+## Advanced Patterns
+
+### Event Filtering
+
+You can filter events by type to handle specific categories:
+
+```typescript
+// Register a listener for only specific event types
+agent.sensing.registerListener((evt) => {
+  if (evt.type.startsWith("USER_")) {
+    // Handle user-related events
+  }
+});
+```
+
+### Task Chaining
+
+Tasks can be chained by having one task emit an event that triggers the next task:
+
+```typescript
+// Task 1
+agent.taskManager.createTask({
+  type: "FETCH_DATA",
+  description: "Fetch data from API",
+  callback: async () => {
+    const data = await fetchFromAPI();
+    
+    // Emit event to trigger next task
+    agent.sensing.emitEvent({
+      type: "DATA_FETCHED",
+      description: "Data has been fetched and is ready for processing",
+      payload: data,
+      timestamp: Date.now(),
+    });
+    
+    return data;
+  },
+});
+
+// A separate listener sets up Task 2
+agent.sensing.registerListener((evt) => {
+  if (evt.type === "DATA_FETCHED") {
+    agent.taskManager.createTask({
+      type: "TRANSFORM_DATA",
+      description: "Transform fetched data",
+      payload: evt.payload,
+      callback: (data) => {
+        // Process the data
+      },
+    });
+  }
+});
+```
+
+## Best Practices
+
+1. **Use Descriptive Type Names**: Choose clear, action-oriented names for event types (e.g., "DATA_REQUESTED", "USER_AUTHENTICATED")
+
+2. **Include Relevant Data**: Ensure event payloads contain all necessary data for tasks to execute without additional context
+
+3. **Filter Appropriately**: Only create tasks for events that your module or agent should respond to
+
+4. **Think in Flows**: Design your system in terms of event-task flows rather than direct function calls
+
+5. **Log Important Transitions**: Consider logging when critical events are emitted or tasks are completed for debugging
+
+## Next Steps
+
+- Learn about [Extensibility](/extensibility) through modules and blueprints
+- Explore [Multi-Agent Communication](/multi-agent) using group sensing

@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AITOS Documentation
+
+This directory contains the documentation for the AITOS multi-agent framework, built with [Nextra](https://nextra.site/), a Next.js-based documentation site generator using the App Router.
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
 
 ```bash
+pnpm install
+# or
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
+
+```bash
+pnpm dev
+# or
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the documentation site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Documentation Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/`: Contains the Next.js App Router structure with MDX documentation pages
+- `app/framework-overview/`: Framework overview documentation
+- `app/quick-start/`: Quick start guide documentation
+- `app/event-task-system/`: Event-task system documentation
+- `app/extensibility/`: Documentation about extensibility with modules and blueprints
+- `app/multi-agent/`: Multi-agent communication documentation
+- `app/code-examples/`: Documentation with code examples
+- `app/api-reference/`: API reference documentation
+- `public/images/`: Contains diagrams and visual assets
+- `theme.config.tsx`: Nextra theme configuration
 
-## Learn More
+## Building for Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm build
+# or
+npm run build
+# or
+yarn build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The static output will be generated in the `out` directory.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The documentation covers:
 
-## Deploy on Vercel
+1. **Framework Overview** - Core components and architecture of AITOS
+2. **Quick Start Guide** - How to set up your first AITOS agent
+3. **Event-Task System** - The event-task mechanism that drives AITOS
+4. **Extensibility** - How to extend AITOS with modules and blueprints
+5. **Multi-Agent Communication** - Group sensing mechanism for agent collaboration
+6. **Code Examples** - Practical examples for common use cases
+7. **API Reference** - Interfaces and types reference
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Building for Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To build the documentation site for production:
+
+```bash
+pnpm build
+pnpm start
+```
+
+To export as static HTML:
+
+```bash
+pnpm build
+```
+
+## Contributing
+
+When contributing to the documentation, please follow the existing style and formatting, use clear language, and include code examples where appropriate.

@@ -1,0 +1,81 @@
+# Framework Overview
+
+AITOS is built on a modular, event-driven architecture designed to enable complex agent behaviors and multi-agent collaboration. This page provides a high-level overview of the key components that make up the AITOS framework.
+
+<div className="mt-8 mb-12 flex justify-center">
+  <img src="/images/aitos-architecture.svg" alt="AITOS Architecture Diagram" width="800" />
+</div>
+
+## Core Components
+
+The AITOS framework consists of several core components that work together to provide a flexible and powerful agent system:
+
+### Agent
+
+The `Agent` class is the central entity in the AITOS framework. It integrates several core modules:
+
+- **sensing**: Event perception system
+- **taskManager**: Task management
+- **thinking**: Cognitive processing
+- **state**: Status management
+- **reflection**: Self-reflection capabilities
+- **monitoring**: System monitoring
+
+Each agent has a unique `agentId` and can have both a private sensing system for internal events and a shared group sensing system for multi-agent communication.
+
+```typescript
+const agent = new Agent({
+  agentId: "my-agent-id", // Optional, will generate UUID if not provided
+  name: "My Agent",       // Optional, defaults to "Agent-{first 8 chars of agentId}"
+  groupSensing: sharedSensingInstance, // Optional, for multi-agent setups
+});
+```
+
+### Sensing
+
+The Sensing system serves as the event perception layer for agents. AITOS provides two types of sensing:
+
+1. **Private Sensing** (`agent.sensing`): Each agent's private event bus for internal events
+2. **Group Sensing** (`agent.groupSensing`): Shared event bus for multi-agent communication
+
+Both implement the `ISensing` interface which provides methods for registering listeners and emitting events.
+
+### Task Manager
+
+The Task Manager handles the creation and execution of tasks within an agent. It provides:
+
+- Task creation with automatic execution
+- Task status tracking
+- Task callback execution
+
+Tasks are the unit of work in the AITOS system, responding to events and executing actions.
+
+### Blueprints
+
+Blueprints define reusable agent configurations, including which modules to enable and how they interact. They serve as templates for quickly setting up agents with specific capabilities.
+
+### Modules
+
+Modules provide specific functionalities that can be added to agents. Each module typically:
+
+1. Registers listeners for specific events
+2. Creates tasks in response to those events
+3. Emits new events upon task completion
+
+## System Architecture
+
+AITOS follows an event-driven architecture where:
+
+1. External or internal triggers emit events
+2. Event listeners detect relevant events
+3. Tasks are created in response to events
+4. Task execution potentially creates new events
+
+This creates a flexible, decoupled system where components communicate through events rather than direct function calls.
+
+## Next Steps
+
+- [Quick Start Guide](/quick-start): Set up your first AITOS agent
+- [Event-Task System](/event-task-system): Learn about the event-task mechanism
+- [Extensibility](/extensibility): Discover how to extend AITOS with modules and blueprints
+- [Multi-Agent Communication](/multi-agent): Explore the group sensing mechanism

@@ -1,0 +1,269 @@
+# Multi-Agent Communication
+
+AITOS provides a powerful mechanism called "Group Sensing" for enabling communication and collaboration between multiple agents. This page explains how the multi-agent communication system works and provides examples of implementing agent collaboration patterns.
+
+<div className="mt-8 mb-12 flex justify-center">
+  <img src="/images/group-sensing.svg" alt="Group Sensing Communication Diagram" width="800" />
+</div>
+
+## Group Sensing Overview
+
+The Group Sensing mechanism is a shared event bus that allows multiple agent instances to communicate by publishing and subscribing to events. Unlike an agent's private sensing layer, which handles internal events, the group sensing layer is designed for cross-agent communication.
+
+### Key Concepts
+
+1. **Shared Event Bus**: Multiple agents connect to the same event bus
+2. **Event Publication**: Any agent can publish events to the shared bus
+3. **Event Subscription**: Any agent can listen for events on the shared bus
+4. **Agent Identification**: Events include information about their source agent
+
+## Setting Up Group Sensing
+
+To enable multi-agent communication, you need to:
+
+1. Create a shared sensing instance
+2. Pass this shared instance to each agent during initialization
+
+```typescript
+import { Agent } from "@/src/agent";
+import { DefaultSensing } from "@/src/agent/core/Sensing";
+import { NullDatabase } from "@/src/agent/core/Store";
+
+// Create a shared sensing instance
+const groupChannel = new DefaultSensing({
+  db: new NullDatabase(),
+  sensingId: "my-agent-group-sensing",
+});
+
+// Create multiple agents sharing the same sensing layer
+const agent1 = new Agent({
+  agentId: "agent-1",
+  name: "Data Producer",
+  groupSensing: groupChannel,
+});
+
+const agent2 = new Agent({
+  agentId: "agent-2",
+  name: "Data Processor",
+  groupSensing: groupChannel,
+});
+
+const agent3 = new Agent({
+  agentId: "agent-3",
+  name: "Data Reporter",
+  groupSensing: groupChannel,
+});
+```
+
+## Inter-Agent Communication Patterns
+
+### Basic Communication
+
+The simplest pattern is direct communication where one agent publishes events and another agent listens for them:
+
+```typescript
+// Agent 1 (Producer) publishes events
+function setupAgent1() {
+  // Periodically emit data to the group sensing layer
+  setInterval(() => {
+    agent1.groupSensing.emitEvent({
+      type: "RAW_DATA_AVAILABLE",
+      description: "New raw data is available for processing",
+      payload: {
+        dataId: `data-${Date.now()}`,
+        sourceAgent: agent1.agentId,
+        rawValue: Math.random() * 100,
+        timestamp: Date.now(),
+      },
+      timestamp: Date.now(),
+    });
+  }, 5000);
+}
+
+// Agent 2 (Processor) listens for events
+function setupAgent2() {
+  agent2.groupSensing.registerListener((evt) => {
+    if (evt.type === "RAW_DATA_AVAILABLE") {
+      const payload = evt.payload;
+      
+      // Make sure we don't process our own data
+      if (payload.sourceAgent !== agent2.agentId) {
+        console.log(`Agent 2 received data from ${payload.sourceAgent}: ${payload.dataId}`);
+        
+        // Process the data
+        const processedValue = payload.rawValue * 1.5 + 10;
+        
+        // Publish the processed result
+        agent2.groupSensing.emitEvent({
+          type: "PROCESSED_DATA_AVAILABLE",
+          description: "Data has been processed",
+          payload: {
+            originalData: payload,
+            processedValue,
+            processorAgent: agent2.agentId,
+            timestamp: Date.now(),
+          },
+          timestamp: Date.now(),
+        });
+      }
+    }
+  });
+}
+
+// Agent 3 (Reporter) listens for processed data
+function setupAgent3() {
+  agent3.groupSensing.registerListener((evt) => {
+    if (evt.type === "PROCESSED_DATA_AVAILABLE") {
+      const payload = evt.payload;
+      console.log(`Agent 3 received processed data from ${payload.processorAgent}`);
+      console.log(`Original value: ${payload.originalData.rawValue}, Processed: ${payload.processedValue}`);
+      
+      // Generate a report
+      agent3.sensing.emitEvent({
+        type: "REPORT_GENERATED",
+        description: "Report generated from processed data",
+        payload: {
+          report: {
+            rawValue: payload.originalData.rawValue,
+            processedValue: payload.processedValue,
+            improvementFactor: payload.processedValue / payload.originalData.rawValue,
+          },
+        },
+        timestamp: Date.now(),
+      });
+    }
+  });
+}
+
+// Initialize all agents
+setupAgent1();
+setupAgent2();
+setupAgent3();
+```
+
+### Request-Response Pattern
+
+Agents can implement a request-response pattern where one agent requests information and another provides it:
+
+```typescript
+// In Agent 1: Make a request
+function requestDataFromAgents() {
+  agent1.groupSensing.emitEvent({
+    type: "DATA_REQUEST",
+    description: "Request for data from all available agents",
+    payload: {
+      requestId: `req-${Date.now()}`,
+      requesterAgentId: agent1.agentId,
+      dataType: "sensor-reading",
+    },
+    timestamp: Date.now(),
+  });
+}
+
+// In Agent 2: Respond to requests
+function setupResponseHandler() {
+  agent2.groupSensing.registerListener((evt) => {
+    if (evt.type === "DATA_REQUEST") {
+      const request = evt.payload;
+      
+      // Only respond to requests from other agents
+      if (request.requesterAgentId !== agent2.agentId) {
+        // Generate response data
+        const responseData = generateResponseData(request.dataType);
+        
+        // Send response
+        agent2.groupSensing.emitEvent({
+          type: "DATA_RESPONSE",
+          description: `Response to data request ${request.requestId}`,
+          payload: {
+            requestId: request.requestId,
+            responderAgentId: agent2.agentId,
+            requesterAgentId: request.requesterAgentId,
+            dataType: request.dataType,
+            data: responseData,
+          },
+          timestamp: Date.now(),
+        });
+      }
+    }
+  });
+}
+
+// Helper function to generate response data
+function generateResponseData(dataType) {
+  if (dataType === "sensor-reading") {
+    return {
+      temperature: 22 + Math.random() * 5,
+      humidity: 40 + Math.random() * 20,
+      pressure: 1013 + Math.random() * 10,
+    };
+  }
+  return null;
+}
+```
+
+## Advanced Group Sensing Techniques
+
+### Filtering by Agent ID
+
+To avoid processing your own events or to target specific agents:
+
+```typescript
+// Only process events from a specific agent
+agent.groupSensing.registerListener((evt) => {
+  if (evt.payload?.sourceAgent === "agent-1") {
+    // Handle events only from agent-1
+  }
+});
+
+// Avoid processing your own events
+agent.groupSensing.registerListener((evt) => {
+  if (evt.payload?.sourceAgent !== agent.agentId) {
+    // Only process events from other agents
+  }
+});
+```
+
+### Broadcasting to Specific Subgroups
+
+You can implement subgroup communication by including group identifiers in your events:
+
+```typescript
+// Emit an event to a specific subgroup
+agent.groupSensing.emitEvent({
+  type: "GROUP_DATA_UPDATE",
+  description: "Data update for the analysis group",
+  payload: {
+    targetGroup: "analysis-team",
+    data: { /* ... */ },
+  },
+  timestamp: Date.now(),
+});
+
+// Listen for events targeted at your group
+agent.groupSensing.registerListener((evt) => {
+  if (evt.type === "GROUP_DATA_UPDATE" && 
+      evt.payload.targetGroup === "analysis-team") {
+    // Process the group update
+  }
+});
+```
+
+## Best Practices
+
+1. **Include Agent IDs**: Always include source agent IDs in event payloads to enable filtering
+
+2. **Use Descriptive Event Types**: Choose clear naming patterns for cross-agent events
+
+3. **Avoid Event Storms**: Be careful not to create feedback loops where agents continuously trigger each other's events
+
+4. **Handle Race Conditions**: Design your system to handle out-of-order event arrival
+
+5. **Implement Timeouts**: For request-response patterns, include timeout handling
+
+6. **Consider Event Persistence**: For critical data, consider using a persistent database backend for your group sensing
+
+## Next Steps
+
+- Check out [Code Examples](/code-examples) for more detailed multi-agent scenarios
+- Learn about the [API Reference](/api-reference) for detailed documentation on sensing interfaces

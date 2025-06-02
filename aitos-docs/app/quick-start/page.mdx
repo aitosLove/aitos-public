@@ -1,0 +1,142 @@
+# Quick Start Guide
+
+This guide will help you quickly get started with AITOS by setting up a basic agent.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Node.js (v18 or higher)
+- npm, yarn, or pnpm
+
+## Installation
+
+1. First, clone the repository or create a new project:
+
+```bash
+git clone https://github.com/yourusername/aitos.git
+cd aitos
+```
+
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+## Creating Your First Agent
+
+Let's create a simple agent that listens for events and responds to them:
+
+1. Create a new file called `my-agent.ts` in the `runtime` directory:
+
+```typescript
+import { Agent } from "@/src/agent";
+import { DefaultSensing } from "@/src/agent/core/Sensing";
+import { NullDatabase } from "@/src/agent/core/Store";
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
+// Create a group sensing channel for multi-agent communication
+const groupChannel = new DefaultSensing({
+  db: new NullDatabase(),
+  sensingId: "my-agent-group-sensing",
+});
+
+// Create the main agent
+const myAgent = new Agent({
+  agentId: "my-first-agent",
+  name: "First AITOS Agent",
+  groupSensing: groupChannel,
+});
+
+// Set up a basic event listener
+myAgent.sensing.registerListener((event) => {
+  console.log(`Received event: ${event.type}`);
+  
+  if (event.type === "HELLO_WORLD") {
+    // Create a task in response to the event
+    myAgent.taskManager.createTask({
+      type: "GREETING_TASK",
+      description: "Respond to hello world event",
+      payload: event.payload,
+      callback: (payload) => {
+        console.log(`Hello, ${payload.name || "world"}!`);
+        
+        // Emit a new event after task completion
+        myAgent.sensing.emitEvent({
+          type: "GREETING_COMPLETED",
+          description: "Greeting response was sent",
+          payload: { greeting: `Hello, ${payload.name || "world"}!` },
+          timestamp: Date.now(),
+        });
+        
+        return `Greeting sent to ${payload.name || "world"}`;
+      },
+    });
+  }
+});
+
+// Emit an initial event to test the system
+myAgent.sensing.emitEvent({
+  type: "HELLO_WORLD",
+  description: "Test event",
+  payload: { name: "AITOS User" },
+  timestamp: Date.now(),
+});
+
+console.log("Agent is running and waiting for events...");
+```
+
+2. Run your agent:
+
+```bash
+npx ts-node runtime/my-agent.ts
+```
+
+You should see output showing that your agent received the "HELLO_WORLD" event and responded with a greeting.
+
+## Using a Blueprint
+
+For more advanced use cases, AITOS provides blueprints that configure agents with common capabilities. Here's how to use the basic blueprint:
+
+```typescript
+import { Agent } from "@/src/agent";
+import { DefaultSensing } from "@/src/agent/core/Sensing";
+import { NullDatabase } from "@/src/agent/core/Store";
+import { BasicBlueprint } from "@/src/blueprints/BasicBlueprint";
+
+// Create a shared sensing channel
+const groupChannel = new DefaultSensing({
+  db: new NullDatabase(),
+  sensingId: "blueprint-group-sensing",
+});
+
+// Create an agent with the Basic blueprint
+const blueprintAgent = new Agent({
+  agentId: "blueprint-agent",
+  name: "Blueprint Agent",
+  groupSensing: groupChannel,
+  blueprint: BasicBlueprint,
+});
+
+// Use the blueprint's capabilities
+blueprintAgent.sensing.emitEvent({
+  type: "TASK_REQUEST",
+  description: "Request a task from the Blueprint agent",
+  payload: {
+    task: "Analyze this text",
+    content: "AITOS is a multi-agent framework",
+  },
+  timestamp: Date.now(),
+});
+```
+
+## Next Steps
+
+Now that you've created your first agent, you can:
+
+1. Learn more about the [Event-Task System](/event-task-system)
+2. Explore how to create custom [Modules and Blueprints](/extensibility)
+3. Set up [Multi-Agent Communication](/multi-agent) with group sensing
