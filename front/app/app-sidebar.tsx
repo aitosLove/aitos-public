@@ -11,6 +11,9 @@ import {
   ChevronsLeftRightEllipsis,
   MessageCircleMore,
   Anchor,
+  XIcon,
+  TableOfContentsIcon,
+  SearchIcon,
 } from "lucide-react";
 
 import {
@@ -18,192 +21,165 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarHeader,
   SidebarMenuItem,
-  SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { ModeToggle as ThemeButton } from "./theme-button";
-
-// // Menu items.
-// const items = [
-//   {
-//     title: "Agent",
-//     url: "/agent",
-//     icon: Home,
-//   },
-//   {
-//     title: "Portfolio",
-//     url: "/portfolio",
-//     icon: Inbox,
-//   },
-//   {
-//     title: "Chat",
-//     url: "/chat",
-//     icon: Calendar,
-//   },
-// ];
+import ThemedLogo from "./themed-logo";
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent>
-        <SidebarHeader>
+    <Sidebar className="border-r border-gray-200 dark:border-gray-800 shadow-none rounded-none w-64">
+      <SidebarContent className="flex flex-col h-full">
+        {/* Header with Logo and Title */}
+        <SidebarHeader className="p-6 border-b border-gray-200 dark:border-gray-800">
           <SidebarMenu>
             <SidebarMenuItem>
-              <div className="flex items-center space-x-2">
-                <Image src="/suikai.png" alt="S" width={32} height={32} />
+              <div className="flex items-center space-x-3">
+                <ThemedLogo size="small" />
+                <span className="font-bold text-xl tracking-tight">AITOS</span>
               </div>
-            </SidebarMenuItem>
-            <SidebarMenuItem className="mt-4">
-              <ThemeButton/>
-
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
-        <SidebarGroup>
-          {/* <SidebarGroupLabel>Route</SidebarGroupLabel> */}
-          <SidebarGroupContent>
-            <SidebarMenu>
+
+        {/* Main Menu Items */}
+        <SidebarGroup className="flex-grow">
+          <SidebarGroupContent className="py-4">
+            <SidebarMenu className="space-y-1">
               {/* About */}
-              <SidebarMenuItem key={"about"}>
-                <SidebarMenuButton asChild>
-                  <a href={`/`}>
-                    <ChevronsLeftRightEllipsis />
-                    <span>{`About`}</span>
+              <SidebarMenuItem key="about" className="px-4">
+                <SidebarMenuButton
+                  asChild
+                  className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                >
+                  <a href="/" className="flex items-center py-3 px-2">
+                    <ChevronsLeftRightEllipsis className="mr-3" size={18} />
+                    <span className="font-medium">About</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               {/* Agent */}
-              <SidebarMenuItem key={"agent"}>
-                <SidebarMenuButton asChild>
-                  <a href={`/agent`}>
-                    <Bot />
-                    <span>{`Agent`}</span>
+              <SidebarMenuItem key="agent" className="px-4">
+                <SidebarMenuButton
+                  asChild
+                  className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                >
+                  <a href="/agent" className="flex items-center py-3 px-2">
+                    <Bot className="mr-3" size={18} />
+                    <span className="font-medium">Agent</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* Chat */}
-              <SidebarMenuItem key={"chat"}>
-                <SidebarMenuButton asChild>
-                  <a href={`/chat`}>
-                    <MessageCircle />
-                    <span>{`Chat`}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {/* Blueprint Category */}
+              <div className="px-4 py-2 mt-4 space-y-1">
+                <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 px-2">
+                  Blueprints
+                </h3>
 
-              {/* Blueprint */}
-              <SidebarMenuItem key={"blueprint"}>
-                <SidebarMenuButton asChild>
-                  <div>
-                    <Inbox />
-                    <span>{`Blueprints`}</span>
-                  </div>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  {/* Sui Market */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <a href={`/sui-market`}>
-                        <Blocks />
-                        <span>{`Sui Analysis`}</span>
-                      </a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                {/* Aptos Market */}
+                <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a
+                      href="/aptos-market"
+                      className="flex items-center py-2 px-2"
+                    >
+                      <Blocks className="mr-3" size={16} />
+                      <span>Aptos Analysis</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
 
-                  {/* Portfolio */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <a href={`/portfolio`}>
-                        <Wallet />
-                        <span>{`AI Portfolio`}</span>
-                      </a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                {/* Portfolio */}
+                <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a
+                      href="/portfolio"
+                      className="flex items-center py-2 px-2"
+                    >
+                      <Wallet className="mr-3" size={16} />
+                      <span>AI Portfolio</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
 
-                  {/* Telegram */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <a href={`/telegram`}>
-                        <MessageCircleMore />
-                        <span>{`Telegram`}</span>
-                      </a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a href="/telegram" className="flex items-center py-2 px-2">
+                      <MessageCircleMore className="mr-3" size={16} />
+                      <span>Telegram</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                {/* X */}
 
-                  {/* Defi */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <a href={`/defi`}>
-                        <Anchor />
-                        <span>{`Defi Strategy`}</span>
-                      </a>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                    <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a href="/x" className="flex items-center py-2 px-2">
+                      <XIcon className="mr-3" size={16} />
+                      <span>X Posts</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
 
-                  {/* NFT */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild aria-disabled>
-                      <div>
-                        <Settings />
-                        <span>{`NFT (Coming Soon)`}</span>
-                      </div>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenuItem>
 
-              {/* Modules */}
-              <SidebarMenuItem key={"modules"}>
-                <SidebarMenuButton asChild aria-disabled>
-                  <div>
-                    <Search />
-                    <span>{`Modules`}</span>
-                  </div>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  {/* CoinInfo */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild aria-disabled>
-                      <div>
-                        <Blocks />
-                        <span>{`Coin Info`}</span>
-                      </div>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+              <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a href="/content-evaluation" className="flex items-center py-2 px-2">
+                      <TableOfContentsIcon className="mr-3" size={16} />
+                      <span>Content Evaluation</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
 
-                  {/* Swap */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild aria-disabled>
-                      <div>
-                        <Blocks />
-                        <span>{`Swap Coin on Sui`}</span>
-                      </div>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                 <SidebarMenuItem className="ml-2">
+                  <SidebarMenuButton
+                    asChild
+                    className="rounded-none border border-transparent hover:border-gray-200 dark:hover:border-gray-800 w-full"
+                  >
+                    <a href="/deep-research" className="flex items-center py-2 px-2">
+                      <SearchIcon className="mr-3" size={16} />
+                      <span>Deep Research</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
 
-                  {/* NFT */}
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild aria-disabled>
-                      <div>
-                        <Blocks />
-                        <span>{`NFT Trading`}</span>
-                      </div>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenuItem>
+
+              </div>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Footer with Theme Toggle */}
+        <SidebarFooter className="p-6 border-t border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Theme</span>
+            <ThemeButton />
+          </div>
+        </SidebarFooter>
       </SidebarContent>
     </Sidebar>
   );

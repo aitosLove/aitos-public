@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import {  Source_Sans_3,Source_Code_Pro } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { ThemeProvider } from "./theme-provider";
 import { cn } from "@/lib/utils";
 
-const sourceSans = Source_Sans_3({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight:"variable",
-  display: "swap"
 });
 
-const sourceMono = Source_Code_Pro({
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-    weight:"variable",
-  display: "swap"
 });
 
 export const metadata: Metadata = {
-  title: "AITOS",
-  description: "Blockchain Intelligence, Simplified.",
+  title: "Suikai",
+  description: "All in Suikai, All in SUI&AI.",
 };
 
 export default function RootLayout({
@@ -31,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sourceSans.className}  antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -42,8 +40,8 @@ export default function RootLayout({
           <SidebarProvider>
             <AppSidebar />
             <main className="w-full ">
-              <div className="bg-background -mb-6">
-              <SidebarTrigger />
+              <div className="bg-primary-foreground -mb-2">
+              {/* <SidebarTrigger /> */}
 
               </div>
 
